@@ -32,12 +32,12 @@
 ## 階段三：手動部署（等階段一＋二綠勾後再做）
 
 1. **建立服務帳戶**（Google Cloud Console，分別對 `yoxi-yoi-demo` 與 `yoi-public-demo` 各做一次）：
-   IAM 與管理 → 服務帳戶 → 建立 → 角色選 **Firebase Hosting 管理員**（只給這個角色，不要給擁有者或 Rules 相關權限）→ 金鑰 → 新增 JSON 金鑰，下載。
+   IAM 與管理 → 服務帳戶 → 建立 → 角色選 **Firebase 託管管理員**（Firebase Hosting 管理員；不是「Firebase 管理員」或「App Hosting 管理員」）（只給這個角色，不要給擁有者或 Rules 相關權限）→ 金鑰 → 新增 JSON 金鑰，下載。
 2. **設定 Secrets**（GitHub repo → Settings → Secrets and variables → Actions → New repository secret）：
    - `FIREBASE_SA_INTERNAL`：貼上 `yoxi-yoi-demo` 的 JSON 全文
    - `FIREBASE_SA_PUBLIC`：貼上 `yoi-public-demo` 的 JSON 全文
    - 貼完後把下載的 JSON 檔刪除，不要放進專案資料夾。
-3. **設定核准**（Settings → Environments）：建立 `internal-demo` 與 `public-demo` 兩個環境，各自勾選 **Required reviewers** 並加入您自己。這樣每次部署都要您按核准。
-4. **部署**：Actions → Deploy Hosting → Run workflow → 選 `internal`（內部展示版）或 `public`（公開測試版）→ 核准 → 完成後重新整理網站確認。
+3. **限制分支**（Settings → Environments）：建立 `internal-demo` 與 `public-demo` 兩個環境，各自把「Deployment branches and tags」設為 **Selected branches and tags**，只加 `main`。（免費方案的私人 repo 沒有 Required reviewers；部署只能由 repo 寫入者手動觸發，目前只有產品負責人。）
+4. **部署**：Actions → Deploy Hosting → Run workflow → 選 `internal`（內部展示版）或 `public`（公開測試版）→ 完成後重新整理網站確認。
 
 > 服務帳戶只有 Hosting 權限，即使工作流程被改動也無法發布 Firestore Rules。Rules 發布維持由產品負責人在 Console 手動執行。

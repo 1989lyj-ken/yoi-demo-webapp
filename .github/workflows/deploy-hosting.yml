@@ -27,7 +27,7 @@ jobs:
   deploy:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-    # 在 GitHub 的 Environments 為這兩個環境設定「Required reviewers」，部署前需要產品負責人按核准。
+    # 兩個環境在 GitHub Environments 限定只允許 main 分支（免費方案私人 repo 沒有 Required reviewers；只有 repo 寫入者能手動觸發）。
     environment: ${{ inputs.target == 'public' && 'public-demo' || 'internal-demo' }}
     steps:
       - uses: actions/checkout@v5
