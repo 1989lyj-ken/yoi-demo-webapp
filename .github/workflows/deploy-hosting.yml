@@ -25,14 +25,14 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     # 在 GitHub 的 Environments 為這兩個環境設定「Required reviewers」，部署前需要產品負責人按核准。
     environment: ${{ inputs.target == 'public' && 'public-demo' || 'internal-demo' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
