@@ -1,0 +1,66 @@
+# 階段一：每次 push / PR 自動檢查型別、單元測試與兩個版本的建置。不連雲端、不需要任何 Secrets。
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: 安裝相依
+        run: npm ci
+
+      - name: 型別檢查
+        run: npx tsc --noEmit
+
+      - name: 單元測試
+        run: npm test
+
+      - name: 建置內部展示版
+        run: npm run build
+
+      - name: 建置公開測試版
+        run: npm run build:public
+
+  # 階段二：在 Firestore Emulator 跑 Rules 測試（只在 runner 本機，不連雲端）。
+  rules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: 快取 Firestore Emulator JAR
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/firebase/emulators
+          key: firestore-emulator-1.22.0
+
+      - name: 安裝相依
+        run: npm ci
+
+      - name: Rules 測試
+        run: bash scripts/test-firestore-rules-ci.sh

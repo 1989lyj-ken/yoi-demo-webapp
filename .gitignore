@@ -1,0 +1,20 @@
+# 機敏：帳號資料絕不進版控
+YOI team member accounts.md
+
+# 相依與建置產物
+node_modules/
+dist/
+dist-public/
+
+# 本機工具與快取
+.firebase/
+.backup/
+.codex/
+.claude/settings.local.json
+*.log
+
+# 大型或個人檔案（.wav 超過 GitHub 單檔 100 MB 上限）
+*.wav
+
+# macOS 系統檔
+.DS_Store

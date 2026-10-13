@@ -1,0 +1,98 @@
+{
+  "about": "FSD-03C-1 shared scenario table. Each scenario is replayed both by tests/contrib-state.test.mjs (client rule, simulated server times) and by tests/firestore-rules.test.mjs (Emulator). Days: Y = 2026-09-29, T = 2026-09-30 (same activity week). Ops run in order at the given scenario time; 'steps' value is the new raw total; a 'steps' on taskDay Y while the time is on T is a catch-up stamped Y 23:59:59. A 'check' writes the entry for (member, taskDay, seq) with joinRevision: 'rules' is what the Emulator must decide; 'client' is contributionEligibility's decision (null = a forged write the client never makes; when true, the client's joinRevision must equal the check's). Client-eligible must imply Rules-accepted.",
+  "scenarios": [
+    {
+      "name": "formation tie, founder and joiner, founder with a non-zero joinRevision",
+      "ops": [
+        { "day": "T", "at": "10:00:00", "op": "create", "member": "M01" },
+        { "day": "T", "at": "10:00:00", "op": "steps", "member": "M01", "value": 1000 },
+        { "day": "T", "at": "10:00:00", "op": "join", "member": "M02" },
+        { "day": "T", "at": "11:00:00", "op": "steps", "member": "M01", "value": 2000 },
+        { "day": "T", "at": "11:00:00", "op": "steps", "member": "M02", "value": 500 },
+        { "op": "check", "member": "M01", "taskDay": "T", "seq": 1, "joinRevision": 0, "rules": false, "client": false },
+        { "op": "check", "member": "M01", "taskDay": "T", "seq": 2, "joinRevision": 1, "rules": false, "client": null },
+        { "op": "check", "member": "M01", "taskDay": "T", "seq": 2, "joinRevision": 0, "rules": true, "client": true },
+        { "op": "check", "member": "M02", "taskDay": "T", "seq": 1, "joinRevision": 0, "rules": false, "client": null },
+        { "op": "check", "member": "M02", "taskDay": "T", "seq": 1, "joinRevision": 1, "rules": true, "client": true }
+      ]
+    },
+    {
+      "name": "pause boundary, a ride before the pause credited later, resume (accepted approximation)",
+      "ops": [
+        { "day": "T", "at": "09:00:00", "op": "create", "member": "M01" },
+        { "day": "T", "at": "09:00:00", "op": "join", "member": "M02" },
+        { "day": "T", "at": "10:00:00", "op": "steps", "member": "M01", "value": 1000 },
+        { "day": "T", "at": "10:00:00", "op": "ride", "member": "M01" },
+        { "day": "T", "at": "11:00:00", "op": "leave", "member": "M02" },
+        { "day": "T", "at": "11:00:00", "op": "steps", "member": "M01", "value": 1500 },
+        { "op": "check", "member": "M01", "taskDay": "T", "seq": 1, "joinRevision": 0, "rules": true, "client": true },
+        { "op": "check", "member": "M01", "taskDay": "T", "seq": 2, "joinRevision": 0, "rules": true, "client": true },
+        { "op": "check", "member": "M01", "taskDay": "T", "seq": 3, "joinRevision": 0, "rules": false, "client": false },
+        { "day": "T", "at": "12:00:00", "op": "steps", "member": "M01", "value": 2000 },
+        { "op": "check", "member": "M01", "taskDay": "T", "seq": 4, "joinRevision": 0, "rules": false, "client": false },
+        { "day": "T", "at": "13:00:00", "op": "join", "member": "M03" },
+        { "op": "check", "member": "M01", "taskDay": "T", "seq": 4, "joinRevision": 0, "rules": true, "client": false },
+        { "day": "T", "at": "14:00:00", "op": "steps", "member": "M01", "value": 2500 },
+        { "op": "check", "member": "M01", "taskDay": "T", "seq": 5, "joinRevision": 0, "rules": true, "client": true }
+      ]
+    },
+    {
+      "name": "departed members: steps and rides before leaving count, after leaving do not",
+      "ops": [
+        { "day": "T", "at": "09:00:00", "op": "create", "member": "M01" },
+        { "day": "T", "at": "09:00:00", "op": "join", "member": "M02" },
+        { "day": "T", "at": "10:00:00", "op": "join", "member": "M03" },
+        { "day": "T", "at": "11:00:00", "op": "steps", "member": "M03", "value": 800 },
+        { "day": "T", "at": "11:00:00", "op": "ride", "member": "M03" },
+        { "day": "T", "at": "12:00:00", "op": "leave", "member": "M03" },
+        { "day": "T", "at": "13:00:00", "op": "steps", "member": "M03", "value": 900 },
+        { "op": "check", "member": "M03", "taskDay": "T", "seq": 1, "joinRevision": 0, "rules": true, "client": true },
+        { "op": "check", "member": "M03", "taskDay": "T", "seq": 2, "joinRevision": 0, "rules": true, "client": true },
+        { "op": "check", "member": "M03", "taskDay": "T", "seq": 3, "joinRevision": 0, "rules": false, "client": false },
+        { "day": "T", "at": "13:00:00", "op": "leave", "member": "M02" },
+        { "day": "T", "at": "14:00:00", "op": "ride", "member": "M02" },
+        { "op": "check", "member": "M02", "taskDay": "T", "seq": 1, "joinRevision": 0, "rules": false, "client": false }
+      ]
+    },
+    {
+      "name": "the founder leaves: earlier steps still count, later ones do not",
+      "ops": [
+        { "day": "T", "at": "09:00:00", "op": "create", "member": "M01" },
+        { "day": "T", "at": "09:00:00", "op": "join", "member": "M02" },
+        { "day": "T", "at": "09:00:00", "op": "join", "member": "M03" },
+        { "day": "T", "at": "10:00:00", "op": "steps", "member": "M01", "value": 1000 },
+        { "day": "T", "at": "11:00:00", "op": "leave", "member": "M01" },
+        { "day": "T", "at": "12:00:00", "op": "steps", "member": "M01", "value": 1500 },
+        { "op": "check", "member": "M01", "taskDay": "T", "seq": 1, "joinRevision": 0, "rules": true, "client": true },
+        { "op": "check", "member": "M01", "taskDay": "T", "seq": 2, "joinRevision": 0, "rules": false, "client": false }
+      ]
+    },
+    {
+      "name": "a ride before the join day cannot land in the new team (Security Low-1); the same day still counts (b1)",
+      "ops": [
+        { "day": "Y", "at": "10:00:00", "op": "create", "member": "M01" },
+        { "day": "Y", "at": "10:00:00", "op": "join", "member": "M02" },
+        { "day": "Y", "at": "20:00:00", "op": "ride", "member": "M03" },
+        { "day": "T", "at": "08:00:00", "op": "ride", "member": "M05" },
+        { "day": "T", "at": "09:00:00", "op": "join", "member": "M03" },
+        { "day": "T", "at": "09:00:00", "op": "join", "member": "M05" },
+        { "op": "check", "member": "M03", "taskDay": "Y", "seq": 1, "joinRevision": 0, "rules": false, "client": false },
+        { "op": "check", "member": "M05", "taskDay": "T", "seq": 1, "joinRevision": 0, "rules": true, "client": true },
+        { "day": "T", "at": "10:00:00", "op": "leave", "member": "M03" },
+        { "op": "check", "member": "M03", "taskDay": "Y", "seq": 1, "joinRevision": 0, "rules": false, "client": false }
+      ]
+    },
+    {
+      "name": "yesterday catch-up at 23:59:59 counts for members of yesterday's team, not for today's joiner",
+      "ops": [
+        { "day": "Y", "at": "10:00:00", "op": "create", "member": "M01" },
+        { "day": "Y", "at": "10:00:00", "op": "join", "member": "M02" },
+        { "day": "T", "at": "09:00:00", "op": "join", "member": "M03" },
+        { "day": "T", "at": "09:30:00", "op": "steps", "member": "M01", "taskDay": "Y", "value": 3000 },
+        { "day": "T", "at": "09:30:00", "op": "steps", "member": "M03", "taskDay": "Y", "value": 2000 },
+        { "op": "check", "member": "M01", "taskDay": "Y", "seq": 1, "joinRevision": 0, "rules": true, "client": true },
+        { "op": "check", "member": "M03", "taskDay": "Y", "seq": 1, "joinRevision": 2, "rules": false, "client": false }
+      ]
+    }
+  ]
+}

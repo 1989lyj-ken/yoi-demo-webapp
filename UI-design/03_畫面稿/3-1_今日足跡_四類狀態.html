@@ -1,0 +1,1186 @@
+<!-- yoxi 1.0 移動足跡｜UI 示意（草稿）
+     規格來源：../02_設計規格/2-1_DESIGN_設計規格.md 1.24.0，token 取自第 12 章，元件取自第 8 章
+     大字好讀模式：第 7 個畫面複製第 3 個畫面，只在外層加 data-mode="large-text"，由 token 覆寫切換
+     輸出：以 headless Chrome 截圖為 footprint.jpg -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>今日足跡狀態</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,700;0,900;1,900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+/* ───── DESIGN.md 第 12 章設計 token（原樣複製） ───── */
+:root {
+  --yx-brand-red: #EF392A;
+  --yx-icon-red: #F14A42;
+  --yx-red-deep: #CC3329;
+  --yx-action-navy: #0B1F38;
+  --yx-navy-deep: #051122;
+  --yx-link-blue: #0C4C80;
+  --yx-slate: #3C4C60;
+  --yx-star-yellow: #FFF571;
+  --yx-star-gold: #B38A42;
+  --yx-white: #FFFFFF;
+  --yx-text-primary: var(--yx-action-navy);
+  --yx-text-muted: #778AA4;
+  --yx-text-placeholder: #C3CBDC;
+  --yx-text-on-color: #FFFFFF;
+  --yx-text-link: var(--yx-link-blue);
+  --yx-surface: #FFFFFF;
+  --yx-surface-grey: #F2F6F9;
+  --yx-surface-blue: #EDF4FC;
+  --yx-surface-apricot: #F3EBE4;
+  --yx-apricot-watermark: #EEE1D5;
+  --yx-surface-praise: #F1E7DF;
+  --yx-border: #DFE4ED;
+  --yx-border-strong: #C3CBDC;
+  --yx-checkbox-border: #EAEDF3;
+  --yx-disabled: #C3CBDC;
+  --yx-disabled-soft: #E2E6EE;
+  --yx-disabled-icon: #BAC3D1;
+  --yx-pressed-light: #E6EBF1;
+  --yx-error: var(--yx-brand-red);
+  --yx-scrim-soft: rgba(11, 31, 56, 0.35);
+  --yx-scrim-strong: rgba(11, 31, 56, 0.85);
+  --yx-scrim-darkest: rgba(11, 31, 56, 0.95);
+  --yx-font: "Montserrat", "Noto Sans TC", "PingFang TC", system-ui, sans-serif;
+  --yx-type-display: 900 34px/1.3 var(--yx-font);
+  --yx-type-slogan: italic 900 28px/1.1 "Montserrat", var(--yx-font);
+  --yx-type-number-lg: 700 28px/1.1 var(--yx-font);
+  --yx-type-number-md: 700 24px/1.1 var(--yx-font);
+  --yx-type-heading: 500 20px/1.4 var(--yx-font);
+  --yx-type-nav-title: 700 20px/1.3 var(--yx-font);
+  --yx-type-menu: 500 20px/1.4 var(--yx-font);
+  --yx-type-title: 700 18px/1.4 var(--yx-font);
+  --yx-type-body: 500 18px/1.6 var(--yx-font);
+  --yx-type-button: 500 18px/1.2 var(--yx-font);
+  --yx-type-body-sm: 400 16px/1.5 var(--yx-font);
+  --yx-type-tab: 500 16px/1.2 var(--yx-font);
+  --yx-type-caption: 400 13px/1.5 var(--yx-font);
+  --yx-type-label: 400 13px/1.4 var(--yx-font);
+  --yx-type-tag: 500 12px/1.2 var(--yx-font);
+  --yx-space-xxs: 4px;
+  --yx-space-xs: 8px;
+  --yx-space-sm: 12px;
+  --yx-space-md: 16px;
+  --yx-space-lg: 24px;
+  --yx-space-xl: 32px;
+  --yx-space-xxl: 40px;
+  --yx-space-xxxl: 56px;
+  --yx-page-header: 16px;
+  --yx-page-content: 24px;
+  --yx-page-inset: 32px;
+  --yx-touch-min: 44px;
+  --yx-touch-gap: 8px;
+  --yx-radius-none: 0;
+  --yx-radius-xs: 2px;
+  --yx-radius-sm: 6px;
+  --yx-radius-md: 8px;
+  --yx-radius-lg: 10px;
+  --yx-radius-xl: 24px;
+  --yx-radius-full: 999px;
+  --yx-shadow-float: 0 2px 8px rgba(11, 31, 56, 0.12);
+  --yx-button-height: 54px;
+  --yx-field-height: 56px;
+  --yx-field-search-height: 48px;
+  --yx-tab-pill-height: 41px;
+  --yx-tab-segment-height: 36px;
+  --yx-chip-height: 34px;
+  --yx-icon-tile: 44px;
+  --yx-pin: 28px;
+  --yx-checkbox: 24px;
+  --yx-row-compact: 56px;
+  --yx-row-icon: 96px;
+  --yx-divider-band: 8px;
+}
+[data-mode="large-text"] {
+  --yx-text-muted: #4A5A70;
+  --yx-border: #7D8BA0;
+  --yx-type-display: 900 40px/1.3 var(--yx-font);
+  --yx-type-heading: 700 26px/1.4 var(--yx-font);
+  --yx-type-nav-title: 700 24px/1.3 var(--yx-font);
+  --yx-type-menu: 500 24px/1.4 var(--yx-font);
+  --yx-type-title: 700 22px/1.4 var(--yx-font);
+  --yx-type-body: 500 22px/1.7 var(--yx-font);
+  --yx-type-button: 700 22px/1.2 var(--yx-font);
+  --yx-type-body-sm: 500 20px/1.6 var(--yx-font);
+  --yx-type-tab: 500 20px/1.2 var(--yx-font);
+  --yx-type-caption: 500 18px/1.5 var(--yx-font);
+  --yx-type-label: 500 18px/1.4 var(--yx-font);
+  --yx-type-tag: 700 18px/1.2 var(--yx-font);
+  --yx-page-header: 20px;
+  --yx-space-xl: 40px;
+  --yx-touch-min: 60px;
+  --yx-touch-gap: 12px;
+  --yx-button-height: 64px;
+  --yx-icon-tile: 56px;
+  --yx-checkbox: 32px;
+  --yx-row-compact: 72px;
+  --yx-row-icon: 112px;
+}
+
+/* ───── DESIGN.md 第 12 章追加的 1.0 token（第 8.12 節） ───── */
+:root {
+  --yx-avatar: 44px;
+  --yx-switch-width: 51px;
+  --yx-switch-height: 31px;
+  --yx-map-ground: #EEF2F6;
+  --yx-map-road: #FFFFFF;
+  --yx-map-water: #D6E4F0;
+  --yx-map-park: #E1ECDD;
+}
+[data-mode="large-text"] { --yx-avatar: 56px; }
+
+/* ───── 畫布 ───── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--yx-font); background: #E4E9EF; color: var(--yx-text-primary); width: 1764px; padding: 56px 60px 72px; font-variant-numeric: tabular-nums; }
+.canvas-head { display: grid; grid-template-columns: 1fr 560px; gap: 48px; align-items: end; margin-bottom: 44px; }
+.canvas-head .eyebrow { font: italic 900 16px/1 "Montserrat", var(--yx-font); color: var(--yx-brand-red); margin-bottom: 14px; }
+.canvas-head h1 { font: 900 36px/1.25 var(--yx-font); }
+.canvas-head p { font: 500 16px/1.7 var(--yx-font); color: #4A5A70; margin-top: 8px; max-width: 70ch; }
+.rules { background: #fff; padding: 18px 22px; border-top: 3px solid var(--yx-action-navy); }
+.rules h2 { font: 700 15px/1.4 var(--yx-font); margin-bottom: 8px; display: flex; justify-content: space-between; }
+.rules h2 span { font: 500 12px/1.6 var(--yx-font); color: #fff; background: var(--yx-slate); padding: 1px 8px; border-radius: var(--yx-radius-sm); }
+.rules dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; font: 500 14px/1.6 var(--yx-font); }
+.rules dt { color: #4A5A70; }
+.grid { display: grid; grid-template-columns: repeat(4, 375px); gap: 56px 48px; }
+.phone { --phone-w: 375px; --phone-h: 812px; --safe-top: 44px; --safe-bottom: 34px; --phone-radius: 44px; width: var(--phone-w); height: var(--phone-h); border-radius: var(--phone-radius); background: var(--yx-surface); overflow: hidden; position: relative; box-shadow: 0 24px 60px rgba(11,31,56,.16); }
+.note { margin-top: 18px; font: 500 14px/1.65 var(--yx-font); color: #4A5A70; }
+.note b { display: block; font: 700 17px/1.4 var(--yx-font); color: var(--yx-action-navy); margin-bottom: 4px; }
+.note b.i { display: inline; font: inherit; font-weight: 700; color: var(--yx-action-navy); margin: 0; }
+.note code { font: 500 12px/1.4 "SF Mono", Menlo, monospace; background: #fff; padding: 1px 5px; border-radius: 3px; color: var(--yx-action-navy); white-space: nowrap; }
+.note .ext { color: var(--yx-link-blue); font-weight: 700; }
+
+/* ───── 共用小件 ───── */
+.status { height: var(--safe-top); display: flex; justify-content: space-between; align-items: center; padding: 6px 28px 0 34px; font: 600 16px/1 -apple-system, "SF Pro Text", var(--yx-font); color: var(--yx-action-navy); flex: none; position: relative; z-index: 1; }
+.status svg { display: block; }
+.on-color .status { color: #fff; }
+.icon { display: block; flex: none; }
+.lt-only { display: none; }
+[data-mode="large-text"] .lt-only { display: inline; }
+.tap { min-height: var(--yx-touch-min); display: inline-flex; align-items: center; gap: var(--yx-space-xs); }
+
+/* 紅方塊箭頭第 7 章：方塊永遠在箭尾 */
+.sq-arrow { display: inline-flex; align-items: center; gap: 3px; flex: none; }
+.sq-arrow i { width: 8px; height: 5px; background: var(--yx-icon-red); display: block; }
+
+/* Header/Red 第 8.9 節 */
+.header-red { background: var(--yx-brand-red); color: var(--yx-text-on-color); padding-bottom: calc(var(--yx-space-md) + var(--yx-radius-md)); }
+.header-red .close { height: 44px; padding: 0 var(--yx-page-header); font: var(--yx-type-body); font-weight: 700; }
+.header-red h2 { font: var(--yx-type-display); padding: 20px var(--yx-page-header) 0; }
+.header-red .sub { font: var(--yx-type-caption); padding: 2px var(--yx-page-header) 0; }
+[data-mode="large-text"] .header-red .sub { font: 700 22px/1.5 var(--yx-font); }
+.pills { display: flex; gap: var(--yx-space-xs); padding: var(--yx-space-sm) var(--yx-page-header) 0; }
+.pill { height: var(--yx-tab-pill-height); padding: 0 var(--yx-space-md); border-radius: var(--yx-radius-full); display: inline-flex; align-items: center; gap: 6px; font: var(--yx-type-tab); background: var(--yx-surface); color: var(--yx-action-navy); }
+.pill.is-on { background: var(--yx-action-navy); color: var(--yx-text-on-color); }
+.board { background: var(--yx-surface); border-radius: var(--yx-radius-md) var(--yx-radius-md) 0 0; margin-top: calc(-1 * var(--yx-radius-md)); position: relative; padding: var(--yx-space-lg) var(--yx-page-content) 0; }
+
+/* Header/White 第 8.9 節 */
+.header-white { border-bottom: 1px solid var(--yx-border); }
+.header-white .bar { height: 61px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 var(--yx-page-header); }
+.header-white h3 { font: var(--yx-type-nav-title); text-align: center; }
+.header-white .back { font: var(--yx-type-body); font-weight: 700; }
+
+/* Button 第 8.2 節 */
+.btn { height: var(--yx-button-height); border-radius: var(--yx-radius-xs); display: flex; align-items: center; justify-content: center; font: var(--yx-type-button); width: 100%; }
+.btn-primary { background: var(--yx-action-navy); color: var(--yx-text-on-color); }
+.btn-secondary { background: var(--yx-surface); color: var(--yx-action-navy); border: 1px solid var(--yx-action-navy); }
+[data-mode="large-text"] .btn-secondary { border-width: 2px; }
+.btn-text { font: var(--yx-type-body); color: var(--yx-text-link); min-height: var(--yx-touch-min); display: inline-flex; align-items: center; gap: var(--yx-space-xs); }
+.btn-skip { font: var(--yx-type-body); color: var(--yx-text-muted); display: inline-flex; align-items: center; gap: var(--yx-space-xs); min-height: var(--yx-touch-min); }
+.fixed-bottom { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--yx-space-md) var(--yx-page-content) calc(var(--safe-bottom) + var(--yx-space-md)); background: var(--yx-surface); }
+
+/* Chip / Tag 第 8.3 節 */
+.chip-action { height: var(--yx-chip-height); padding: 0 14px; border-radius: var(--yx-radius-full); background: var(--yx-action-navy); color: var(--yx-text-on-color); display: inline-flex; align-items: center; gap: 6px; font: var(--yx-type-tab); white-space: nowrap; }
+.tag-status { height: 24px; padding: 0 var(--yx-space-xs); border-radius: var(--yx-radius-sm); background: var(--yx-link-blue); color: var(--yx-text-on-color); font: var(--yx-type-tag); display: inline-flex; align-items: center; white-space: nowrap; }
+[data-mode="large-text"] .tag-status { height: auto; padding: 4px 10px; }
+.tag-note { font: var(--yx-type-tag); color: #fff; background: var(--yx-slate); padding: 2px 6px; border-radius: var(--yx-radius-sm); }
+
+/* Row 第 8.7 節 */
+.row { display: flex; align-items: center; gap: var(--yx-space-md); min-height: var(--yx-row-icon); padding: var(--yx-space-lg) 0; position: relative; }
+.row::after { content: ""; position: absolute; left: calc(var(--yx-icon-tile) + var(--yx-space-md)); right: 0; bottom: 0; height: 1px; background: var(--yx-border); }
+.row.no-line::after { display: none; }
+.row .txt { flex: 1; min-width: 0; }
+.row .t { font: var(--yx-type-title); }
+.row .c { font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.row .c b { color: var(--yx-brand-red); font-weight: 700; }
+.row-section { min-height: 60px; display: flex; align-items: flex-end; padding-bottom: var(--yx-space-xs); font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.band { height: var(--yx-divider-band); background: var(--yx-border); }
+.tile { width: var(--yx-icon-tile); height: var(--yx-icon-tile); border-radius: var(--yx-radius-lg); background: var(--yx-surface-apricot); display: flex; align-items: center; justify-content: center; flex: none; }
+.avatar { width: var(--yx-avatar); height: var(--yx-avatar); border-radius: var(--yx-radius-full); background: var(--yx-surface-blue); color: var(--yx-action-navy); display: flex; align-items: center; justify-content: center; font: var(--yx-type-title); flex: none; }
+.avatar.is-me { background: var(--yx-action-navy); color: #fff; }
+
+/* 數值：紅色數字 + 墨藍單位第 2.7 節 */
+.num { display: inline-flex; align-items: baseline; gap: 4px; white-space: nowrap; }
+.num .n { font: var(--yx-type-number-lg); color: var(--yx-brand-red); }
+.num .u { font: var(--yx-type-title); color: var(--yx-action-navy); }
+.num.md .n { font: var(--yx-type-number-md); }
+.num .pre { font: var(--yx-type-title); color: var(--yx-action-navy); }
+
+/* Progress/Trip 第 8.11 節 */
+.progress { background: var(--yx-surface-grey); padding: var(--yx-space-md) 12px; }
+.progress .top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--yx-space-xs); }
+.progress .lbl { font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.track { position: relative; height: 26px; margin-top: var(--yx-space-xs); }
+.track::before { content: ""; position: absolute; left: 0; right: 0; bottom: 4px; height: 5px; background: var(--yx-disabled); }
+.track .car { position: absolute; bottom: 5px; transform: translateX(-50%); }
+.segbar { position: absolute; left: 0; right: 0; bottom: 4px; height: 5px; display: flex; gap: 3px; }
+.segbar i { flex: 1; background: var(--yx-disabled); border-radius: 1px; }
+.segbar i.on { background: var(--yx-action-navy); }
+.segbar i.last.on { background: var(--yx-brand-red); }
+[data-mode="large-text"] .segbar { height: 6px; gap: 4px; }
+.progress .steps { margin-top: 6px; font: var(--yx-type-title); color: var(--yx-action-navy); font-variant-numeric: tabular-nums; }
+.progress .steps span { font: var(--yx-type-caption); color: var(--yx-text-muted); margin-left: 2px; white-space: nowrap; }
+
+.progress .say { font: var(--yx-type-caption); color: var(--yx-text-primary); margin-top: 6px; }
+
+/* Card 第 8.8 節 */
+.card { background: var(--yx-surface); border: 1px solid var(--yx-border); }
+.card-reward { display: flex; align-items: center; gap: var(--yx-space-md); background: var(--yx-surface-grey); padding: 12px; }
+.card-reward .txt { flex: 1; }
+.card-reward .c { font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.card-reward .t { font: var(--yx-type-body); }
+
+/* Card/Footprint [延伸] */
+.fp-map { border-radius: var(--yx-radius-md); overflow: hidden; border: 1px solid var(--yx-border); position: relative; }
+.fp-map svg { display: block; width: 100%; height: auto; }
+.fp-map .legend { position: absolute; left: 10px; bottom: 10px; display: flex; gap: 6px; }
+.map-label { background: var(--yx-surface); font: var(--yx-type-tag); padding: 4px 8px; display: inline-flex; align-items: center; gap: 6px; }
+.map-label i { width: 10px; height: 10px; display: block; }
+
+.hero { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--yx-space-md); }
+.hero .lbl { font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.hero .meta { font: var(--yx-type-caption); color: var(--yx-text-muted); text-align: right; }
+.hero .meta b { display: block; font: var(--yx-type-title); color: var(--yx-text-primary); }
+[data-mode="large-text"] .hero { flex-direction: column; align-items: flex-start; }
+[data-mode="large-text"] .hero .meta { text-align: left; }
+
+/* 地圖主頁（樣板 A） */
+.map-full { position: absolute; top: 0; left: 50%; width: 440px; height: 874px; transform: translateX(-50%); }  /* 地圖以 440 × 874 繪製（涵蓋最寬機型），置中裁切 */
+.map-full svg { display: block; }
+.fab { position: absolute; width: 50px; height: 50px; border-radius: var(--yx-radius-full); background: var(--yx-action-navy); display: flex; align-items: center; justify-content: center; box-shadow: var(--yx-shadow-float); }
+.map-btn { position: absolute; width: 36px; height: 36px; border-radius: var(--yx-radius-full); background: var(--yx-surface); display: flex; align-items: center; justify-content: center; box-shadow: var(--yx-shadow-float); }
+.badge-count { position: absolute; top: -5px; right: -7px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: var(--yx-radius-full); background: var(--yx-icon-red); color: #fff; font: 600 11px/18px var(--yx-font); text-align: center; }
+/* Badge/Dot：直徑 6 icon-red 圓點，放在說明文字前（DESIGN.md 1.23.0〈開箱期間的入口提示〉） */
+.badge-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--yx-icon-red); vertical-align: middle; margin: 0 6px 2px 0; }
+/* Field/Text（與 design-system 共用；DESIGN.md 1.24.0 建立團隊取名） */
+.field-input { height: var(--yx-field-height); border: 0; background: var(--yx-surface-grey); border-radius: 0; padding: 0 var(--yx-space-md); font: var(--yx-type-body); color: var(--yx-text-primary); width: 100%; min-width: 0; }
+.field-input::placeholder { color: var(--yx-text-placeholder); }
+.field-input:focus-visible { outline: 2px solid var(--yx-link-blue); outline-offset: 2px; }
+[data-mode="large-text"] .field-input, [data-mode="large-text"] .field { box-shadow: inset 0 0 0 2px var(--yx-border); }
+.field-input.is-error { box-shadow: inset 0 0 0 1px var(--yx-error); }
+.field-input { display: block; width: 100%; box-sizing: border-box; }
+.field-count { font: var(--yx-type-caption); color: var(--yx-text-muted); text-align: right; margin-top: 6px; }
+/* 開箱長按提示（DESIGN.md 1.24.0〈寶箱與開箱〉，決策 #108） */
+.hold-hint { font: var(--yx-type-caption); color: var(--yx-text-primary); margin-top: var(--yx-space-md); }
+.panel { position: absolute; left: 0; right: 0; bottom: 0; background: var(--yx-surface); border-top: 1px solid var(--yx-border); padding: var(--yx-space-lg) var(--yx-page-content) max(var(--safe-bottom), var(--yx-space-md)); }
+.panel .greet { font: var(--yx-type-heading); }
+.route-pair { margin-top: var(--yx-space-md); border: 1px solid var(--yx-border); border-radius: var(--yx-radius-xs); box-shadow: var(--yx-shadow-float); padding: 0 var(--yx-space-md); }
+.route-pair .leg { display: flex; align-items: center; gap: var(--yx-space-md); min-height: 64px; position: relative; }
+.route-pair .leg + .leg { border-top: 1px solid var(--yx-border); }
+.route-pair .dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+.route-pair .lab { font: var(--yx-type-label); color: var(--yx-text-muted); }
+.route-pair .val { font: var(--yx-type-body); }
+.route-pair .ph { font: var(--yx-type-body); color: var(--yx-text-placeholder); }
+.route-pair .dash { position: absolute; left: 5.5px; top: 40px; height: 48px; border-left: 1px dashed var(--yx-border-strong); }
+.panel .actions { display: flex; justify-content: space-between; align-items: center; margin-top: var(--yx-space-md); }
+
+/* Card/Footprint-Mini [延伸]：首頁入口 */
+.fp-mini { position: absolute; bottom: calc(100% + var(--yx-space-md)); left: var(--yx-page-content); right: var(--yx-page-content); display: flex; align-items: center; gap: 12px; background: var(--yx-surface); border: 1px solid var(--yx-border); border-radius: var(--yx-radius-xs); box-shadow: var(--yx-shadow-float); padding: 12px var(--yx-space-md) 12px 12px; }
+.fp-mini .txt { flex: 1; }
+.fp-mini .t { font: var(--yx-type-title); }
+.fp-mini .c { font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.fp-mini .c b { color: var(--yx-brand-red); }
+
+/* 記錄中膠囊 */
+.rec { position: absolute; top: calc(var(--safe-top) + 12px); left: 50%; transform: translateX(-50%); }
+.dotlive { width: 8px; height: 8px; border-radius: 50%; background: var(--yx-icon-red); box-shadow: 0 0 0 3px rgba(241,74,66,.3); flex: none; }
+
+/* State/Counting [延伸] 第 8.12 節（沿用第 8.14 節 State/Fullscreen） */
+.fullscreen { position: absolute; inset: 0; background: var(--yx-action-navy); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; padding: 0 var(--yx-page-content); }
+.fullscreen .slogan { font: var(--yx-type-slogan); color: var(--yx-text-on-color); }
+.fullscreen p { font: var(--yx-type-body); color: var(--yx-text-on-color); }
+.fullscreen .cancel { position: absolute; left: 0; right: 0; bottom: calc(var(--safe-bottom) + var(--yx-space-md)); font: var(--yx-type-tab); color: var(--yx-text-on-color); text-align: center; }
+
+/* Overlay/Celebrate [延伸] 第 8.12 節 */
+.celebrate { position: absolute; left: 0; right: 0; bottom: 0; background: var(--yx-surface); border-radius: var(--yx-radius-lg) var(--yx-radius-lg) 0 0; padding: 32px var(--yx-page-content) calc(var(--safe-bottom) + var(--yx-space-md)); display: grid; justify-items: center; gap: var(--yx-space-sm); text-align: center; }
+.celebrate .slogan { font: var(--yx-type-slogan); color: var(--yx-action-navy); }
+.celebrate p { font: var(--yx-type-body); }
+.celebrate .progress { width: 100%; margin-top: var(--yx-space-xs); }
+.celebrate .btn { width: 100%; margin-top: var(--yx-space-xs); }
+
+/* Card/Achievement [延伸] 第 8.12 節（沿用第 8.14 節 Tag/Praise） */
+.achieve { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--yx-space-xs); }
+.achieve .tag-praise { background: var(--yx-surface-praise); padding: 10px 6px; display: grid; justify-items: center; gap: 4px; text-align: center; }
+.achieve .n { font: var(--yx-type-title); }
+.achieve .l { font: var(--yx-type-tag); color: var(--yx-text-muted); }
+[data-mode="large-text"] .achieve { grid-template-columns: repeat(2, 1fr); }
+
+/* Note/Eco [延伸] 第 8.12 節 */
+.eco { display: flex; align-items: center; gap: 8px; background: var(--yx-surface-blue); padding: 10px 12px; font: var(--yx-type-caption); color: var(--yx-text-primary); }
+.eco b { font-weight: 700; }
+.eco svg { flex: none; }
+
+/* Card/Ride-Suggest [延伸] */
+.suggest { position: absolute; left: 12px; right: 12px; bottom: max(var(--safe-bottom), 12px); max-height: 60%; display: flex; flex-direction: column; background: var(--yx-surface); border-radius: var(--yx-radius-md); box-shadow: var(--yx-shadow-float); padding: 20px var(--yx-space-md) var(--yx-space-md); }
+.suggest .kicker { display: flex; align-items: center; gap: 6px; font: var(--yx-type-tag); color: var(--yx-link-blue); }
+.suggest h4 { font: var(--yx-type-title); margin-top: 6px; }
+.suggest .why { font: var(--yx-type-caption); color: var(--yx-text-muted); margin-top: 2px; }
+.estimate { margin-top: 12px; background: var(--yx-surface-grey); padding: 4px 12px; }
+.estimate .line { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; font: var(--yx-type-body); }
+.estimate .line + .line { border-top: 1px solid var(--yx-border); }
+.estimate .line .num .n { font: var(--yx-type-number-md); }
+.estimate .line.total .num .n { font: var(--yx-type-number-lg); }
+.estimate .line:not(.total) .num .n, .estimate .line:not(.total) .num .u { color: var(--yx-text-primary); }  /* Card/Estimate：只有實付用紅字（DESIGN.md 1.4.0） */
+/* 1.13.0：團隊提示、成員列、叫車確認頁價格、連續天數 */
+.vehicle .price2 { text-align:right; align-self:flex-start; margin-top: 12px; }
+.vehicle .price2 .now { font: var(--yx-type-title); white-space:nowrap; display:inline-flex; align-items:center; gap:4px; }
+.vehicle .price2 .was { font: var(--yx-type-caption); color: var(--yx-text-muted); text-decoration: line-through; }
+.hint { margin-top: 12px; background:#fff; padding: 10px 12px; font: var(--yx-type-caption); color: var(--yx-text-primary); }
+.hint b { font-weight:700; } .hint .tl { display:inline-flex; align-items:center; gap:6px; color: var(--yx-link-blue); font-weight:700; margin-top: 6px; }
+.row .t .tagp { display:inline-flex; align-items:center; gap:3px; background: var(--yx-surface-praise); font: var(--yx-type-tag); padding: 2px 6px; margin-left: 6px; vertical-align: 2px; }
+.row .trail { text-align:right; } .row .trail .n { font: var(--yx-type-number-md); color: var(--yx-text-primary); } .row .trail .u { font: var(--yx-type-caption); color: var(--yx-text-muted); margin-left: 2px; }
+.row .trail.zero .n { color: var(--yx-text-muted); }
+.streak { display:flex; align-items:center; gap:6px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--yx-border); font: var(--yx-type-caption); color: var(--yx-text-primary); }
+.streak b { font-weight: 700; }
+/* Card/Estimate 精簡版（DESIGN.md 1.13.0 第 8.12 節） */
+.est2 { margin-top: 12px; background: var(--yx-surface-grey); padding: 12px; }
+.est2 .total { display: flex; justify-content: space-between; align-items: baseline; }
+.est2 .total .l { font: var(--yx-type-body); color: var(--yx-text-primary); }
+.est2 .total .amt { font: var(--yx-type-number-lg); color: var(--yx-brand-red); font-variant-numeric: tabular-nums; }
+.est2 .bd { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--yx-border); }
+.est2 .bd div { display: flex; justify-content: space-between; align-items: center; gap: 12px; font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.est2 .bd div span:first-child { display: inline-flex; align-items: center; }
+.est2 .bd div span:last-child { color: var(--yx-text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.est2 .bd .ico { margin-right: 4px; }
+.est2 .fine { margin-top: 6px; font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.estimate .line .line-sub { display: block; font: var(--yx-type-caption); color: var(--yx-text-muted); }  /* 折抵換算說明（DESIGN.md 1.4.0） */
+.estimate .fine { font: var(--yx-type-caption); color: var(--yx-text-primary); padding: 6px 0 8px; border-top: 1px solid var(--yx-border); }
+.suggest .btns { display: grid; grid-template-columns: 1fr 1fr; gap: var(--yx-touch-gap); margin-top: 12px; }
+
+/* Guide/Permission */
+.guide { padding: 28px var(--yx-page-content) 0; text-align: center; }
+.guide .art { width: 132px; height: 132px; margin: 0 auto; border-radius: var(--yx-radius-lg); background: var(--yx-surface-apricot); display: flex; align-items: center; justify-content: center; }
+.guide h4 { font: var(--yx-type-heading); font-weight: 700; margin-top: 20px; }
+.guide p { font: var(--yx-type-body); color: var(--yx-text-primary); margin-top: 6px; }
+.sys-alert { width: 270px; margin: 24px auto 0; background: #F2F2F7; border-radius: 14px; overflow: hidden; font-family: -apple-system, "SF Pro Text", var(--yx-font); }
+.sys-alert .msg { padding: 16px 16px 14px; }
+.sys-alert .msg b { display: block; font-size: 15px; line-height: 1.35; font-weight: 600; color: #000; }
+.sys-alert .msg span { display: block; font-size: 12px; line-height: 1.4; color: #3C3C43; margin-top: 4px; }
+.sys-alert .opt { border-top: 0.5px solid #C6C6C8; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #0A7AFF; position: relative; }
+.sys-alert .opt.is-target { outline: 2px solid var(--yx-action-navy); outline-offset: -3px; font-weight: 600; }
+.guide .hint { font: var(--yx-type-caption); color: var(--yx-text-muted); margin-top: 16px; }
+.pointer { font: var(--yx-type-tag); color: var(--yx-action-navy); margin-top: 8px; display: flex; justify-content: center; align-items: center; gap: 6px; }
+
+/* 團隊 */
+.team-card { background: var(--yx-surface-grey); padding: var(--yx-space-md); margin-top: var(--yx-space-lg); }
+.team-card .name { font: var(--yx-type-title); }
+.team-card .c { font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.team-card .progress { padding: 12px 0 0; }
+.member-steps { font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.cheer { font: var(--yx-type-tab); color: var(--yx-text-link); min-height: var(--yx-touch-min); display: inline-flex; align-items: center; }
+
+/* 兌換 */
+.balance { background: var(--yx-surface-grey); padding: 20px var(--yx-page-content); display: flex; justify-content: space-between; align-items: center; }
+.balance .lbl { font: var(--yx-type-title); }
+.balance .c { font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.foot-tip { font: var(--yx-type-caption); color: var(--yx-text-muted); padding: var(--yx-space-md) var(--yx-page-content); text-align: center; }
+
+
+/* Card/Suggest（路線）[延伸] */
+.route-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.route-tag { height: 28px; padding: 0 10px; display: inline-flex; align-items: center; background: var(--yx-surface-blue); color: var(--yx-action-navy); border-radius: var(--yx-radius-full); font: var(--yx-type-tag); }
+.compare { display: grid; grid-template-columns: 1fr 1fr; margin-top: 12px; background: var(--yx-surface-grey); }
+.compare > div { padding: 10px 12px; }
+.compare > div + div { border-left: 1px solid var(--yx-border); }
+.compare .k { font: var(--yx-type-caption); color: var(--yx-text-muted); display: flex; align-items: center; gap: 6px; }
+.compare .k i { width: 14px; height: 0; border-top: 3px solid; display: block; }
+.compare .v { font: var(--yx-type-title); }
+
+/* Control/Check-Card 第 8.6 節 */
+.check-card { display: flex; align-items: center; gap: var(--yx-space-md); min-height: 80px; padding: 0 var(--yx-space-md); border: 1px solid var(--yx-border-strong); border-radius: var(--yx-radius-xs); }
+.check-card + .check-card { margin-top: var(--yx-space-md); }
+.check-card .txt { flex: 1; }
+.check-card .t { font: var(--yx-type-title); }
+.check-card .c { font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.checkbox { width: var(--yx-checkbox); height: var(--yx-checkbox); background: var(--yx-surface-grey); box-shadow: inset 0 0 0 1.3px var(--yx-checkbox-border); flex: none; display: flex; align-items: center; justify-content: center; }
+.checkbox.is-on { background: var(--yx-action-navy); box-shadow: none; }
+
+/* Control/Switch [延伸] */
+.switch { width: var(--yx-switch-width); height: var(--yx-switch-height); border-radius: var(--yx-radius-full); background: var(--yx-border-strong); position: relative; flex: none; }
+.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(11,31,56,.25); }
+.switch.is-on { background: var(--yx-action-navy); }
+.switch.is-on::after { left: 22px; }
+
+/* Chip/Preference [延伸] */
+.pref-chip { position: absolute; height: var(--yx-chip-height); padding: 0 10px 0 12px; border-radius: var(--yx-radius-full); background: var(--yx-surface); border: 1px solid var(--yx-border); box-shadow: var(--yx-shadow-float); display: inline-flex; align-items: center; gap: 6px; font: var(--yx-type-tab); color: var(--yx-action-navy); white-space: nowrap; }
+.suggest .relink { display: block; text-align: center; font: var(--yx-type-tag); color: var(--yx-text-link); margin-top: 10px; }
+.scrim { position: absolute; inset: 0; background: var(--yx-scrim-soft); }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--yx-surface); border-radius: var(--yx-radius-lg) var(--yx-radius-lg) 0 0; padding: var(--yx-space-lg) var(--yx-page-content) calc(var(--safe-bottom) + var(--yx-space-md)); }
+.sheet .x { position: absolute; top: 20px; right: 20px; color: var(--yx-text-placeholder); }
+.sheet h4 { font: var(--yx-type-title); }
+.sheet .c { font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.sheet .opt { display: flex; align-items: center; gap: var(--yx-space-md); min-height: 64px; border-bottom: 1px solid var(--yx-border); }
+.sheet .opt .t { flex: 1; font: var(--yx-type-body); }
+
+/* Button/Listen [延伸] */
+.hdr-row { height: 44px; padding: 0 var(--yx-page-header); display: flex; justify-content: space-between; align-items: center; }
+.hdr-row .close { padding: 0; height: auto; }
+.listen { font: var(--yx-type-tab); color: var(--yx-text-on-color); display: inline-flex; align-items: center; gap: 6px; min-height: var(--yx-touch-min); }
+.listen.on-light { color: var(--yx-text-link); font: var(--yx-type-tag); min-height: 0; }
+.row .val { font: var(--yx-type-body); color: var(--yx-text-muted); white-space: nowrap; }
+.pref-note { font: var(--yx-type-caption); color: var(--yx-text-primary); background: var(--yx-surface-blue); padding: 10px 12px; margin-top: var(--yx-space-md); }
+
+/* 顯示與字級預覽 */
+.preview { margin-top: var(--yx-space-sm); border: 1px dashed var(--yx-border-strong); padding: var(--yx-space-md); background: var(--yx-surface); }
+.preview-cap { font: 400 13px/1.5 var(--yx-font); color: #778AA4; margin-top: var(--yx-space-lg); }
+.preview .row { padding: 0 0 var(--yx-space-md); min-height: 0; }
+.preview .row::after { display: none; }
+
+/* Tab/Segment 與 Card/Vehicle（叫車確認頁用） */
+.wrap-row { display: flex; flex-wrap: wrap; gap: var(--yx-space-xs); align-items: center; }
+.seg { height: var(--yx-tab-segment-height); min-width: 92px; padding: 0 12px; border: 2px solid var(--yx-border); border-radius: var(--yx-radius-xs); display: inline-flex; align-items: center; justify-content: center; font: var(--yx-type-tab); color: var(--yx-action-navy); background: var(--yx-surface); }
+.seg.is-on { border-color: var(--yx-link-blue); }
+.vehicle { display: flex; align-items: center; gap: 12px; min-height: 84px; padding: 0 14px; border: 2px solid var(--yx-border); border-radius: var(--yx-radius-md); }
+.vehicle.is-on { border-color: var(--yx-link-blue); }
+.vehicle .txt { flex: 1; min-width: 0; }
+.vehicle .t { font: var(--yx-type-title); }
+.vehicle .c { font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.vehicle .price { font: var(--yx-type-title); align-self: flex-start; margin-top: 16px; white-space: nowrap; }
+
+/* 折抵條件說明與確認對話框（DESIGN.md 1.4.0） */
+.pay-note { font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.dialog-confirm { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 280px; background: var(--yx-surface); border-radius: var(--yx-radius-xl); padding: var(--yx-space-lg); display: grid; gap: var(--yx-space-xs); }
+.dialog-confirm h4 { font: var(--yx-type-nav-title); }
+.dialog-confirm p { font: var(--yx-type-body-sm); color: var(--yx-text-primary); }
+.dialog-confirm .btns { display: grid; grid-template-columns: 1fr 1fr; gap: var(--yx-touch-gap); margin-top: var(--yx-space-md); }
+.scrim-full { position: absolute; inset: 0; background: var(--yx-scrim-strong); }
+/* ── DESIGN.md 1.6.0 第 8.12 節獎勵元件（與 design-system 共用） ── */
+.reward { position: absolute; left: 20px; right: 20px; top: 50%; transform: translateY(-50%);
+  background: var(--yx-surface-praise); border-radius: var(--yx-radius-xl); padding: 24px 20px 20px; text-align: center; }
+.reward.team { background: var(--yx-surface-blue); }
+.reward .slogan { font: var(--yx-type-slogan); color: var(--yx-action-navy); margin: 8px 0 4px; }
+.reward .t { font: var(--yx-type-title); } .reward .c { font: var(--yx-type-caption); color: var(--yx-text-muted); margin-top: 4px; }
+.prize { background: var(--yx-surface); border: 1px solid var(--yx-border); border-radius: var(--yx-radius-lg);
+  padding: 14px 16px 14px 20px; position: relative; overflow: hidden; box-shadow: var(--yx-shadow-float); text-align: left; margin-top: 8px; }
+.prize::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background: var(--yx-border-strong); }
+.prize.minor::before { background: var(--yx-tier-minor); }
+.prize.super::before { background: var(--yx-star-gold); }
+.prize .nm { font: var(--yx-type-title); }
+.prize .amt { font: var(--yx-type-number-lg); margin-top: 2px; }
+.prize.super .amt { color: var(--yx-star-gold); }
+.prize .mt { font: var(--yx-type-caption); color: var(--yx-text-muted); margin-top: 4px; }
+.prize .tier { position:absolute; right:12px; top:12px; font: var(--yx-type-tag); padding:4px 8px;
+  border-radius: var(--yx-radius-full); background: var(--yx-surface-grey); color: var(--yx-text-muted); }
+.prize.minor .tier { background: var(--yx-surface-apricot); color: var(--yx-star-gold); }
+.prize.super .tier { background: var(--yx-star-gold); color: #fff; }
+.prize .comma { position:absolute; right:12px; bottom:6px; font:900 26px/1 "Montserrat"; color: var(--yx-apricot-watermark); }
+.invite-code { background: var(--yx-surface-grey); border-radius: var(--yx-radius-lg); padding: 16px;
+  font: var(--yx-type-number-md); letter-spacing: 4px; text-align: center; margin-top: var(--yx-space-md); }
+
+/* 記錄中控制列與記錄摘要（S05、S06） */
+.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--yx-space-xs); }
+.stat.hero { margin-bottom: var(--yx-space-xs); }
+.stat { display: grid; gap: 2px; }
+.stat .lbl { font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.stat .val { font: var(--yx-type-number-md); color: var(--yx-text-primary); white-space: nowrap; }
+.stat .val em { font: var(--yx-type-tab); font-style: normal; color: var(--yx-text-primary); }
+.stat.hero .val { color: var(--yx-brand-red); }
+.gps-note { display: flex; align-items: center; gap: 6px; font: var(--yx-type-caption); color: var(--yx-text-primary); }
+.gps-note i { width: 16px; height: 16px; border-radius: 50%; background: var(--yx-icon-red); color: #fff; font: 700 11px/16px var(--yx-font); font-style: normal; text-align: center; flex: none; }
+.two-btn { display: grid; grid-template-columns: 1fr 1fr; gap: var(--yx-touch-gap); }
+.summary-wrap { padding: var(--yx-space-lg) var(--yx-page-content) 0; display: grid; gap: var(--yx-space-md); }
+.summary-wrap h4 { font: var(--yx-type-heading); }
+.again { display: block; text-align: center; font: var(--yx-type-body); color: var(--yx-text-link); min-height: var(--yx-touch-min); line-height: var(--yx-touch-min); }
+
+/* 叫車確認底板（S10，樣板 E） */
+.book-sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--yx-surface); border-top: 1px solid var(--yx-border); box-shadow: var(--yx-shadow-float); padding: var(--yx-space-md) var(--yx-page-content) max(var(--safe-bottom), var(--yx-space-md)); display: grid; gap: var(--yx-space-md); }
+.opt-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--yx-border); border-bottom: 1px solid var(--yx-border); }
+.opt-row .opt-item { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 52px; font: var(--yx-type-caption); color: var(--yx-text-primary); text-align: center; }
+.opt-row .opt-item + .opt-item { border-left: 1px solid var(--yx-border); }
+.opt-row .opt-item b { font: var(--yx-type-caption); font-weight: 700; color: var(--yx-brand-red); }
+
+/* 第 4.6 節高度規則與短螢幕 */
+.suggest .sbody { overflow: auto; min-height: 0; flex: 1 1 auto; }
+.suggest .btns, .suggest .relink { flex: none; }
+.phone.is-short .header-red h2 { padding-top: 4px; }
+.phone.is-short .map-full.center-user { top: -130px; }  /* 使用者位置維持在未被遮住的可見區域中央 */
+.phone.is-tiny-status .status { font-size: 12px; padding: 0 12px; }
+.pills { overflow-x: auto; scrollbar-width: none; }
+
+/* 尺寸檢查模式（?check） */
+.check-row { display: grid; grid-template-columns: 170px repeat(4, max-content); gap: 32px; align-items: start; margin-bottom: 64px; }
+.check-row h3 { font: 900 22px/1.3 var(--yx-font); }
+.check-row p { font: 500 14px/1.6 var(--yx-font); color: #4A5A70; margin-top: 6px; }
+.check-cell .cap { font: 700 14px/1.4 var(--yx-font); color: #4A5A70; margin-bottom: 10px; }
+
+/* 大字好讀模式的版面規則第 11.2 節 */
+[data-mode="large-text"] .foot-tip,
+[data-mode="large-text"] .guide { text-align: left; }
+</style><style>
+.sk { background: var(--yx-surface-grey); display: block; border-radius: 2px; }
+.progress .sk { background: var(--yx-border); }
+.hero-msg { font: var(--yx-type-title); color: var(--yx-action-navy); margin-top: 2px; }
+.tlink { display: inline-flex; align-items: center; gap: 6px; font: var(--yx-type-body); color: var(--yx-link-blue); min-height: 44px; }
+.err { display: flex; gap: 6px; align-items: flex-start; font: var(--yx-type-caption); color: var(--yx-text-primary); margin-top: 8px; }
+.err .ico { flex: none; width: 16px; height: 16px; border-radius: 50%; background: var(--yx-icon-red); color: #fff; font: 700 11px/16px var(--yx-font); text-align: center; margin-top: 2px; }
+[data-mode="large-text"] .err .ico { width: 20px; height: 20px; font-size: 14px; line-height: 20px; }
+.err a { color: var(--yx-link-blue); font-weight: 700; margin-left: 4px; text-decoration: none; white-space: nowrap; }
+.syncing { font: var(--yx-type-caption); color: var(--yx-text-muted); display: inline-flex; align-items: center; gap: 6px; }
+.spin { width: 12px; height: 12px; border: 2px solid var(--yx-disabled); border-top-color: var(--yx-action-navy); border-radius: 50%; display: inline-block; }
+.map-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.map-empty span { background: var(--yx-surface); font: var(--yx-type-caption); color: var(--yx-text-primary); padding: 6px 10px; box-shadow: var(--yx-shadow-float); }
+.progress.dim .segbar i { background: var(--yx-disabled); }
+.progress.dim .num .n, .progress.dim .num .u { color: var(--yx-text-muted); }
+.grp { grid-column: 1 / -1; font: 700 18px/1.4 var(--yx-font); margin: 24px 0 -8px; }
+.grp small { font: 400 13px/1.5 var(--yx-font); color: var(--yx-text-muted); margin-left: 8px; }
+</style>
+</head>
+<body>
+<!-- 共用圖示：墨藍主體 ＋ icon-red 副件（第 7 章） -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" stroke="currentColor" stroke-width="3.2" stroke-linecap="square"/></symbol>
+    <symbol id="i-back" viewBox="0 0 30 16"><path d="M9 2L3 8l6 6M3 8h14" stroke="#0B1F38" stroke-width="2.6" fill="none" stroke-linejoin="round"/><rect x="21" y="5.5" width="8" height="5" fill="#F14A42"/></symbol>
+    <symbol id="i-fwd" viewBox="0 0 16 14"><path d="M9 1l6 6-6 6M15 7H1" stroke="#0B1F38" stroke-width="2.4" fill="none" stroke-linejoin="round"/></symbol>
+    <symbol id="i-shoe" viewBox="0 0 32 32"><path d="M5 20c0-6 2-12 3-15h7l1 6c3 1 9 3 11 6 1 2 1 4-1 5H7c-1 0-2-1-2-2z" fill="#0B1F38"/><rect x="5" y="23" width="22" height="3" fill="#F14A42"/><path d="M12 11h4M12 14h5" stroke="#F3EBE4" stroke-width="1.6"/></symbol>
+    <symbol id="i-coin" viewBox="0 0 32 32"><circle cx="15" cy="17" r="12" fill="#0B1F38"/><path d="M11 10.5h5.5a4.2 4.2 0 0 1 0 8.4H14V24h-3z" fill="#fff"/><path d="M14 13.5h2.3a1.2 1.2 0 0 1 0 2.4H14z" fill="#0B1F38"/><circle cx="26" cy="6" r="4.5" fill="#F14A42"/></symbol>
+    <symbol id="i-team" viewBox="0 0 32 32"><circle cx="11" cy="9" r="5" fill="#0B1F38"/><path d="M1 27c0-6 4.5-10 10-10s10 4 10 10z" fill="#0B1F38"/><circle cx="23" cy="11" r="4" fill="#F14A42"/><path d="M17.5 27c.3-5 2.6-8.3 5.5-8.3 3.5 0 7 3 7 8.3z" fill="#F14A42"/></symbol>
+    <symbol id="i-car" viewBox="0 0 34 24"><path d="M3 11h5l4-7h10l5 7h3a2 2 0 0 1 2 2v6H1v-6a2 2 0 0 1 2-2z" fill="#0B1F38"/><path d="M13 5h4v6h-7z" fill="#F14A42"/><circle cx="9" cy="19" r="3.4" fill="#0B1F38" stroke="#F3EBE4" stroke-width="1.6"/><circle cx="25" cy="19" r="3.4" fill="#0B1F38" stroke="#F3EBE4" stroke-width="1.6"/></symbol>
+    <symbol id="i-car-red" viewBox="0 0 34 22"><path d="M3 10h5l4-7h10l5 7h3a2 2 0 0 1 2 2v5H1v-5a2 2 0 0 1 2-2z" fill="#F14A42"/><path d="M20 3h2l5 7h-7z" fill="#0B1F38"/><circle cx="9" cy="17" r="3.6" fill="#0B1F38"/><circle cx="9" cy="17" r="1.3" fill="#fff"/><circle cx="25" cy="17" r="3.6" fill="#0B1F38"/><circle cx="25" cy="17" r="1.3" fill="#fff"/></symbol>
+    <symbol id="i-irent" viewBox="0 0 32 32"><rect x="3" y="7" width="26" height="18" rx="2" fill="#0B1F38"/><circle cx="12" cy="16" r="4.5" fill="none" stroke="#fff" stroke-width="2.2"/><path d="M16 16h9M22 16v3" stroke="#fff" stroke-width="2.2"/><rect x="20" y="3" width="9" height="5" fill="#F14A42"/></symbol>
+    <symbol id="i-gift" viewBox="0 0 32 32"><circle cx="11" cy="9" r="5" fill="#0B1F38"/><path d="M1 27c0-6 4.5-10 10-10s10 4 10 10z" fill="#0B1F38"/><path d="M25 12c-2.4-3.6-7-1.4-5 2.6L25 20l5-5.4c2-4-2.6-6.2-5-2.6z" fill="#F14A42"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 64 64"><path d="M32 6c-11 0-19 8-19 18 0 13 19 32 19 32s19-19 19-32C51 14 43 6 32 6z" fill="#0B1F38"/><circle cx="32" cy="24" r="7" fill="#fff"/><path d="M8 52c4-2 7 1 10-1M44 54c4-2 7 1 11-1" stroke="#F14A42" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="50" cy="12" r="5" fill="#F14A42"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 16 16"><path d="M8 1l1.6 4.4L14 7l-4.4 1.6L8 13l-1.6-4.4L2 7l4.4-1.6z" fill="#0C4C80"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 22 16"><rect y="0" width="22" height="3" fill="#F14A42"/><rect y="6.5" width="22" height="3" fill="#F14A42"/><rect y="13" width="22" height="3" fill="#F14A42"/></symbol>
+    <symbol id="i-scan" viewBox="0 0 20 20"><path d="M1 6V1h5M14 1h5v5M19 14v5h-5M6 19H1v-5" stroke="#0B1F38" stroke-width="2.2" fill="none"/><rect x="4" y="9" width="12" height="2" fill="#F14A42"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 20 20"><path d="M10 2a6 6 0 0 0-6 6v5l-2 2h16l-2-2V8a6 6 0 0 0-6-6z" fill="#0B1F38"/><rect x="7" y="16.5" width="6" height="3" fill="#F14A42"/></symbol>
+    <symbol id="i-plane" viewBox="0 0 20 20"><path d="M2 11l5 1 3 6h2l-1-6 5 1 2-2-7-2 1-6h-2L7 8 2 7z" fill="#fff"/></symbol>
+    <symbol id="i-signal" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" fill="currentColor"/><rect x="5" y="5" width="3" height="7" fill="currentColor"/><rect x="10" y="2" width="3" height="10" fill="currentColor"/><rect x="15" y="0" width="3" height="12" fill="currentColor"/></symbol>
+    <symbol id="i-batt" viewBox="0 0 27 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/><rect x="24" y="4" width="2" height="4" fill="currentColor"/></symbol>
+    <symbol id="i-rain" viewBox="0 0 16 16"><path d="M4 9a3.5 3.5 0 0 1 .5-7 4.5 4.5 0 0 1 8.3 1.8A2.7 2.7 0 0 1 12.5 9z" fill="#0C4C80"/><path d="M5 11l-1 3M9 11l-1 3M13 11l-1 3" stroke="#0C4C80" stroke-width="1.5"/></symbol>
+    <symbol id="i-back-white" viewBox="0 0 30 16"><path d="M9 2L3 8l6 6M3 8h14" stroke="#fff" stroke-width="2.6" fill="none" stroke-linejoin="round"/><rect x="21" y="5.5" width="8" height="5" fill="#fff"/></symbol>
+    <symbol id="i-wheel" viewBox="0 0 32 32"><circle cx="13" cy="5" r="3" fill="#F14A42"/><path d="M12 10v9h9l3 7" stroke="#0B1F38" stroke-width="3" fill="none" stroke-linejoin="round"/><path d="M12 14h7" stroke="#0B1F38" stroke-width="3"/><path d="M9.5 15.5a7.5 7.5 0 1 0 10.6 8.7" stroke="#0B1F38" stroke-width="2.6" fill="none"/></symbol>
+    <symbol id="i-speaker" viewBox="0 0 20 20"><path d="M2 7h4l5-4v14l-5-4H2z" fill="currentColor"/><path d="M14 6.5a5 5 0 0 1 0 7M16.5 4a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></symbol>
+    <symbol id="i-sound" viewBox="0 0 32 32"><path d="M3 11h6l8-6v22l-8-6H3z" fill="#0B1F38"/><path d="M21 11a7 7 0 0 1 0 10M25 7a12 12 0 0 1 0 18" stroke="#F14A42" stroke-width="2.6" fill="none" stroke-linecap="round"/></symbol>
+    <symbol id="i-lang" viewBox="0 0 32 32"><path d="M3 5h18v13H11l-6 5v-5H3z" fill="#0B1F38"/><path d="M13 21h9l5 4v-4h2V10h-5v8a3 3 0 0 1-3 3z" fill="#F14A42"/><path d="M8 9h8M12 9v6M9 15h6" stroke="#fff" stroke-width="1.6"/></symbol>
+    <symbol id="i-speed" viewBox="0 0 32 32"><path d="M4 22a12 12 0 1 1 24 0" stroke="#0B1F38" stroke-width="3" fill="none"/><path d="M16 22l-6-6" stroke="#F14A42" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="22" r="2.5" fill="#0B1F38"/></symbol>
+    <symbol id="i-stroller" viewBox="0 0 32 32"><path d="M4 6h3l3 12h16l3-9H11" stroke="#0B1F38" stroke-width="2.6" fill="none" stroke-linejoin="round"/><path d="M13 9h15l-2.4 7H14.6z" fill="#0B1F38"/><circle cx="12" cy="25" r="3" fill="#F14A42"/><circle cx="24" cy="25" r="3" fill="#F14A42"/></symbol>
+    <symbol id="i-pet" viewBox="0 0 32 32"><rect x="5" y="9" width="18" height="11" rx="2" fill="#0B1F38"/><path d="M23 11l5-5" stroke="#0B1F38" stroke-width="2.6"/><circle cx="10" cy="25" r="3" fill="#0B1F38"/><circle cx="20" cy="25" r="3" fill="#0B1F38"/><circle cx="11" cy="14.5" r="1.6" fill="#F14A42"/><circle cx="14" cy="12.5" r="1.6" fill="#F14A42"/><circle cx="17" cy="14.5" r="1.6" fill="#F14A42"/><circle cx="14" cy="16.5" r="1.8" fill="#F14A42"/></symbol>
+    <symbol id="i-stairs" viewBox="0 0 32 32"><path d="M3 27h7v-6h6v-6h6V9h7v18z" fill="#0B1F38"/><path d="M5 6l6 6M11 6l-6 6" stroke="#F14A42" stroke-width="2.6"/></symbol>
+    <symbol id="i-text" viewBox="0 0 32 32"><path d="M3 25l6-18h3l6 18h-3.2l-1.5-4.6H7.7L6.2 25zm5.6-7.4h4.8L11 10.3z" fill="#0B1F38"/><path d="M20 25l3.6-11h2.2L29.4 25h-2.3l-.9-2.8h-3.9L21.4 25zm2.9-4.6h2.8l-1.4-4.4z" fill="#F14A42"/></symbol>
+    <symbol id="i-route" viewBox="0 0 16 16"><circle cx="3" cy="13" r="2.2" fill="#0C4C80"/><circle cx="13" cy="3" r="2.2" fill="#0C4C80"/><path d="M3 11V8h10V5" stroke="#0C4C80" stroke-width="1.8" fill="none"/></symbol>
+    <symbol id="i-leaf" viewBox="0 0 20 20"><path d="M17 3C9 3 4 6 3 12c-.4 2.4.3 4 1.6 5 .6-3.4 2.3-6.2 5.4-8.3-2.3 2.3-3.7 5-4.2 8.3H8c6 0 9-4.6 9-14z" fill="#0C4C80"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l3 6.6 7 .8-5.2 4.8 1.4 7L12 17.8 5.8 21.2l1.4-7L2 9.4l7-.8z" fill="currentColor"/></symbol>
+  </defs>
+</svg>
+<header class="canvas-head">
+  <div>
+    <div class="eyebrow">yoxi 1.0 · Move Footprint.</div>
+    <h1>今日足跡：空白、載入、錯誤、極限狀態</h1>
+    <p>2026/09/22 定案（DESIGN.md 1.10.0），目前依 1.24.0 第 8.12 節〈今日足跡的四類狀態〉〈點數是自動累積的〉（1.21.0 E1 主按鈕改「連結步數」、新增 E1-2 步數權限說明、點數卡加自動算點數一行）｜沿用 State/Skeleton、第 8.1 節 錯誤寫法與 Button/Text-Link，不新增元件｜人名、地點與數字皆為示意假資料</p>
+  </div>
+</header>
+<main class="grid">
+  <div class="grp">空白狀態<small>初次使用或今天還沒有資料</small></div>
+  <section>
+    <div class="phone on-color">
+      <div class="header-red">
+        <div class="status"><span>9:41</span><span style="display:flex;gap:6px"><svg class="icon" width="18" height="12"><use href="#i-signal"/></svg><svg class="icon" width="27" height="12"><use href="#i-batt"/></svg></span></div>
+        <div class="hdr-row"><span class="close tap"><svg width="24" height="24" style="color:#fff"><use href="#i-close"/></svg><span class="lt-only">關閉</span></span><span class="listen"><svg width="20" height="20"><use href="#i-speaker"/></svg>唸給我聽</span></div>
+        <h2>移動足跡</h2>
+        <div class="sub">走路存點數，點數折車資</div>
+        <div class="pills"><span class="pill is-on">今天</span><span class="pill">本週</span></div>
+      </div>
+      <div class="board">
+        <div class="hero">
+          <div>
+            <div class="hero-lbl lbl">今天走了</div>
+            <div class="hero-msg">還沒連結手機的步數</div>
+          </div>
+          <div class="meta"></div>
+        </div>
+
+        <div class="fp-map" style="margin-top:var(--yx-space-md)">
+          <svg viewBox="0 0 354 150" preserveAspectRatio="xMidYMid slice">
+            <rect width="354" height="150" fill="var(--yx-map-ground)"/>
+            <path d="M-10 120 C 70 100, 120 140, 200 110 S 320 70, 370 90" stroke="var(--yx-map-water)" stroke-width="26" fill="none"/>
+            <rect x="210" y="14" width="80" height="44" fill="var(--yx-map-park)"/>
+            <g stroke="var(--yx-map-road)" stroke-width="7" fill="none"><path d="M0 40H354"/><path d="M90 0V150"/><path d="M300 0V150"/><path d="M190 0V150"/></g>
+          </svg>
+          <div class="map-empty"><span>連結步數後，就能記錄路線</span></div>
+        </div>
+
+        <div class="progress dim" style="margin-top:var(--yx-space-md)">
+          <div class="top">
+            <span class="lbl">今天的點數</span>
+            <span class="num md"><span class="n">0</span><span class="u">/ 3 點</span></span>
+          </div>
+          <div class="track"><div class="segbar"><i></i><i></i><i class="last"></i></div><svg class="car" style="left:0%" width="30" height="20"><use href="#i-car-red"/></svg></div>
+          <div class="say">連結後，每走 2,000 步存 1 點</div>
+        </div>
+
+        <div class="row" style="padding-bottom:var(--yx-space-md)">
+          <div class="tile"><svg width="28" height="28"><use href="#i-team"/></svg></div>
+          <div class="txt"><div class="t">週末健走隊</div><div class="c">本週全隊 <b>18.6</b> / 30 萬步・5 人</div></div>
+          <span class="sq-arrow"><i></i><svg width="16" height="14"><use href="#i-fwd"/></svg></span>
+        </div>
+        <div class="row no-line" style="padding-top:var(--yx-space-md);padding-bottom:88px">
+          <div class="tile"><svg width="28" height="28"><use href="#i-coin"/></svg></div>
+          <div class="txt"><div class="t">我的和泰 Points</div><div class="c">可折抵車資、租車、商城</div></div>
+          <span class="num md"><span class="n">86</span><span class="u">點</span></span>
+        </div>
+      </div>
+      <div class="fixed-bottom"><div class="btn btn-primary">連結步數</div></div>
+    </div>
+    
+    <p class="note"><b>E1 尚未連結步數（初次使用）</b>不顯示「0 步」（PRD <code>M5</code>）：0 會被誤會成「今天沒走」<br><b class="i">底部主按鈕改成「連結步數」</b>（決策 #101）：照最顯眼的按鈕走，第一步就是連結步數；頁首不再放文字連結，同一件事不出現兩次<br>按下先進 S45 步數權限說明，再跳系統授權視窗；連結後主按鈕才換回「記錄這段路線」<br>進度條降為灰階，說明行講規則</p>
+  </section>
+  <section>
+    <div class="phone">
+      <div class="header-white">
+        <div class="status"><span>9:41</span><span style="display:flex;gap:6px"><svg class="icon" width="18" height="12"><use href="#i-signal"/></svg><svg class="icon" width="27" height="12"><use href="#i-batt"/></svg></span></div>
+        <div class="bar">
+          <span class="back tap"><svg width="30" height="16"><use href="#i-back"/></svg><span class="lt-only">返回</span></span>
+          <h3>連結步數</h3>
+          <span></span>
+        </div>
+      </div>
+      <div class="guide">
+        <div class="art"><svg width="84" height="84"><use href="#i-shoe"/></svg></div>
+        <h4>讓 yoxi 讀取你的步數</h4>
+        <p>手機本來就會記步數。連結後，<br>每走 2,000 步存 1 點，不用開著 App。</p>
+        <div class="sys-alert" aria-label="系統權限視窗示意">
+          <div class="msg"><b>「yoxi」想要取用你的健康資料</b><span>讀取：步數</span></div>
+          <div class="opt is-target">允許</div>
+          <div class="opt">不允許</div>
+        </div>
+        <div class="pointer">按「允許」</div>
+        <p class="hint">只讀步數，不讀其他健康資料。隨時可以在設定裡關閉。</p>
+      </div>
+      <div class="fixed-bottom"><div class="btn btn-primary">好，下一步</div></div>
+    </div>
+    <p class="note"><b>E1-2 步數權限說明（S45，新增）</b><code>Guide/Permission</code> 的步數版，版面同主要畫面 ② 定位說明（決策 #101）<br><b class="i">只問步數，不同時問定位</b>——定位等第一次按「記錄這段路線」時才問；拒絕定位仍能存點數（PRD <code>M5</code>），兩個權限分開問才說得通<br>說明寫出最在意的兩件事：每 2,000 步 1 點、不用開著 App<br>按「不允許」回到 E1，主按鈕仍是「連結步數」；Prototype 的展示資料預設已連結，可以不做這張</p>
+  </section>
+  <section>
+    <div class="phone on-color">
+      <div class="header-red">
+        <div class="status"><span>9:41</span><span style="display:flex;gap:6px"><svg class="icon" width="18" height="12"><use href="#i-signal"/></svg><svg class="icon" width="27" height="12"><use href="#i-batt"/></svg></span></div>
+        <div class="hdr-row"><span class="close tap"><svg width="24" height="24" style="color:#fff"><use href="#i-close"/></svg><span class="lt-only">關閉</span></span><span class="listen"><svg width="20" height="20"><use href="#i-speaker"/></svg>唸給我聽</span></div>
+        <h2>移動足跡</h2>
+        <div class="sub">走路存點數，點數折車資</div>
+        <div class="pills"><span class="pill is-on">今天</span><span class="pill">本週</span></div>
+      </div>
+      <div class="board">
+        <div class="hero">
+          <div>
+            <div class="hero-lbl lbl">今天走了</div>
+            <div class="num"><span class="n">0</span><span class="u">/ 6,000 步</span></div>
+          </div>
+          <div class="meta"><b>0 公里</b>還沒開始走</div>
+        </div>
+
+        <div class="fp-map" style="margin-top:var(--yx-space-md)">
+          <svg viewBox="0 0 354 150" preserveAspectRatio="xMidYMid slice">
+            <rect width="354" height="150" fill="var(--yx-map-ground)"/>
+            <path d="M-10 120 C 70 100, 120 140, 200 110 S 320 70, 370 90" stroke="var(--yx-map-water)" stroke-width="26" fill="none"/>
+            <rect x="210" y="14" width="80" height="44" fill="var(--yx-map-park)"/>
+            <g stroke="var(--yx-map-road)" stroke-width="7" fill="none"><path d="M0 40H354"/><path d="M90 0V150"/><path d="M300 0V150"/><path d="M190 0V150"/></g>
+          </svg>
+          <div class="map-empty"><span>按「記錄這段路線」，走過的路會畫在這裡</span></div>
+        </div>
+
+        <div class="progress " style="margin-top:var(--yx-space-md)">
+          <div class="top">
+            <span class="lbl">今天的點數</span>
+            <span class="num md"><span class="n">0</span><span class="u">/ 3 點</span></span>
+          </div>
+          <div class="track"><div class="segbar"><i></i><i></i><i class="last"></i></div><svg class="car" style="left:0%" width="30" height="20"><use href="#i-car-red"/></svg></div>
+          <div class="say">每走 2,000 步存 1 點，大約 20 分鐘</div>
+          <div class="streak"><svg width="16" height="16"><use href="#i-shoe"/></svg><span>手機記下的每一步都<b>自動</b>算點數，不用開著 App</span></div>
+        </div>
+
+        <div class="row" style="padding-bottom:var(--yx-space-md)">
+          <div class="tile"><svg width="28" height="28"><use href="#i-team"/></svg></div>
+          <div class="txt"><div class="t">週末健走隊</div><div class="c">本週全隊 <b>18.6</b> / 30 萬步・5 人</div></div>
+          <span class="sq-arrow"><i></i><svg width="16" height="14"><use href="#i-fwd"/></svg></span>
+        </div>
+        <div class="row no-line" style="padding-top:var(--yx-space-md);padding-bottom:88px">
+          <div class="tile"><svg width="28" height="28"><use href="#i-coin"/></svg></div>
+          <div class="txt"><div class="t">我的和泰 Points</div><div class="c">可折抵車資、租車、商城</div></div>
+          <span class="num md"><span class="n">86</span><span class="u">點</span></span>
+        </div>
+      </div>
+      <div class="fixed-bottom"><div class="btn btn-primary">記錄這段路線</div></div>
+    </div>
+    
+    <p class="note"><b>E2 今天還沒走（0 步）</b>已授權、今天 0 步：照常顯示「0 / 6,000 步」，這是真實數字<br>地圖沒有路線時不留空白，改一行引導文字<br>說明行從「再走約 N 分鐘」換成規則說明，因為還沒開始</p>
+  </section>
+  <div class="grp">載入狀態<small>資料正在取得或同步</small></div>
+  <section>
+    <div class="phone on-color">
+      <div class="header-red">
+        <div class="status"><span>9:41</span><span style="display:flex;gap:6px"><svg class="icon" width="18" height="12"><use href="#i-signal"/></svg><svg class="icon" width="27" height="12"><use href="#i-batt"/></svg></span></div>
+        <div class="hdr-row"><span class="close tap"><svg width="24" height="24" style="color:#fff"><use href="#i-close"/></svg><span class="lt-only">關閉</span></span><span class="listen"><svg width="20" height="20"><use href="#i-speaker"/></svg>唸給我聽</span></div>
+        <h2>移動足跡</h2>
+        <div class="sub">走路存點數，點數折車資</div>
+        <div class="pills"><span class="pill is-on">今天</span><span class="pill">本週</span></div>
+      </div>
+      <div class="board">
+        <div class="hero">
+          <div>
+            <div class="hero-lbl lbl">今天走了</div>
+            <span class="sk" style="width:150px;height:30px;margin-top:4px"></span>
+          </div>
+          <div class="meta"><span class="sk" style="width:70px;height:18px;margin-left:auto"></span><span class="sk" style="width:90px;height:14px;margin-top:6px;margin-left:auto"></span></div>
+        </div>
+
+        <div style="margin-top:var(--yx-space-md);height:150px" class="sk"></div>
+
+        <div class="progress" style="margin-top:var(--yx-space-md)">
+          <div class="top"><span class="lbl">今天的點數</span><span class="sk" style="width:64px;height:24px"></span></div>
+          <div class="track"><div class="segbar"><i></i><i></i><i class="last"></i></div></div>
+          <span class="sk" style="width:180px;height:14px;margin-top:8px"></span>
+        </div>
+
+        <div class="row" style="padding-bottom:var(--yx-space-md)">
+          <div class="tile"><svg width="28" height="28"><use href="#i-team"/></svg></div>
+          <div class="txt"><div class="t">週末健走隊</div><div class="c">本週全隊 <b>18.6</b> / 30 萬步・5 人</div></div>
+          <span class="sq-arrow"><i></i><svg width="16" height="14"><use href="#i-fwd"/></svg></span>
+        </div>
+        <div class="row no-line" style="padding-top:var(--yx-space-md);padding-bottom:88px">
+          <div class="tile"><svg width="28" height="28"><use href="#i-coin"/></svg></div>
+          <div class="txt"><div class="t">我的和泰 Points</div><div class="c">可折抵車資、租車、商城</div></div>
+          <span class="num md"><span class="n">86</span><span class="u">點</span></span>
+        </div>
+      </div>
+      <div class="fixed-bottom"><div class="btn btn-primary">記錄這段路線</div></div>
+    </div>
+    
+    <p class="note"><b>L1 第一次載入（沒有暫存）</b>用 <code>State/Skeleton</code>：色塊形狀同最終內容，1.2 秒淡入淡出<br>標籤（今天走了、今天的點數）先出現，只有數字是色塊<br>不用滿版轉圈，也不遮住底部主按鈕</p>
+  </section>
+  <section>
+    <div class="phone on-color">
+      <div class="header-red">
+        <div class="status"><span>9:41</span><span style="display:flex;gap:6px"><svg class="icon" width="18" height="12"><use href="#i-signal"/></svg><svg class="icon" width="27" height="12"><use href="#i-batt"/></svg></span></div>
+        <div class="hdr-row"><span class="close tap"><svg width="24" height="24" style="color:#fff"><use href="#i-close"/></svg><span class="lt-only">關閉</span></span><span class="listen"><svg width="20" height="20"><use href="#i-speaker"/></svg>唸給我聽</span></div>
+        <h2>移動足跡</h2>
+        <div class="sub">走路存點數，點數折車資</div>
+        <div class="pills"><span class="pill is-on">今天</span><span class="pill">本週</span></div>
+      </div>
+      <div class="board">
+        <div class="hero">
+          <div>
+            <div class="hero-lbl lbl">今天走了　<span class="syncing"><i class="spin"></i>更新中</span></div>
+            <div class="num"><span class="n">4,200</span><span class="u">/ 6,000 步</span></div>
+          </div>
+          <div class="meta"><b>2.9 公里</b>走了 40 分鐘</div>
+        </div>
+
+        <div class="fp-map" style="margin-top:var(--yx-space-md)">
+          <svg viewBox="0 0 354 150" preserveAspectRatio="xMidYMid slice">
+            <rect width="354" height="150" fill="var(--yx-map-ground)"/>
+            <path d="M-10 120 C 70 100, 120 140, 200 110 S 320 70, 370 90" stroke="var(--yx-map-water)" stroke-width="26" fill="none"/>
+            <rect x="210" y="14" width="80" height="44" fill="var(--yx-map-park)"/>
+            <g stroke="var(--yx-map-road)" stroke-width="7" fill="none"><path d="M0 40H354"/><path d="M90 0V150"/><path d="M300 0V150"/><path d="M190 0V150"/></g>
+            <path d="M40 104 L90 104 L90 40 L190 40 L190 66 L256 66 L256 40 L300 40" stroke="#0B1F38" stroke-width="4" fill="none" stroke-linejoin="round"/>
+            <circle cx="40" cy="104" r="6" fill="#0B1F38" stroke="#fff" stroke-width="2.5"/>
+            <circle cx="300" cy="40" r="6" fill="#F14A42" stroke="#fff" stroke-width="2.5"/>
+          </svg>
+          <div class="legend">
+            <span class="map-label"><i style="background:var(--yx-action-navy);border-radius:50%"></i>出發</span>
+            <span class="map-label"><i style="background:var(--yx-icon-red);border-radius:50%"></i>現在</span>
+          </div>
+        </div>
+
+        <div class="progress " style="margin-top:var(--yx-space-md)">
+          <div class="top">
+            <span class="lbl">今天的點數</span>
+            <span class="num md"><span class="n">2</span><span class="u">/ 3 點</span></span>
+          </div>
+          <div class="track"><div class="segbar"><i class="on"></i><i class="on"></i><i class="last"></i></div><svg class="car" style="left:70%" width="30" height="20"><use href="#i-car-red"/></svg></div>
+          <div class="say">再走約 <b>15 分鐘</b>，今天就存滿了。</div>
+          <div class="streak"><svg width="16" height="16"><use href="#i-shoe"/></svg><span>手機記下的每一步都<b>自動</b>算點數，不用開著 App</span></div>
+        </div>
+
+        <div class="row" style="padding-bottom:var(--yx-space-md)">
+          <div class="tile"><svg width="28" height="28"><use href="#i-team"/></svg></div>
+          <div class="txt"><div class="t">週末健走隊</div><div class="c">本週全隊 <b>18.6</b> / 30 萬步・5 人</div></div>
+          <span class="sq-arrow"><i></i><svg width="16" height="14"><use href="#i-fwd"/></svg></span>
+        </div>
+        <div class="row no-line" style="padding-top:var(--yx-space-md);padding-bottom:88px">
+          <div class="tile"><svg width="28" height="28"><use href="#i-coin"/></svg></div>
+          <div class="txt"><div class="t">我的和泰 Points</div><div class="c">可折抵車資、租車、商城</div></div>
+          <span class="num md"><span class="n">86</span><span class="u">點</span></span>
+        </div>
+      </div>
+      <div class="fixed-bottom"><div class="btn btn-primary">記錄這段路線</div></div>
+    </div>
+    
+    <p class="note"><b>L2 更新中（有上次的資料）</b>有暫存時<b>先顯示上次的數字</b>，標籤旁加小轉圈「更新中」，不換成骨架屏——數字閃一下再出現，比舊數字更讓人不安<br>更新完成後轉圈消失，數字直接換新，不加動畫</p>
+  </section>
+  <div class="grp">錯誤狀態<small>網路斷線、讀不到步數、同步失敗</small></div>
+  <section>
+    <div class="phone on-color">
+      <div class="header-red">
+        <div class="status"><span>9:41</span><span style="display:flex;gap:6px"><svg class="icon" width="18" height="12"><use href="#i-signal"/></svg><svg class="icon" width="27" height="12"><use href="#i-batt"/></svg></span></div>
+        <div class="hdr-row"><span class="close tap"><svg width="24" height="24" style="color:#fff"><use href="#i-close"/></svg><span class="lt-only">關閉</span></span><span class="listen"><svg width="20" height="20"><use href="#i-speaker"/></svg>唸給我聽</span></div>
+        <h2>移動足跡</h2>
+        <div class="sub">走路存點數，點數折車資</div>
+        <div class="pills"><span class="pill is-on">今天</span><span class="pill">本週</span></div>
+      </div>
+      <div class="board">
+        <div class="hero">
+          <div>
+            <div class="hero-lbl lbl">今天走了</div>
+            <div class="num"><span class="n">4,200</span><span class="u">/ 6,000 步</span></div>
+          </div>
+          <div class="meta"><b>2.9 公里</b>走了 40 分鐘</div>
+        </div>
+
+        <div class="fp-map" style="margin-top:var(--yx-space-md)">
+          <svg viewBox="0 0 354 150" preserveAspectRatio="xMidYMid slice">
+            <rect width="354" height="150" fill="var(--yx-map-ground)"/>
+            <path d="M-10 120 C 70 100, 120 140, 200 110 S 320 70, 370 90" stroke="var(--yx-map-water)" stroke-width="26" fill="none"/>
+            <rect x="210" y="14" width="80" height="44" fill="var(--yx-map-park)"/>
+            <g stroke="var(--yx-map-road)" stroke-width="7" fill="none"><path d="M0 40H354"/><path d="M90 0V150"/><path d="M300 0V150"/><path d="M190 0V150"/></g>
+            <path d="M40 104 L90 104 L90 40 L190 40 L190 66 L256 66 L256 40 L300 40" stroke="#0B1F38" stroke-width="4" fill="none" stroke-linejoin="round"/>
+            <circle cx="40" cy="104" r="6" fill="#0B1F38" stroke="#fff" stroke-width="2.5"/>
+            <circle cx="300" cy="40" r="6" fill="#F14A42" stroke="#fff" stroke-width="2.5"/>
+          </svg>
+          <div class="legend">
+            <span class="map-label"><i style="background:var(--yx-action-navy);border-radius:50%"></i>出發</span>
+            <span class="map-label"><i style="background:var(--yx-icon-red);border-radius:50%"></i>現在</span>
+          </div>
+        </div>
+
+        <div class="progress " style="margin-top:var(--yx-space-md)">
+          <div class="top">
+            <span class="lbl">今天的點數</span>
+            <span class="num md"><span class="n">2</span><span class="u">/ 3 點</span></span>
+          </div>
+          <div class="track"><div class="segbar"><i class="on"></i><i class="on"></i><i class="last"></i></div><svg class="car" style="left:70%" width="30" height="20"><use href="#i-car-red"/></svg></div>
+          <div class="err"><span class="ico">!</span><span>目前沒有網路，走的步數都有記下來，連線後點數會自動入帳</span></div>
+          <div class="streak"><svg width="16" height="16"><use href="#i-shoe"/></svg><span>手機記下的每一步都<b>自動</b>算點數，不用開著 App</span></div>
+        </div>
+
+        <div class="row" style="padding-bottom:var(--yx-space-md)">
+          <div class="tile"><svg width="28" height="28"><use href="#i-team"/></svg></div>
+          <div class="txt"><div class="t">週末健走隊</div><div class="c">本週全隊 <b>18.6</b> / 30 萬步・5 人</div></div>
+          <span class="sq-arrow"><i></i><svg width="16" height="14"><use href="#i-fwd"/></svg></span>
+        </div>
+        <div class="row no-line" style="padding-top:var(--yx-space-md);padding-bottom:88px">
+          <div class="tile"><svg width="28" height="28"><use href="#i-coin"/></svg></div>
+          <div class="txt"><div class="t">我的和泰 Points</div><div class="c">可折抵車資、租車、商城</div></div>
+          <span class="num md"><span class="n">86</span><span class="u">點</span></span>
+        </div>
+      </div>
+      <div class="fixed-bottom"><div class="btn btn-primary">記錄這段路線</div></div>
+    </div>
+    
+    <p class="note"><b>R1 網路斷線</b>步數來自手機本身的計步器，<b>斷線照樣準確</b>，所以頁首不變<br>受影響的是點數與團隊（要連線才入帳，PRD <code>D5</code>），錯誤提示放在點數卡裡<br>錯誤寫法照第 8.1 節：icon-red 驚嘆號 ＋ 墨藍字，<b>不用紅字</b>；先說「沒事」，再說「會怎樣」</p>
+  </section>
+  <section>
+    <div class="phone on-color">
+      <div class="header-red">
+        <div class="status"><span>9:41</span><span style="display:flex;gap:6px"><svg class="icon" width="18" height="12"><use href="#i-signal"/></svg><svg class="icon" width="27" height="12"><use href="#i-batt"/></svg></span></div>
+        <div class="hdr-row"><span class="close tap"><svg width="24" height="24" style="color:#fff"><use href="#i-close"/></svg><span class="lt-only">關閉</span></span><span class="listen"><svg width="20" height="20"><use href="#i-speaker"/></svg>唸給我聽</span></div>
+        <h2>移動足跡</h2>
+        <div class="sub">走路存點數，點數折車資</div>
+        <div class="pills"><span class="pill is-on">今天</span><span class="pill">本週</span></div>
+      </div>
+      <div class="board">
+        <div class="hero">
+          <div>
+            <div class="hero-lbl lbl">今天走了</div>
+            <div class="hero-msg">讀不到今天的步數</div><span class="tlink">前往設定開啟<span class="sq-arrow"><i></i><svg width="16" height="14"><use href="#i-fwd"/></svg></span></span>
+          </div>
+          <div class="meta"></div>
+        </div>
+
+        <div class="fp-map" style="margin-top:var(--yx-space-md)">
+          <svg viewBox="0 0 354 150" preserveAspectRatio="xMidYMid slice">
+            <rect width="354" height="150" fill="var(--yx-map-ground)"/>
+            <path d="M-10 120 C 70 100, 120 140, 200 110 S 320 70, 370 90" stroke="var(--yx-map-water)" stroke-width="26" fill="none"/>
+            <rect x="210" y="14" width="80" height="44" fill="var(--yx-map-park)"/>
+            <g stroke="var(--yx-map-road)" stroke-width="7" fill="none"><path d="M0 40H354"/><path d="M90 0V150"/><path d="M300 0V150"/><path d="M190 0V150"/></g>
+            <path d="M40 104 L90 104 L90 40 L190 40 L190 66 L256 66 L256 40 L300 40" stroke="#0B1F38" stroke-width="4" fill="none" stroke-linejoin="round"/>
+            <circle cx="40" cy="104" r="6" fill="#0B1F38" stroke="#fff" stroke-width="2.5"/>
+            <circle cx="300" cy="40" r="6" fill="#F14A42" stroke="#fff" stroke-width="2.5"/>
+          </svg>
+          <div class="legend">
+            <span class="map-label"><i style="background:var(--yx-action-navy);border-radius:50%"></i>出發</span>
+            <span class="map-label"><i style="background:var(--yx-icon-red);border-radius:50%"></i>現在</span>
+          </div>
+        </div>
+
+        <div class="progress dim" style="margin-top:var(--yx-space-md)">
+          <div class="top">
+            <span class="lbl">今天的點數</span>
+            <span class="num md"><span class="n">2</span><span class="u">/ 3 點</span></span>
+          </div>
+          <div class="track"><div class="segbar"><i class="on"></i><i class="on"></i><i class="last"></i></div><svg class="car" style="left:70%" width="30" height="20"><use href="#i-car-red"/></svg></div>
+          <div class="err"><span class="ico">!</span><span>健康資料的權限被關閉了，打開後會補回今天的步數</span></div>
+        </div>
+
+        <div class="row" style="padding-bottom:var(--yx-space-md)">
+          <div class="tile"><svg width="28" height="28"><use href="#i-team"/></svg></div>
+          <div class="txt"><div class="t">週末健走隊</div><div class="c">本週全隊 <b>18.6</b> / 30 萬步・5 人</div></div>
+          <span class="sq-arrow"><i></i><svg width="16" height="14"><use href="#i-fwd"/></svg></span>
+        </div>
+        <div class="row no-line" style="padding-top:var(--yx-space-md);padding-bottom:88px">
+          <div class="tile"><svg width="28" height="28"><use href="#i-coin"/></svg></div>
+          <div class="txt"><div class="t">我的和泰 Points</div><div class="c">可折抵車資、租車、商城</div></div>
+          <span class="num md"><span class="n">86</span><span class="u">點</span></span>
+        </div>
+      </div>
+      <div class="fixed-bottom"><div class="btn btn-primary">記錄這段路線</div></div>
+    </div>
+    
+    <p class="note"><b>R2 讀不到步數（授權被關閉）</b>和 E1 同一個版面，只換文字：E1 是「還沒連結」，R2 是「曾經連結、現在讀不到」<br>已入帳的點數保留顯示（灰階），告訴使用者點數沒有消失<br>按鈕直接開系統設定</p>
+  </section>
+  <section>
+    <div class="phone on-color">
+      <div class="header-red">
+        <div class="status"><span>9:41</span><span style="display:flex;gap:6px"><svg class="icon" width="18" height="12"><use href="#i-signal"/></svg><svg class="icon" width="27" height="12"><use href="#i-batt"/></svg></span></div>
+        <div class="hdr-row"><span class="close tap"><svg width="24" height="24" style="color:#fff"><use href="#i-close"/></svg><span class="lt-only">關閉</span></span><span class="listen"><svg width="20" height="20"><use href="#i-speaker"/></svg>唸給我聽</span></div>
+        <h2>移動足跡</h2>
+        <div class="sub">走路存點數，點數折車資</div>
+        <div class="pills"><span class="pill is-on">今天</span><span class="pill">本週</span></div>
+      </div>
+      <div class="board">
+        <div class="hero">
+          <div>
+            <div class="hero-lbl lbl">今天走了</div>
+            <div class="num"><span class="n">4,200</span><span class="u">/ 6,000 步</span></div>
+          </div>
+          <div class="meta"><b>2.9 公里</b>走了 40 分鐘</div>
+        </div>
+
+        <div class="fp-map" style="margin-top:var(--yx-space-md)">
+          <svg viewBox="0 0 354 150" preserveAspectRatio="xMidYMid slice">
+            <rect width="354" height="150" fill="var(--yx-map-ground)"/>
+            <path d="M-10 120 C 70 100, 120 140, 200 110 S 320 70, 370 90" stroke="var(--yx-map-water)" stroke-width="26" fill="none"/>
+            <rect x="210" y="14" width="80" height="44" fill="var(--yx-map-park)"/>
+            <g stroke="var(--yx-map-road)" stroke-width="7" fill="none"><path d="M0 40H354"/><path d="M90 0V150"/><path d="M300 0V150"/><path d="M190 0V150"/></g>
+            <path d="M40 104 L90 104 L90 40 L190 40 L190 66 L256 66 L256 40 L300 40" stroke="#0B1F38" stroke-width="4" fill="none" stroke-linejoin="round"/>
+            <circle cx="40" cy="104" r="6" fill="#0B1F38" stroke="#fff" stroke-width="2.5"/>
+            <circle cx="300" cy="40" r="6" fill="#F14A42" stroke="#fff" stroke-width="2.5"/>
+          </svg>
+          <div class="legend">
+            <span class="map-label"><i style="background:var(--yx-action-navy);border-radius:50%"></i>出發</span>
+            <span class="map-label"><i style="background:var(--yx-icon-red);border-radius:50%"></i>現在</span>
+          </div>
+        </div>
+
+        <div class="progress " style="margin-top:var(--yx-space-md)">
+          <div class="top">
+            <span class="lbl">今天的點數</span>
+            <span class="num md"><span class="n">2</span><span class="u">/ 3 點</span></span>
+          </div>
+          <div class="track"><div class="segbar"><i class="on"></i><i class="on"></i><i class="last"></i></div><svg class="car" style="left:70%" width="30" height="20"><use href="#i-car-red"/></svg></div>
+          <div class="err"><span class="ico">!</span><span>點數暫時沒辦法更新<a>再試一次</a></span></div>
+          <div class="streak"><svg width="16" height="16"><use href="#i-shoe"/></svg><span>手機記下的每一步都<b>自動</b>算點數，不用開著 App</span></div>
+        </div>
+
+        <div class="row" style="padding-bottom:var(--yx-space-md)">
+          <div class="tile"><svg width="28" height="28"><use href="#i-team"/></svg></div>
+          <div class="txt"><div class="t">週末健走隊</div><div class="c">本週全隊 <b>18.6</b> / 30 萬步・5 人</div></div>
+          <span class="sq-arrow"><i></i><svg width="16" height="14"><use href="#i-fwd"/></svg></span>
+        </div>
+        <div class="row no-line" style="padding-top:var(--yx-space-md);padding-bottom:88px">
+          <div class="tile"><svg width="28" height="28"><use href="#i-coin"/></svg></div>
+          <div class="txt"><div class="t">我的和泰 Points</div><div class="c">可折抵車資、租車、商城</div></div>
+          <span class="num md"><span class="n">86</span><span class="u">點</span></span>
+        </div>
+      </div>
+      <div class="fixed-bottom"><div class="btn btn-primary">記錄這段路線</div></div>
+    </div>
+    
+    <p class="note"><b>R3 點數同步失敗</b>步數有讀到、但伺服器結算失敗<br>只在點數卡內提示，附「再試一次」；不跳視窗打斷<br>自動重試 3 次都失敗才顯示這行</p>
+  </section>
+  <div class="grp">極限狀態<small>最小值、門檻前後、最大值</small></div>
+  <section>
+    <div class="phone on-color">
+      <div class="header-red">
+        <div class="status"><span>9:41</span><span style="display:flex;gap:6px"><svg class="icon" width="18" height="12"><use href="#i-signal"/></svg><svg class="icon" width="27" height="12"><use href="#i-batt"/></svg></span></div>
+        <div class="hdr-row"><span class="close tap"><svg width="24" height="24" style="color:#fff"><use href="#i-close"/></svg><span class="lt-only">關閉</span></span><span class="listen"><svg width="20" height="20"><use href="#i-speaker"/></svg>唸給我聽</span></div>
+        <h2>移動足跡</h2>
+        <div class="sub">走路存點數，點數折車資</div>
+        <div class="pills"><span class="pill is-on">今天</span><span class="pill">本週</span></div>
+      </div>
+      <div class="board">
+        <div class="hero">
+          <div>
+            <div class="hero-lbl lbl">今天走了</div>
+            <div class="num"><span class="n">5,960</span><span class="u">/ 6,000 步</span></div>
+          </div>
+          <div class="meta"><b>4.2 公里</b>走了 58 分鐘</div>
+        </div>
+
+        <div class="fp-map" style="margin-top:var(--yx-space-md)">
+          <svg viewBox="0 0 354 150" preserveAspectRatio="xMidYMid slice">
+            <rect width="354" height="150" fill="var(--yx-map-ground)"/>
+            <path d="M-10 120 C 70 100, 120 140, 200 110 S 320 70, 370 90" stroke="var(--yx-map-water)" stroke-width="26" fill="none"/>
+            <rect x="210" y="14" width="80" height="44" fill="var(--yx-map-park)"/>
+            <g stroke="var(--yx-map-road)" stroke-width="7" fill="none"><path d="M0 40H354"/><path d="M90 0V150"/><path d="M300 0V150"/><path d="M190 0V150"/></g>
+            <path d="M40 104 L90 104 L90 40 L190 40 L190 66 L256 66 L256 40 L300 40" stroke="#0B1F38" stroke-width="4" fill="none" stroke-linejoin="round"/>
+            <circle cx="40" cy="104" r="6" fill="#0B1F38" stroke="#fff" stroke-width="2.5"/>
+            <circle cx="300" cy="40" r="6" fill="#F14A42" stroke="#fff" stroke-width="2.5"/>
+          </svg>
+          <div class="legend">
+            <span class="map-label"><i style="background:var(--yx-action-navy);border-radius:50%"></i>出發</span>
+            <span class="map-label"><i style="background:var(--yx-icon-red);border-radius:50%"></i>現在</span>
+          </div>
+        </div>
+
+        <div class="progress " style="margin-top:var(--yx-space-md)">
+          <div class="top">
+            <span class="lbl">今天的點數</span>
+            <span class="num md"><span class="n">2</span><span class="u">/ 3 點</span></span>
+          </div>
+          <div class="track"><div class="segbar"><i class="on"></i><i class="on"></i><i class="last"></i></div><svg class="car" style="left:99.3%" width="30" height="20"><use href="#i-car-red"/></svg></div>
+          <div class="say">再走<b>幾步</b>，今天就存滿了。</div>
+          <div class="streak"><svg width="16" height="16"><use href="#i-shoe"/></svg><span>手機記下的每一步都<b>自動</b>算點數，不用開著 App</span></div>
+        </div>
+
+        <div class="row" style="padding-bottom:var(--yx-space-md)">
+          <div class="tile"><svg width="28" height="28"><use href="#i-team"/></svg></div>
+          <div class="txt"><div class="t">週末健走隊</div><div class="c">本週全隊 <b>18.6</b> / 30 萬步・5 人</div></div>
+          <span class="sq-arrow"><i></i><svg width="16" height="14"><use href="#i-fwd"/></svg></span>
+        </div>
+        <div class="row no-line" style="padding-top:var(--yx-space-md);padding-bottom:88px">
+          <div class="tile"><svg width="28" height="28"><use href="#i-coin"/></svg></div>
+          <div class="txt"><div class="t">我的和泰 Points</div><div class="c">可折抵車資、租車、商城</div></div>
+          <span class="num md"><span class="n">86</span><span class="u">點</span></span>
+        </div>
+      </div>
+      <div class="fixed-bottom"><div class="btn btn-primary">記錄這段路線</div></div>
+    </div>
+    
+    <p class="note"><b>X1 差幾步就存滿（5,960 步）</b>剩不到 100 步時，「再走約 0 分鐘」不成立，改寫「再走幾步」<br>同理，差一點到下一點（例 1,950 步）寫「再走幾步，就多 1 點」</p>
+  </section>
+  <section>
+    <div class="phone on-color">
+      <div class="header-red">
+        <div class="status"><span>9:41</span><span style="display:flex;gap:6px"><svg class="icon" width="18" height="12"><use href="#i-signal"/></svg><svg class="icon" width="27" height="12"><use href="#i-batt"/></svg></span></div>
+        <div class="hdr-row"><span class="close tap"><svg width="24" height="24" style="color:#fff"><use href="#i-close"/></svg><span class="lt-only">關閉</span></span><span class="listen"><svg width="20" height="20"><use href="#i-speaker"/></svg>唸給我聽</span></div>
+        <h2>移動足跡</h2>
+        <div class="sub">走路存點數，點數折車資</div>
+        <div class="pills"><span class="pill is-on">今天</span><span class="pill">本週</span></div>
+      </div>
+      <div class="board">
+        <div class="hero">
+          <div>
+            <div class="hero-lbl lbl">今天走了</div>
+            <div class="num"><span class="n">6,000</span><span class="u">/ 6,000 步</span></div>
+          </div>
+          <div class="meta"><b>4.2 公里</b>走了 1 小時</div>
+        </div>
+
+        <div class="fp-map" style="margin-top:var(--yx-space-md)">
+          <svg viewBox="0 0 354 150" preserveAspectRatio="xMidYMid slice">
+            <rect width="354" height="150" fill="var(--yx-map-ground)"/>
+            <path d="M-10 120 C 70 100, 120 140, 200 110 S 320 70, 370 90" stroke="var(--yx-map-water)" stroke-width="26" fill="none"/>
+            <rect x="210" y="14" width="80" height="44" fill="var(--yx-map-park)"/>
+            <g stroke="var(--yx-map-road)" stroke-width="7" fill="none"><path d="M0 40H354"/><path d="M90 0V150"/><path d="M300 0V150"/><path d="M190 0V150"/></g>
+            <path d="M40 104 L90 104 L90 40 L190 40 L190 66 L256 66 L256 40 L300 40" stroke="#0B1F38" stroke-width="4" fill="none" stroke-linejoin="round"/>
+            <circle cx="40" cy="104" r="6" fill="#0B1F38" stroke="#fff" stroke-width="2.5"/>
+            <circle cx="300" cy="40" r="6" fill="#F14A42" stroke="#fff" stroke-width="2.5"/>
+          </svg>
+          <div class="legend">
+            <span class="map-label"><i style="background:var(--yx-action-navy);border-radius:50%"></i>出發</span>
+            <span class="map-label"><i style="background:var(--yx-icon-red);border-radius:50%"></i>現在</span>
+          </div>
+        </div>
+
+        <div class="progress " style="margin-top:var(--yx-space-md)">
+          <div class="top">
+            <span class="lbl">今天的點數</span>
+            <span class="num md"><span class="n">3</span><span class="u">/ 3 點</span></span>
+          </div>
+          <div class="track"><div class="segbar"><i class="on"></i><i class="on"></i><i class="last on"></i></div><svg class="car" style="left:100%" width="30" height="20"><use href="#i-car-red"/></svg></div>
+          <div class="say">點數存滿了，接下來的每一步都會算進團隊。</div>
+          <div class="streak"><svg width="16" height="16"><use href="#i-shoe"/></svg><span>手機記下的每一步都<b>自動</b>算點數，不用開著 App</span></div>
+        </div>
+
+        <div class="row" style="padding-bottom:var(--yx-space-md)">
+          <div class="tile"><svg width="28" height="28"><use href="#i-team"/></svg></div>
+          <div class="txt"><div class="t">週末健走隊</div><div class="c">本週全隊 <b>18.6</b> / 30 萬步・5 人</div></div>
+          <span class="sq-arrow"><i></i><svg width="16" height="14"><use href="#i-fwd"/></svg></span>
+        </div>
+        <div class="row no-line" style="padding-top:var(--yx-space-md);padding-bottom:88px">
+          <div class="tile"><svg width="28" height="28"><use href="#i-coin"/></svg></div>
+          <div class="txt"><div class="t">我的和泰 Points</div><div class="c">可折抵車資、租車、商城</div></div>
+          <span class="num md"><span class="n">86</span><span class="u">點</span></span>
+        </div>
+      </div>
+      <div class="fixed-bottom"><div class="btn btn-primary">記錄這段路線</div></div>
+    </div>
+    
+    <p class="note"><b>X2 剛好存滿（6,000 步）</b>分子等於分母時仍寫「6,000 / 6,000 步」<br>第 3 段轉紅；當天第一次存滿時另跳 <code>Overlay/Celebrate</code></p>
+  </section>
+  <section>
+    <div class="phone on-color" data-mode="large-text">
+      <div class="header-red">
+        <div class="status"><span>9:41</span><span style="display:flex;gap:6px"><svg class="icon" width="18" height="12"><use href="#i-signal"/></svg><svg class="icon" width="27" height="12"><use href="#i-batt"/></svg></span></div>
+        <div class="hdr-row"><span class="close tap"><svg width="24" height="24" style="color:#fff"><use href="#i-close"/></svg><span class="lt-only">關閉</span></span><span class="listen"><svg width="20" height="20"><use href="#i-speaker"/></svg>唸給我聽</span></div>
+        <h2>移動足跡</h2>
+        <div class="sub">走路存點數，點數折車資</div>
+        <div class="pills"><span class="pill is-on">今天</span><span class="pill">本週</span></div>
+      </div>
+      <div class="board">
+        <div class="hero">
+          <div>
+            <div class="hero-lbl lbl">今天走了</div>
+            <div class="num"><span class="n">45,678</span><span class="u">步</span></div>
+          </div>
+          <div class="meta"><b>31.9 公里</b>走了 6 小時 12 分</div>
+        </div>
+
+        <div class="fp-map" style="margin-top:var(--yx-space-md)">
+          <svg viewBox="0 0 354 150" preserveAspectRatio="xMidYMid slice">
+            <rect width="354" height="150" fill="var(--yx-map-ground)"/>
+            <path d="M-10 120 C 70 100, 120 140, 200 110 S 320 70, 370 90" stroke="var(--yx-map-water)" stroke-width="26" fill="none"/>
+            <rect x="210" y="14" width="80" height="44" fill="var(--yx-map-park)"/>
+            <g stroke="var(--yx-map-road)" stroke-width="7" fill="none"><path d="M0 40H354"/><path d="M90 0V150"/><path d="M300 0V150"/><path d="M190 0V150"/></g>
+            <path d="M40 104 L90 104 L90 40 L190 40 L190 66 L256 66 L256 40 L300 40" stroke="#0B1F38" stroke-width="4" fill="none" stroke-linejoin="round"/>
+            <circle cx="40" cy="104" r="6" fill="#0B1F38" stroke="#fff" stroke-width="2.5"/>
+            <circle cx="300" cy="40" r="6" fill="#F14A42" stroke="#fff" stroke-width="2.5"/>
+          </svg>
+          <div class="legend">
+            <span class="map-label"><i style="background:var(--yx-action-navy);border-radius:50%"></i>出發</span>
+            <span class="map-label"><i style="background:var(--yx-icon-red);border-radius:50%"></i>現在</span>
+          </div>
+        </div>
+
+        <div class="progress " style="margin-top:var(--yx-space-md)">
+          <div class="top">
+            <span class="lbl">今天的點數</span>
+            <span class="num md"><span class="n">3</span><span class="u">/ 3 點</span></span>
+          </div>
+          <div class="track"><div class="segbar"><i class="on"></i><i class="on"></i><i class="last on"></i></div><svg class="car" style="left:100%" width="30" height="20"><use href="#i-car-red"/></svg></div>
+          <div class="say">點數存滿了，多走的 <b>39,678 步</b>已算進團隊。</div>
+          <div class="streak"><svg width="16" height="16"><use href="#i-shoe"/></svg><span>手機記下的每一步都<b>自動</b>算點數，不用開著 App</span></div>
+        </div>
+
+        <div class="row" style="padding-bottom:var(--yx-space-md)">
+          <div class="tile"><svg width="28" height="28"><use href="#i-team"/></svg></div>
+          <div class="txt"><div class="t">週末健走隊</div><div class="c">本週全隊 <b>18.6</b> / 30 萬步・5 人</div></div>
+          <span class="sq-arrow"><i></i><svg width="16" height="14"><use href="#i-fwd"/></svg></span>
+        </div>
+        <div class="row no-line" style="padding-top:var(--yx-space-md);padding-bottom:88px">
+          <div class="tile"><svg width="28" height="28"><use href="#i-coin"/></svg></div>
+          <div class="txt"><div class="t">我的和泰 Points</div><div class="c">可折抵車資、租車、商城</div></div>
+          <span class="num md"><span class="n">86</span><span class="u">點</span></span>
+        </div>
+      </div>
+      <div class="fixed-bottom"><div class="btn btn-primary">記錄這段路線</div></div>
+    </div>
+    
+    <p class="note"><b>X3 走很多（45,678 步・大字好讀模式）</b>五位數步數在大字好讀模式 360 寬放得下；時間滿 60 分鐘寫「1 小時」「6 小時 12 分」<br>大字模式內容變長，說明行要往下捲才看得到，底部主按鈕固定不跟著捲<br>頁面照實顯示，<b>不設顯示上限</b>；異常數值由正式版的有效步數（PRD <code>D3</code>）處理，不在畫面上質疑使用者</p>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{
+  "about": "FSD-03C-2 shared scenario table. Each scenario runs in tests/week-result-state.test.mjs (latestStints/membersAt with simulated server times) and in tests/firestore-rules.test.mjs (Emulator). All times are on 2026-09-30. 'reach' makes the founder M01 sync steps and credit them; that entry is M (the week result is created from it). A 'check' is an award for (member, joinRevision, leaveRevision) at M: 'rules' is what the Emulator must decide; 'client' is whether membersAt(M) contains the member with exactly these revisions (null = a forged write the client never makes). Client-eligible must imply Rules-accepted.",
+  "scenarios": [
+    {
+      "name": "founder and early joiner are in; a later joiner is not",
+      "ops": [
+        { "at": "09:00:00", "op": "create", "member": "M01" },
+        { "at": "09:00:00", "op": "join", "member": "M02" },
+        { "at": "10:00:00", "op": "reach" },
+        { "at": "11:00:00", "op": "join", "member": "M03" },
+        { "op": "check", "member": "M01", "joinRevision": 0, "leaveRevision": 0, "rules": true, "client": true },
+        { "op": "check", "member": "M02", "joinRevision": 1, "leaveRevision": 0, "rules": true, "client": true },
+        { "op": "check", "member": "M02", "joinRevision": 0, "leaveRevision": 0, "rules": false, "client": null },
+        { "op": "check", "member": "M03", "joinRevision": 2, "leaveRevision": 0, "rules": false, "client": false }
+      ]
+    },
+    {
+      "name": "a join and a leave at the same scenario time as M are decided by the server time",
+      "ops": [
+        { "at": "09:00:00", "op": "create", "member": "M01" },
+        { "at": "09:00:00", "op": "join", "member": "M02" },
+        { "at": "14:00:00", "op": "reach" },
+        { "at": "14:00:00", "op": "join", "member": "M03" },
+        { "at": "14:00:00", "op": "leave", "member": "M02" },
+        { "op": "check", "member": "M03", "joinRevision": 2, "leaveRevision": 0, "rules": false, "client": false },
+        { "op": "check", "member": "M02", "joinRevision": 1, "leaveRevision": 3, "rules": true, "client": true }
+      ]
+    },
+    {
+      "name": "a captain transfer is neither a join nor a leave",
+      "ops": [
+        { "at": "09:00:00", "op": "create", "member": "M01" },
+        { "at": "09:00:00", "op": "join", "member": "M02" },
+        { "at": "09:00:00", "op": "transfer", "member": "M01", "target": "M02" },
+        { "at": "10:00:00", "op": "join", "member": "M03" },
+        { "at": "11:00:00", "op": "reach" },
+        { "at": "12:00:00", "op": "leave", "member": "M02" },
+        { "op": "check", "member": "M02", "joinRevision": 2, "leaveRevision": 4, "rules": false, "client": null },
+        { "op": "check", "member": "M02", "joinRevision": 1, "leaveRevision": 4, "rules": true, "client": true },
+        { "op": "check", "member": "M03", "joinRevision": 3, "leaveRevision": 0, "rules": true, "client": true }
+      ]
+    },
+    {
+      "name": "a member who left before M has no award; one who stays keeps it",
+      "ops": [
+        { "at": "09:00:00", "op": "create", "member": "M01" },
+        { "at": "09:00:00", "op": "join", "member": "M02" },
+        { "at": "09:00:00", "op": "join", "member": "M03" },
+        { "at": "10:00:00", "op": "leave", "member": "M03" },
+        { "at": "11:00:00", "op": "reach" },
+        { "op": "check", "member": "M03", "joinRevision": 2, "leaveRevision": 3, "rules": false, "client": false },
+        { "op": "check", "member": "M02", "joinRevision": 1, "leaveRevision": 0, "rules": true, "client": true }
+      ]
+    }
+  ]
+}

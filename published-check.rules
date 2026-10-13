@@ -1,0 +1,792 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function activeMember() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/membersByUid/$(request.auth.uid))
+        && get(/databases/$(database)/documents/membersByUid/$(request.auth.uid)).data.active == true;
+    }
+
+    match /membersByUid/{authUid} {
+      allow get: if signedIn() && request.auth.uid == authUid;
+      allow list, create, update, delete: if false;
+    }
+
+    // ===== FSD-AC1 >>> read-only display names for teammates, written only by the product owner in the Console.
+    // Removing this block (markers included) must give back the published 01C-04A Rules exactly.
+    match /memberProfiles/{memberId} {
+      allow get: if activeMember();
+      allow list, create, update, delete: if false;
+    }
+    // ===== FSD-AC1 <<<
+
+    // FSD-02B: only an admin advances the shared clock or resets the session, always together with
+    // a create-only audit entry keyed by the new clockVersion (which also makes every s{N} session unique).
+    function isAdmin() {
+      return get(/databases/$(database)/documents/membersByUid/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Fixed-length Asia/Taipei timestamps compare correctly as strings.
+    function validScenarioNow(s) {
+      return s is string
+        && s.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9][+]08:00$');
+    }
+
+    // ISO weekday (Monday == 1). timestamp.date() throws on impossible dates, which denies the write.
+    function weekMatches(s, weekId) {
+      let d = s.split('T')[0].split('-');
+      let w = weekId.split('-');
+      let day = timestamp.date(int(d[0]), int(d[1]), int(d[2]));
+      let monday = timestamp.date(int(w[0]), int(w[1]), int(w[2]));
+      return weekId.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && monday.dayOfWeek() == 1 && monday <= day && day < monday + duration.value(7, 'd');
+    }
+
+    function validClockChange() {
+      let cur = resource.data;
+      let nxt = request.resource.data;
+      return nxt.keys().size() == 4
+        && nxt.keys().hasOnly(['sessionId','scenarioNow','clockVersion','activityWeekId'])
+        && nxt.clockVersion is int && nxt.clockVersion == cur.clockVersion + 1
+        && nxt.sessionId is string && nxt.activityWeekId is string
+        && validScenarioNow(nxt.scenarioNow)
+        && weekMatches(nxt.scenarioNow, nxt.activityWeekId)
+        // The audit entry must be created by this same write: an entry left over from a lowered
+        // clock (Console) cannot cover an unaudited change or re-open a used s{N} session.
+        && !exists(/databases/$(database)/documents/demoClockLog/$(string(nxt.clockVersion)))
+        && existsAfter(/databases/$(database)/documents/demoClockLog/$(string(nxt.clockVersion)))
+        && ((nxt.sessionId == cur.sessionId
+            && nxt.scenarioNow >= cur.scenarioNow
+            && (!cur.keys().hasAny(['activityWeekId']) || nxt.activityWeekId >= cur.activityWeekId))
+          || (nxt.sessionId != cur.sessionId && nxt.sessionId == 's' + string(nxt.clockVersion)));
+    }
+
+    function validClockLog(version) {
+      let l = request.resource.data;
+      let cur = get(/databases/$(database)/documents/demo/current).data;
+      let nxt = getAfter(/databases/$(database)/documents/demo/current).data;
+      return l.keys().size() == 10
+        && l.keys().hasOnly(['clockVersion','kind','actorMemberId','fromSessionId','toSessionId','fromScenarioNow','toScenarioNow','fromWeekId','toWeekId','serverRecordedAt'])
+        && l.clockVersion is int && version == string(l.clockVersion)
+        && l.clockVersion == nxt.clockVersion && nxt.clockVersion == cur.clockVersion + 1
+        && l.actorMemberId == actorMemberId()
+        && l.fromSessionId == cur.sessionId && l.toSessionId == nxt.sessionId
+        && l.fromScenarioNow == cur.scenarioNow && l.toScenarioNow == nxt.scenarioNow
+        && l.fromWeekId == (cur.keys().hasAny(['activityWeekId']) ? cur.activityWeekId : null)
+        && l.toWeekId == nxt.activityWeekId
+        && l.serverRecordedAt == request.time
+        && l.kind == (nxt.sessionId == cur.sessionId ? 'advance' : 'reset');
+    }
+
+    match /demo/current {
+      allow get: if activeMember();
+      allow update: if activeMember() && isAdmin() && validClockChange();
+      allow list, create, delete: if false;
+    }
+
+    match /demoClockLog/{version} {
+      allow get: if activeMember() && isAdmin();
+      allow create: if activeMember() && isAdmin() && validClockLog(version);
+      allow list, update, delete: if false;
+    }
+
+    function currentSession(sessionId) {
+      return get(/databases/$(database)/documents/demo/current).data.sessionId == sessionId;
+    }
+
+    function currentClockVersion() {
+      return get(/databases/$(database)/documents/demo/current).data.clockVersion;
+    }
+
+    function currentScenarioNow() {
+      return get(/databases/$(database)/documents/demo/current).data.scenarioNow;
+    }
+
+    // FSD-01C: one canonical daily schema, new sessions only. The full shape is checked on create;
+    // an update may touch only the fields of the one operation chosen by diff, so every stored
+    // document keeps the create-time shape by induction (no Console writes inside a session).
+    function dailyPath(sessionId, memberId, taskDate) {
+      return /databases/$(database)/documents/dailySteps/$(sessionId)/members/$(memberId)/days/$(taskDate);
+    }
+
+    function dailyEventPath(sessionId, memberId, taskDate, seq) {
+      return /databases/$(database)/documents/dailySteps/$(sessionId)/members/$(memberId)/days/$(taskDate)/events/$(seq);
+    }
+
+    function dailyReader(sessionId, memberId, taskDate) {
+      return activeMember() && currentSession(sessionId) && actorMemberId() == memberId
+        && taskDate.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+    }
+
+    // 'today', 'yesterday' or '' (closed). The regex blocks aliases such as '2026-9-30' or '+9' that
+    // int() would accept; timestamp.date() throws on impossible dates (verified in the Emulator), and
+    // the month/day round trip keeps an alias closed even if that behaviour ever changed.
+    function dailyWindow(taskDate, now) {
+      let p = taskDate.split('-');
+      let n = now.split('T')[0].split('-');
+      let day = timestamp.date(int(p[0]), int(p[1]), int(p[2]));
+      return !taskDate.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') || !validScenarioNow(now) ? ''
+        : (now.split('T')[0] == taskDate ? 'today'
+          : (day.month() == int(p[1]) && day.day() == int(p[2])
+            && day + duration.value(1, 'd') == timestamp.date(int(n[0]), int(n[1]), int(n[2])) ? 'yesterday' : ''));
+    }
+
+    // effectiveSteps == floor(raw * 1.5) with a ride, in integer arithmetic.
+    function dailyEffective(raw, eff, ride) {
+      return eff is int && (ride ? (eff * 2 <= raw * 3 && raw * 3 < eff * 2 + 2) : eff == raw);
+    }
+
+    function dailyCreate(sessionId, memberId, taskDate) {
+      let d = request.resource.data;
+      return d.keys().size() == 10
+        && d.keys().hasOnly(['sessionId','memberId','taskDate','clockVersion','rawSteps','effectiveSteps','rideCompletedAt','claimed','eventSeq','lastSyncedAt'])
+        && d.sessionId == sessionId && d.memberId == memberId && d.taskDate == taskDate
+        && d.clockVersion == currentClockVersion()
+        && d.rawSteps is int && d.rawSteps == 0 && d.effectiveSteps is int && d.effectiveSteps == 0
+        && d.rideCompletedAt == null && d.claimed is int && d.claimed == 0
+        && d.eventSeq is int && d.eventSeq == 0 && d.lastSyncedAt == request.time;
+    }
+
+    function dailySteps(o, d, keys, e, now, w, taskDate) {
+      return keys.hasOnly(['rawSteps','effectiveSteps','eventSeq','lastSyncedAt','clockVersion'])
+        && d.rawSteps is int && d.rawSteps > o.rawSteps && d.rawSteps <= 1000000
+        && dailyEffective(d.rawSteps, d.effectiveSteps, o.rideCompletedAt != null)
+        && e.kind == 'steps' && e.rawDelta == d.rawSteps - o.rawSteps && e.pointsDelta == 0
+        && e.occurredAt == (w == 'today' ? now : taskDate + 'T23:59:59+08:00');
+    }
+
+    // A ride counts only on the day it is completed (P08): never on yesterday's document.
+    function dailyRide(o, d, keys, e, now, w) {
+      return w == 'today'
+        && keys.hasOnly(['rideCompletedAt','effectiveSteps','eventSeq','lastSyncedAt','clockVersion'])
+        && o.rideCompletedAt == null && d.rideCompletedAt == now
+        && dailyEffective(o.rawSteps, d.effectiveSteps, true)
+        && e.kind == 'ride' && e.rawDelta == 0 && e.pointsDelta == 0 && e.occurredAt == now;
+    }
+
+    // One counter covers single and all claims: it only rises, so milestones stay contiguous and
+    // each (session, member, day, milestone) is booked once.
+    function dailyClaim(o, d, keys, e, now) {
+      return keys.hasOnly(['claimed','eventSeq','lastSyncedAt','clockVersion'])
+        && d.claimed is int && d.claimed > o.claimed && d.claimed <= 3
+        && d.claimed * 2000 <= o.effectiveSteps
+        && e.kind == 'claim' && e.rawDelta == 0 && e.pointsDelta == d.claimed - o.claimed && e.occurredAt == now;
+    }
+
+    // Routed with a ternary rather than ||, so a denied write evaluates a single branch.
+    function dailyUpdate(sessionId, memberId, taskDate) {
+      let o = resource.data;
+      let d = request.resource.data;
+      let keys = d.diff(o).affectedKeys();
+      let now = currentScenarioNow();
+      let w = dailyWindow(taskDate, now);
+      let e = getAfter(dailyEventPath(sessionId, memberId, taskDate, d.eventSeq)).data;
+      return w != '' && d.clockVersion == currentClockVersion()
+        && d.eventSeq is int && d.eventSeq == o.eventSeq + 1 && d.lastSyncedAt == request.time
+        && e.claimedAfter == d.claimed
+        && (keys.hasAny(['claimed']) ? dailyClaim(o, d, keys, e, now)
+          : (keys.hasAny(['rideCompletedAt']) ? dailyRide(o, d, keys, e, now, w)
+            : dailySteps(o, d, keys, e, now, w, taskDate)));
+    }
+
+    match /dailySteps/{sessionId}/members/{memberId}/days/{taskDate} {
+      allow get: if dailyReader(sessionId, memberId, taskDate) || sameTeamTodayReader(sessionId, memberId, taskDate);
+      allow create: if activeMember() && currentSession(sessionId) && actorMemberId() == memberId
+        && dailyWindow(taskDate, currentScenarioNow()) != ''
+        && dailyCreate(sessionId, memberId, taskDate);
+      allow update: if activeMember() && currentSession(sessionId) && actorMemberId() == memberId
+        && dailyUpdate(sessionId, memberId, taskDate);
+      allow list, delete: if false;
+      // ===== FSD-06A daily-list >>> the owner lists their own days of the current session (points balance).
+      allow list: if dailyOwnerList(sessionId, memberId);
+      // ===== FSD-06A daily-list <<<
+    }
+
+    // An event exists only beside the daily write that advances eventSeq by exactly one, so the
+    // daily rule (window, owner, kind and values) is always evaluated for it; this rule checks the
+    // event's own shape and that link.
+    function dailyEventCreate(sessionId, memberId, taskDate, eventId) {
+      let v = request.resource.data;
+      let p = dailyPath(sessionId, memberId, taskDate);
+      return v.keys().size() == 11
+        && v.keys().hasOnly(['sessionId','memberId','taskDate','seq','kind','rawDelta','pointsDelta','claimedAfter','occurredAt','syncedAt','clockVersion'])
+        && v.sessionId == sessionId && v.memberId == memberId && v.taskDate == taskDate
+        && v.seq is int && v.seq >= 1 && eventId == string(v.seq)
+        && v.kind in ['steps','ride','claim']
+        && v.rawDelta is int && v.pointsDelta is int && v.claimedAfter is int && v.occurredAt is string
+        && v.syncedAt == request.time && v.clockVersion == currentClockVersion()
+        && exists(p) && getAfter(p).data.eventSeq == get(p).data.eventSeq + 1
+        && v.seq == getAfter(p).data.eventSeq;
+    }
+
+    match /dailySteps/{sessionId}/members/{memberId}/days/{taskDate}/events/{eventId} {
+      allow get: if dailyReader(sessionId, memberId, taskDate);
+      allow create: if activeMember() && currentSession(sessionId) && actorMemberId() == memberId
+        && dailyEventCreate(sessionId, memberId, taskDate, eventId);
+      allow list, update, delete: if false;
+    }
+
+    function actorMemberId() {
+      return get(/databases/$(database)/documents/membersByUid/$(request.auth.uid)).data.memberId;
+    }
+
+    function weekOrNull() {
+      let d = get(/databases/$(database)/documents/demo/current).data;
+      return d.keys().hasAny(['activityWeekId']) ? d.activityWeekId : null;
+    }
+
+    // Full team shape is checked on create only. Updates may touch only the roster fields
+    // below (diff), so every stored team keeps the create-time shape by induction.
+    function teamShape(d, sessionId, teamId) {
+      return d.keys().size() == 11
+        && d.keys().hasOnly(['sessionId','teamId','leaderMemberId','memberIds','inviteCode','status','clockVersion','createdAt','everFormed','nextJoinOrder','revision'])
+        && d.sessionId == sessionId && d.teamId == teamId && d.inviteCode == teamId
+        && teamId.matches('^[A-F0-9]{16}$')
+        && d.memberIds is list && d.clockVersion is int && d.createdAt is string
+        && d.everFormed is bool && d.nextJoinOrder is int && d.revision is int;
+    }
+
+    function teamUpdateBase(o, d) {
+      return d.diff(o).affectedKeys().hasOnly(['leaderMemberId','memberIds','status','clockVersion','everFormed','nextJoinOrder','revision'])
+        && d.revision == o.revision + 1 && d.clockVersion == currentClockVersion();
+    }
+
+    function membershipShape(d, sessionId, memberId) {
+      return d.keys().size() == 10
+        && d.keys().hasOnly(['sessionId','memberId','teamId','joinOrder','clockVersion','status','joinedAt','leftTeamId','leftWeekId','leftAt'])
+        && d.sessionId == sessionId && d.memberId == memberId
+        && d.joinOrder is int && d.joinOrder >= 0
+        && d.clockVersion == currentClockVersion()
+        && ((d.status == 'active' && d.teamId is string && d.joinedAt is string
+            && d.leftTeamId == null && d.leftWeekId == null && d.leftAt == null)
+          || (d.status == 'left' && d.teamId == null && d.leftTeamId is string
+            && (d.joinedAt == null || d.joinedAt is string)
+            && (d.leftWeekId == null || d.leftWeekId is string) && d.leftAt is string));
+    }
+
+    function canJoin(sessionId, memberId) {
+      let p = /databases/$(database)/documents/teamMembership/$(sessionId)/members/$(memberId);
+      // A week-locked tombstone fails closed while demo/current has no activityWeekId.
+      return !exists(p) || (get(p).data.status == 'left'
+        && (get(p).data.leftWeekId == null
+          || (weekOrNull() is string && get(p).data.leftWeekId != weekOrNull())));
+    }
+
+    // Each document validates its own shape in its own match block; the team rule only
+    // checks the linking fields of the index and event written in the same transaction.
+    function indexAfter(sessionId, memberId) {
+      return getAfter(/databases/$(database)/documents/teamMembership/$(sessionId)/members/$(memberId)).data;
+    }
+
+    function eventAfter(sessionId, teamId, revision) {
+      return getAfter(/databases/$(database)/documents/teams/$(sessionId)/items/$(teamId)/events/$(revision)).data;
+    }
+
+    function teamCreate(sessionId, teamId) {
+      let d = request.resource.data;
+      let actor = actorMemberId();
+      return teamShape(d, sessionId, teamId) && d.clockVersion == currentClockVersion()
+        && d.memberIds == [actor] && d.leaderMemberId == actor
+        && d.status == 'recruiting' && d.everFormed == false
+        && d.nextJoinOrder == 1 && d.revision == 0 && d.createdAt == currentScenarioNow()
+        && canJoin(sessionId, actor)
+        && indexAfter(sessionId, actor).teamId == teamId;
+    }
+
+    function teamJoin(sessionId, teamId) {
+      let o = resource.data;
+      let d = request.resource.data;
+      let actor = actorMemberId();
+      let n = o.memberIds.size();
+      let e = eventAfter(sessionId, teamId, d.revision);
+      return teamUpdateBase(o, d)
+        && o.status != 'archived' && n < 5 && !o.memberIds.hasAny([actor])
+        && d.memberIds.size() == n + 1 && d.memberIds[0:n] == o.memberIds && d.memberIds[n] == actor
+        && d.leaderMemberId == o.leaderMemberId && d.status == 'active'
+        && d.everFormed == true && d.nextJoinOrder == o.nextJoinOrder + 1
+        && canJoin(sessionId, actor)
+        && indexAfter(sessionId, actor).teamId == teamId
+        && e.type == 'join' && e.targetMemberId == actor;
+    }
+
+    // Leaving never reorders others; the earliest remaining member (memberIds[0]) succeeds a leaving captain.
+    function teamLeave(sessionId, teamId) {
+      let o = resource.data;
+      let d = request.resource.data;
+      let actor = actorMemberId();
+      let remaining = o.memberIds.removeAll([actor]);
+      let idx = indexAfter(sessionId, actor);
+      let e = eventAfter(sessionId, teamId, d.revision);
+      return teamUpdateBase(o, d) && weekOrNull() is string
+        && o.memberIds.hasAny([actor])
+        && d.memberIds == remaining && d.everFormed == o.everFormed && d.nextJoinOrder == o.nextJoinOrder
+        && d.leaderMemberId == (remaining.size() == 0 ? null : (o.leaderMemberId == actor ? remaining[0] : o.leaderMemberId))
+        && d.status == (remaining.size() == 0 ? 'archived' : (remaining.size() == 1 ? (o.everFormed ? 'paused' : 'recruiting') : 'active'))
+        && idx.status == 'left' && idx.leftTeamId == teamId
+        && idx.leftWeekId == (o.everFormed ? weekOrNull() : null)
+        && e.type == (o.everFormed ? 'leave' : 'cancelRecruiting') && e.targetMemberId == actor;
+    }
+
+    function teamTransfer(sessionId, teamId) {
+      let o = resource.data;
+      let d = request.resource.data;
+      let actor = actorMemberId();
+      let e = eventAfter(sessionId, teamId, d.revision);
+      return teamUpdateBase(o, d) && weekOrNull() is string
+        && o.leaderMemberId == actor && d.leaderMemberId != actor
+        && o.memberIds.hasAny([d.leaderMemberId])
+        && d.memberIds == o.memberIds && d.status == o.status
+        && d.everFormed == o.everFormed && d.nextJoinOrder == o.nextJoinOrder
+        && e.type == 'transferCaptain' && e.targetMemberId == d.leaderMemberId;
+    }
+
+    match /teams/{sessionId}/items/{teamId} {
+      allow get: if activeMember() && currentSession(sessionId)
+        && (!exists(/databases/$(database)/documents/teams/$(sessionId)/items/$(teamId))
+          || resource.data.memberIds.hasAll([actorMemberId()])
+          || (resource.data.status != 'archived' && resource.data.inviteCode == teamId));
+      allow list, delete: if false;
+      allow create: if activeMember() && currentSession(sessionId) && teamCreate(sessionId, teamId);
+      allow update: if activeMember() && currentSession(sessionId)
+        && ((request.resource.data.memberIds.size() > resource.data.memberIds.size() && teamJoin(sessionId, teamId))
+          || (request.resource.data.memberIds.size() < resource.data.memberIds.size() && teamLeave(sessionId, teamId))
+          || (request.resource.data.memberIds.size() == resource.data.memberIds.size() && teamTransfer(sessionId, teamId)));
+    }
+
+    // An active index must point at a roster that contains the member after this write:
+    // either a brand-new recruiting team (joinOrder 0) or an existing team joined at nextJoinOrder.
+    function activeIndexTarget(sessionId, memberId, d) {
+      let teamPath = /databases/$(database)/documents/teams/$(sessionId)/items/$(d.teamId);
+      return d.status == 'active' && d.joinedAt == currentScenarioNow()
+        && existsAfter(teamPath) && getAfter(teamPath).data.memberIds.hasAll([memberId])
+        && ((!exists(teamPath) && d.joinOrder == 0)
+          || (exists(teamPath) && d.joinOrder == get(teamPath).data.nextJoinOrder
+            && getAfter(teamPath).data.revision == get(teamPath).data.revision + 1));
+    }
+
+    // Stored indexes may predate a clock advance: only the new value is pinned to the current clock.
+    // A leaving index is accepted only alongside the team update that removes the member (teamLeave
+    // checks leftWeekId against everFormed and the shared activity week).
+    function leavingIndex(sessionId, memberId) {
+      let o = resource.data;
+      let d = request.resource.data;
+      let teamPath = /databases/$(database)/documents/teams/$(sessionId)/items/$(o.teamId);
+      return o.status == 'active' && d.status == 'left'
+        && d.joinOrder == o.joinOrder && d.joinedAt == o.joinedAt
+        && d.leftTeamId == o.teamId && d.leftAt == currentScenarioNow()
+        && getAfter(teamPath).data.revision == get(teamPath).data.revision + 1
+        && !getAfter(teamPath).data.memberIds.hasAny([memberId]);
+    }
+
+    match /teamMembership/{sessionId}/members/{memberId} {
+      allow get: if activeMember() && currentSession(sessionId) && memberId == actorMemberId();
+      allow list, delete: if false;
+      allow create: if activeMember() && currentSession(sessionId) && memberId == actorMemberId()
+        && membershipShape(request.resource.data, sessionId, memberId)
+        && activeIndexTarget(sessionId, memberId, request.resource.data);
+      allow update: if activeMember() && currentSession(sessionId) && memberId == actorMemberId()
+        && membershipShape(request.resource.data, sessionId, memberId)
+        && ((resource.data.status == 'left' && canJoin(sessionId, memberId)
+            && activeIndexTarget(sessionId, memberId, request.resource.data))
+          || leavingIndex(sessionId, memberId));
+    }
+
+    match /teams/{sessionId}/items/{teamId}/events/{eventId} {
+      allow get: if activeMember() && currentSession(sessionId)
+        && exists(/databases/$(database)/documents/teamMembership/$(sessionId)/members/$(actorMemberId()))
+        && get(/databases/$(database)/documents/teamMembership/$(sessionId)/members/$(actorMemberId())).data.teamId == teamId;
+      allow list, update, delete: if false;
+      allow create: if activeMember() && currentSession(sessionId)
+        && request.resource.data.keys().size() == 9
+        && request.resource.data.keys().hasOnly(['sessionId','teamId','revision','type','actorMemberId','targetMemberId','effectiveAt','serverRecordedAt','activityWeekId'])
+        && request.resource.data.sessionId == sessionId && request.resource.data.teamId == teamId
+        && request.resource.data.revision is int && request.resource.data.revision >= 1
+        && eventId == string(request.resource.data.revision)
+        && request.resource.data.actorMemberId == actorMemberId()
+        && request.resource.data.targetMemberId is string
+        && request.resource.data.effectiveAt == currentScenarioNow()
+        && request.resource.data.activityWeekId == weekOrNull()
+        && request.resource.data.serverRecordedAt == request.time
+        && exists(/databases/$(database)/documents/teams/$(sessionId)/items/$(teamId))
+        && getAfter(/databases/$(database)/documents/teams/$(sessionId)/items/$(teamId)).data.revision
+          == get(/databases/$(database)/documents/teams/$(sessionId)/items/$(teamId)).data.revision + 1
+        && request.resource.data.revision == getAfter(/databases/$(database)/documents/teams/$(sessionId)/items/$(teamId)).data.revision
+        && request.resource.data.type in ['join','leave','cancelRecruiting','transferCaptain'];
+    }
+
+    function sameTeamTodayReader(sessionId, targetMemberId, taskDate) {
+      let actorId = actorMemberId();
+      let actorPath = /databases/$(database)/documents/teamMembership/$(sessionId)/members/$(actorId);
+      let targetPath = /databases/$(database)/documents/teamMembership/$(sessionId)/members/$(targetMemberId);
+      let teamPath = /databases/$(database)/documents/teams/$(sessionId)/items/$(get(actorPath).data.teamId);
+      return activeMember() && currentSession(sessionId)
+        && taskDate is string && taskDate.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && get(/databases/$(database)/documents/demo/current).data.scenarioNow.matches('^' + taskDate + 'T.*[+]08:00$')
+        && exists(actorPath) && exists(targetPath)
+        && get(actorPath).data.status == 'active' && get(targetPath).data.status == 'active'
+        && get(targetPath).data.teamId == get(actorPath).data.teamId
+        && get(teamPath).data.memberIds.hasAll([actorId, targetMemberId]);
+    }
+
+    // ===== FSD-03C-1: team contribution ledger =====
+    // One create-only entry per step/ride event, written by its owner beside (after) the event.
+    // The Rules check each entry's amount and eligibility only; they never add up a total.
+
+    function teamEventDoc(sessionId, teamId, revision) {
+      return get(/databases/$(database)/documents/teams/$(sessionId)/items/$(teamId)/events/$(revision)).data;
+    }
+
+    // Same scenario time cannot order two actions, so the server time breaks the tie (both are request.time).
+    function contribAfter(t, s, ref) {
+      return t > ref.effectiveAt || (t == ref.effectiveAt && s > ref.serverRecordedAt);
+    }
+
+    function contribBefore(t, s, ref) {
+      return t < ref.effectiveAt || (t == ref.effectiveAt && s < ref.serverRecordedAt);
+    }
+
+    function teamContribReader(sessionId, teamId) {
+      let p = /databases/$(database)/documents/teamMembership/$(sessionId)/members/$(actorMemberId());
+      return activeMember() && currentSession(sessionId) && exists(p)
+        && get(p).data.status == 'active' && get(p).data.teamId == teamId;
+    }
+
+    // An owner may check whether an entry of theirs exists (also after leaving); memberIds contain no '_'.
+    function ownContribPath(sessionId, entryId) {
+      return activeMember() && currentSession(sessionId) && entryId.split('_')[0] == actorMemberId();
+    }
+
+    // Start of the member's current stint: the founder starts at creation (only formation counts),
+    // anyone else at their latest join event. A departed member cannot read team events, so their
+    // client sends 0 and the Rules fall back to a strict scenario-time bound (conservative on ties).
+    function contribJoinStart(sessionId, teamId, m, v, ms, ts) {
+      return ms.joinOrder == 0 && ms.joinedAt == ts.createdAt ? v.joinRevision == 0
+        : (v.joinRevision == 0 ? (ms.status == 'left' && v.occurredAt > ms.joinedAt)
+          : contribJoinEvent(teamEventDoc(sessionId, teamId, v.joinRevision), m, v, ms));
+    }
+
+    function contribJoinEvent(je, m, v, ms) {
+      return je.type == 'join' && je.targetMemberId == m && je.effectiveAt == ms.joinedAt
+        && contribAfter(v.occurredAt, v.syncedAt, je);
+    }
+
+    // A paused team's latest event is always the leave that paused it (no other operation is possible
+    // while paused), so a fragment from before that moment still counts.
+    function contribBeforePause(sessionId, teamId, ts, v) {
+      let pe = teamEventDoc(sessionId, teamId, ts.revision);
+      return pe.type == 'leave' && contribBefore(v.occurredAt, v.syncedAt, pe);
+    }
+
+    function contribEligible(sessionId, teamId, m, v) {
+      let ms = get(/databases/$(database)/documents/teamMembership/$(sessionId)/members/$(m)).data;
+      let ts = get(/databases/$(database)/documents/teams/$(sessionId)/items/$(teamId)).data;
+      let formed = teamEventDoc(sessionId, teamId, 1);
+      return ts.everFormed == true && formed.type == 'join'
+        && (ms.status == 'active'
+          ? ms.teamId == teamId && (ts.status == 'active' || (ts.status == 'paused' && contribBeforePause(sessionId, teamId, ts, v)))
+          : ms.status == 'left' && ms.leftTeamId == teamId && v.occurredAt < ms.leftAt)
+        // A ride needs no start moment (ruling b1) but must be on or after the member's join day, so an
+        // earlier day's ride cannot also land in a team joined later; a step must follow formation and the start.
+        && (v.kind == 'ride' ? v.joinRevision == 0 && v.taskDate >= ms.joinedAt.split('T')[0]
+          : contribAfter(v.occurredAt, v.syncedAt, formed) && contribJoinStart(sessionId, teamId, m, v, ms, ts));
+    }
+
+    function contribEvent(sessionId, m, v) {
+      let e = get(dailyEventPath(sessionId, m, v.taskDate, v.seq)).data;
+      return e.kind == v.kind && e.occurredAt == v.occurredAt && e.syncedAt == v.syncedAt
+        && v.eligibleRawDelta == (v.kind == 'steps' ? e.rawDelta : 0);
+    }
+
+    function contribCreate(sessionId, teamId, entryId) {
+      let v = request.resource.data;
+      let m = actorMemberId();
+      return v.keys().size() == 12
+        && v.keys().hasOnly(['sessionId','teamId','weekId','memberId','taskDate','seq','kind','eligibleRawDelta','occurredAt','syncedAt','joinRevision','recordedAt'])
+        && v.sessionId == sessionId && v.teamId == teamId && v.memberId == m
+        && v.taskDate is string && v.taskDate.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && v.seq is int && v.seq >= 1 && v.kind in ['steps', 'ride']
+        && v.eligibleRawDelta is int && v.joinRevision is int && v.joinRevision >= 0
+        && v.occurredAt is string && v.syncedAt is timestamp && v.recordedAt == request.time
+        && entryId == m + '_' + v.taskDate + '_' + string(v.seq)
+        && v.weekId is string && weekMatches(v.taskDate + 'T', v.weekId)
+        && dailyWindow(v.taskDate, currentScenarioNow()) != ''
+        && contribEvent(sessionId, m, v)
+        && contribEligible(sessionId, teamId, m, v);
+    }
+
+    match /teamContrib/{sessionId}/teams/{teamId}/entries/{entryId} {
+      allow get: if teamContribReader(sessionId, teamId) || ownContribPath(sessionId, entryId);
+      allow list: if teamContribReader(sessionId, teamId);
+      allow create: if activeMember() && currentSession(sessionId) && contribCreate(sessionId, teamId, entryId);
+      allow update, delete: if false;
+    }
+
+    // ===== FSD-03C-2: week results and the chest award list =====
+    // A team week keeps its first reaching moment (M1, immutable) and the current one (Mc, only earlier).
+    // Whether the team reached 300,000 is the clients' deterministic replay (trust model); the Rules check
+    // the structure: the referenced entry, the writer's team, and each awardee being in the team at M.
+
+    function weekResultPath(sessionId, teamId, weekId) {
+      return /databases/$(database)/documents/teamWeeks/$(sessionId)/teams/$(teamId)/weeks/$(weekId);
+    }
+
+    // The date must round-trip (defence in depth beside timestamp.date throwing on impossible dates).
+    function weekBefore(weekId, w) {
+      let a = weekId.split('-');
+      let b = w.split('-');
+      let d = timestamp.date(int(a[0]), int(a[1]), int(a[2]));
+      return d.month() == int(a[1]) && d.day() == int(a[2])
+        && d + duration.value(7, 'd') == timestamp.date(int(b[0]), int(b[1]), int(b[2]));
+    }
+
+    // The current activity week, or on its Monday also the previous one (catch-up until Monday 24:00).
+    function weekResultWindow(weekId) {
+      let w = weekOrNull();
+      return w is string && weekId.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && (weekId == w || (currentScenarioNow().split('T')[0] == w && weekBefore(weekId, w)));
+    }
+
+    function momentBefore(t, s, u, v) {
+      return t < u || (t == u && s < v);
+    }
+
+    function weekResultBase(sessionId, teamId, weekId) {
+      let v = request.resource.data;
+      let e = get(/databases/$(database)/documents/teamContrib/$(sessionId)/teams/$(teamId)/entries/$(v.reachingEntryId)).data;
+      return teamContribReader(sessionId, teamId)
+        && get(/databases/$(database)/documents/teams/$(sessionId)/items/$(teamId)).data.everFormed == true
+        && weekResultWindow(weekId)
+        && v.keys().size() == 12
+        && v.keys().hasOnly(['sessionId','teamId','weekId','firstReachedAt','firstReachedSyncedAt','reachedAt','reachedSyncedAt','reachingEntryId','revision','firstRecordedAt','updatedAt','updatedBy'])
+        && v.sessionId == sessionId && v.teamId == teamId && v.weekId == weekId
+        && v.reachedAt is string && v.reachedSyncedAt is timestamp && v.revision is int
+        && v.reachingEntryId is string && v.reachingEntryId.matches('^[A-Za-z0-9-]{1,40}_[0-9]{4}-[0-9]{2}-[0-9]{2}_[1-9][0-9]{0,5}$')
+        && v.updatedAt == request.time && v.updatedBy == actorMemberId()
+        && e.weekId == weekId && e.occurredAt == v.reachedAt && e.syncedAt == v.reachedSyncedAt;
+    }
+
+    function weekResultCreate(sessionId, teamId, weekId) {
+      let v = request.resource.data;
+      return weekResultBase(sessionId, teamId, weekId)
+        && v.revision == 0 && v.firstRecordedAt == request.time
+        && v.firstReachedAt == v.reachedAt && v.firstReachedSyncedAt == v.reachedSyncedAt;
+    }
+
+    function weekResultUpdate(sessionId, teamId, weekId) {
+      let v = request.resource.data;
+      let o = resource.data;
+      return v.diff(o).affectedKeys().hasOnly(['reachedAt','reachedSyncedAt','reachingEntryId','revision','updatedAt','updatedBy'])
+        && v.revision == o.revision + 1
+        && momentBefore(v.reachedAt, v.reachedSyncedAt, o.reachedAt, o.reachedSyncedAt)
+        && weekResultBase(sessionId, teamId, weekId);
+    }
+
+    // The award's moment is the week's M1 ('first') or its current Mc when that differs ('reissue').
+    function awardMoment(wr, v) {
+      return (v.reachedAt == wr.firstReachedAt && v.reachedSyncedAt == wr.firstReachedSyncedAt)
+        ? v.basis == 'first'
+        : (v.basis == 'reissue' && v.reachedAt == wr.reachedAt && v.reachedSyncedAt == wr.reachedSyncedAt);
+    }
+
+    function awardJoin(je, m, v, ms) {
+      return je.type == 'join' && je.targetMemberId == m && je.effectiveAt == ms.joinedAt
+        && contribAfter(v.reachedAt, v.reachedSyncedAt, je);
+    }
+
+    function awardLeave(le, m, v, ms) {
+      return le.type == 'leave' && le.targetMemberId == m && le.effectiveAt == ms.leftAt
+        && contribBefore(v.reachedAt, v.reachedSyncedAt, le);
+    }
+
+    // In the team at M: started (founder since creation, or this stint's join before M) and not yet gone
+    // (still in the team, or the leave that ended the stint after M). Same-time ties use the server time.
+    function awardInTeam(sessionId, m, v) {
+      let ms = get(/databases/$(database)/documents/teamMembership/$(sessionId)/members/$(m)).data;
+      let ts = get(/databases/$(database)/documents/teams/$(sessionId)/items/$(v.teamId)).data;
+      return (ms.status == 'active'
+          ? ms.teamId == v.teamId && v.leaveRevision == 0
+          : ms.status == 'left' && ms.leftTeamId == v.teamId && v.leaveRevision > 0
+            && awardLeave(teamEventDoc(sessionId, v.teamId, v.leaveRevision), m, v, ms))
+        && (ms.joinOrder == 0 && ms.joinedAt == ts.createdAt
+          // The founder is in the team from its creation on, never before it.
+          ? v.joinRevision == 0 && v.reachedAt >= ts.createdAt
+          : v.joinRevision > 0 && awardJoin(teamEventDoc(sessionId, v.teamId, v.joinRevision), m, v, ms));
+    }
+
+    function awardCreate(sessionId, weekId, memberId) {
+      let v = request.resource.data;
+      return v.keys().size() == 11
+        && v.keys().hasOnly(['sessionId','weekId','memberId','teamId','reachedAt','reachedSyncedAt','joinRevision','leaveRevision','basis','grantedBy','grantedAt'])
+        && v.sessionId == sessionId && v.weekId == weekId && v.memberId == memberId
+        && v.teamId is string && v.teamId.matches('^[A-F0-9]{16}$')
+        && v.reachedAt is string && v.reachedSyncedAt is timestamp
+        && v.joinRevision is int && v.joinRevision >= 0 && v.leaveRevision is int && v.leaveRevision >= 0
+        && v.basis in ['first', 'reissue'] && v.grantedBy == actorMemberId() && v.grantedAt == request.time
+        && weekResultWindow(weekId)
+        && teamContribReader(sessionId, v.teamId)
+        && awardMoment(get(weekResultPath(sessionId, v.teamId, weekId)).data, v)
+        && awardInTeam(sessionId, memberId, v);
+    }
+
+    // A teammate's transaction reads a missing award before creating it, so a missing document is
+    // readable by any current team member of the session (it only reveals that no award exists yet).
+    function awardTeamReader(sessionId) {
+      let p = /databases/$(database)/documents/teamMembership/$(sessionId)/members/$(actorMemberId());
+      return exists(p) && get(p).data.status == 'active';
+    }
+
+    match /teamWeeks/{sessionId}/teams/{teamId}/weeks/{weekId} {
+      allow get, list: if teamContribReader(sessionId, teamId);
+      allow create: if activeMember() && currentSession(sessionId) && weekResultCreate(sessionId, teamId, weekId);
+      allow update: if activeMember() && currentSession(sessionId) && weekResultUpdate(sessionId, teamId, weekId);
+      allow delete: if false;
+    }
+
+    match /chestAwards/{sessionId}/weeks/{weekId}/awards/{memberId} {
+      allow get: if activeMember() && currentSession(sessionId)
+        && (memberId == actorMemberId()
+          || (resource == null ? awardTeamReader(sessionId) : teamContribReader(sessionId, resource.data.teamId)));
+      allow list: if activeMember() && currentSession(sessionId) && teamContribReader(sessionId, resource.data.teamId);
+      allow create: if activeMember() && currentSession(sessionId) && awardCreate(sessionId, weekId, memberId);
+      allow update, delete: if false;
+    }
+
+    // ===== FSD-04A: weekly perfect-attendance ride coupons =====
+    // One create-only coupon per member and week. The Rules read the member's seven 01C daily documents
+    // of the week (built from weekId) and require 6,000 effective steps each plus Sunday's third point.
+
+    function pad2(n) {
+      return (n < 10 ? '0' : '') + string(n);
+    }
+
+    // YYYY-MM-DD of a timestamp (UTC calendar arithmetic, like weekBefore).
+    function dayStr(t) {
+      return string(t.year()) + '-' + pad2(t.month()) + '-' + pad2(t.day());
+    }
+
+    function couponDay(sessionId, memberId, monday, i) {
+      return get(/databases/$(database)/documents/dailySteps/$(sessionId)/members/$(memberId)/days/$(dayStr(monday + duration.value(i, 'd')))).data;
+    }
+
+    // The same time of day (with +08:00) and the date exactly 30 days later.
+    function couponExpiry(issuedAt, expiresAt) {
+      let a = issuedAt.split('T');
+      let b = expiresAt.split('T');
+      let x = a[0].split('-');
+      let y = b[0].split('-');
+      let e = timestamp.date(int(y[0]), int(y[1]), int(y[2]));
+      return validScenarioNow(expiresAt) && b[1] == a[1] && dayStr(e) == b[0]
+        && e == timestamp.date(int(x[0]), int(x[1]), int(x[2])) + duration.value(30, 'd');
+    }
+
+    function couponCreate(sessionId, memberId, weekId) {
+      let v = request.resource.data;
+      let w = weekId.split('-');
+      let monday = timestamp.date(int(w[0]), int(w[1]), int(w[2]));
+      return v.keys().size() == 10
+        && v.keys().hasOnly(['sessionId','memberId','weekId','faceValue','minFare','issuedAt','expiresAt','clockVersion','recordedAt','kind'])
+        && v.sessionId == sessionId && v.memberId == memberId && v.weekId == weekId
+        && v.faceValue == 50 && v.minFare == 150 && v.kind == 'weeklyPerfect'
+        && v.recordedAt == request.time && v.clockVersion == currentClockVersion()
+        // A Monday whose canonical spelling is the week ID itself: one legal ID per week, no aliases.
+        && weekId.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') && monday.dayOfWeek() == 1 && dayStr(monday) == weekId
+        && v.issuedAt == currentScenarioNow() && v.expiresAt is string && couponExpiry(v.issuedAt, v.expiresAt)
+        && couponDay(sessionId, memberId, monday, 0).effectiveSteps >= 6000
+        && couponDay(sessionId, memberId, monday, 1).effectiveSteps >= 6000
+        && couponDay(sessionId, memberId, monday, 2).effectiveSteps >= 6000
+        && couponDay(sessionId, memberId, monday, 3).effectiveSteps >= 6000
+        && couponDay(sessionId, memberId, monday, 4).effectiveSteps >= 6000
+        && couponDay(sessionId, memberId, monday, 5).effectiveSteps >= 6000
+        && couponDay(sessionId, memberId, monday, 6).effectiveSteps >= 6000
+        && couponDay(sessionId, memberId, monday, 6).claimed == 3;
+    }
+
+    match /rideCoupons/{sessionId}/members/{memberId}/weeks/{weekId} {
+      allow get, list: if activeMember() && currentSession(sessionId) && actorMemberId() == memberId;
+      allow create: if activeMember() && currentSession(sessionId) && actorMemberId() == memberId
+        && couponCreate(sessionId, memberId, weekId);
+      allow update, delete: if false;
+    }
+
+    // All feature data remains closed until each FSD's access rules are reviewed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ===== FSD-06A >>> chest opening and points ledger (Q1-B: the browser draws; the Rules check that the
+    // tier and points are legal and match, and that each chest is opened once). Only the owner, only the current session.
+    function dailyOwnerList(sessionId, memberId) {
+      return activeMember() && currentSession(sessionId) && actorMemberId() == memberId;
+    }
+
+    function chestPoints(tier, points) {
+      return points is int && (tier == 'basic' ? points >= 1 && points <= 3
+        : tier == 'small' ? points == 5
+        : tier == 'big' ? points >= 10 && points <= 20
+        : tier == 'super' && points == 50);
+    }
+
+    function chestOpenCreate(sessionId, memberId, weekId) {
+      let v = request.resource.data;
+      return v.keys().size() == 8
+        && v.keys().hasOnly(['sessionId','memberId','weekId','tier','points','openedAt','clockVersion','recordedAt'])
+        && v.sessionId == sessionId && v.memberId == memberId && v.weekId == weekId
+        && chestPoints(v.tier, v.points)
+        && v.openedAt == currentScenarioNow() && v.clockVersion == currentClockVersion()
+        && v.recordedAt == request.time
+        && exists(/databases/$(database)/documents/chestAwards/$(sessionId)/weeks/$(weekId)/awards/$(memberId));
+    }
+
+    match /chestOpens/{sessionId}/members/{memberId}/weeks/{weekId} {
+      allow get, list: if dailyOwnerList(sessionId, memberId);
+      allow create: if dailyOwnerList(sessionId, memberId) && chestOpenCreate(sessionId, memberId, weekId);
+      allow update, delete: if false;
+    }
+    // ===== FSD-06A <<<
+
+    // ===== FSD-07A >>> referrals (simulated): one referral per referee and session, the code is the
+    // referrer's memberId (valid when memberProfiles has it), no self or mutual referral, one first ride.
+    // Known limit (ruling M3-a): two hand-written clients writing a mutual pair at the same moment are not serialized.
+    function referralPath(sessionId, memberId) {
+      return /databases/$(database)/documents/referrals/$(sessionId)/referees/$(memberId);
+    }
+
+    function referralCreate(sessionId, refereeId) {
+      let v = request.resource.data;
+      return v.keys().size() == 8
+        && v.keys().hasOnly(['sessionId','refereeId','referrerId','boundAt','firstRideAt','clockVersion','recordedAt','firstRideRecordedAt'])
+        && v.sessionId == sessionId && v.refereeId == refereeId
+        && v.referrerId is string && v.referrerId.matches('^[A-Za-z0-9-]{1,40}$')
+        && v.referrerId != refereeId
+        && v.boundAt == currentScenarioNow() && v.clockVersion == currentClockVersion() && v.recordedAt == request.time
+        && v.firstRideAt == null && v.firstRideRecordedAt == null
+        && exists(/databases/$(database)/documents/memberProfiles/$(v.referrerId))
+        // Short-circuit: the referrer's own referral is read only when it exists.
+        && (!exists(referralPath(sessionId, v.referrerId)) || get(referralPath(sessionId, v.referrerId)).data.referrerId != refereeId);
+    }
+
+    function referralFirstRide() {
+      let v = request.resource.data;
+      return resource.data.firstRideAt == null
+        && v.diff(resource.data).affectedKeys().hasOnly(['firstRideAt','firstRideRecordedAt'])
+        && v.diff(resource.data).affectedKeys().hasAll(['firstRideAt','firstRideRecordedAt'])
+        && v.firstRideAt == currentScenarioNow() && v.firstRideRecordedAt == request.time;
+    }
+
+    match /referrals/{sessionId}/referees/{refereeId} {
+      // A missing document is readable by any active member (it only says "none yet"): the binding
+      // transaction reads the referrer's referral to rule out a mutual pair.
+      allow get: if activeMember() && currentSession(sessionId)
+        && (refereeId == actorMemberId() || resource == null || resource.data.referrerId == actorMemberId());
+      allow list: if activeMember() && currentSession(sessionId) && resource.data.referrerId == actorMemberId();
+      allow create: if activeMember() && currentSession(sessionId) && refereeId == actorMemberId() && referralCreate(sessionId, refereeId);
+      allow update: if activeMember() && currentSession(sessionId) && refereeId == actorMemberId() && referralFirstRide();
+      allow delete: if false;
+    }
+    // ===== FSD-07A <<<
+  }
+}

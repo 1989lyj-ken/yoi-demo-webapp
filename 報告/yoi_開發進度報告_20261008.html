@@ -1,0 +1,140 @@
+<title>yoi 遊移遊戲開發進度</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,600;0,800;1,900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: one reading column like a printed progress report; a navy masthead strip, sections divided by thin rules, one table for the modules. */
+:root {
+  --bg: #F4F6FA;
+  --paper: #FFFFFF;
+  --ink: #0B1F38;
+  --muted: #5F7089;
+  --rule: #DCE2EC;
+  --red: #E5352A;
+  --chip: #EEF2F8;
+  --head-bg: #0B1F38;
+  --head-ink: #FFFFFF;
+  --font-display: "Montserrat", "Noto Sans TC", "PingFang TC", sans-serif;
+  --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A1626; --paper: #10213A; --ink: #E8EEF7; --muted: #9AABC3; --rule: #22385A;
+    --red: #FF6A5C; --chip: #172C4A; --head-bg: #061120; --head-ink: #FFFFFF; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A1626; --paper: #10213A; --ink: #E8EEF7; --muted: #9AABC3; --rule: #22385A;
+  --red: #FF6A5C; --chip: #172C4A; --head-bg: #061120; --head-ink: #FFFFFF; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.75 var(--font-body); padding: 0 16px; padding-block: 24px 48px; }
+.sheet { max-width: 760px; margin: 0 auto; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+.mast { background: var(--head-bg); color: var(--head-ink); padding: 28px 32px 24px; display: grid; gap: 6px; }
+.mast .kicker { font: 600 12px/1.4 var(--font-display); letter-spacing: .14em; text-transform: uppercase; opacity: .75; }
+.mast h1 { margin: 0; font: 900 30px/1.25 var(--font-body); text-wrap: balance; }
+.mast h1 i { font: italic 900 30px/1.25 var(--font-display); color: var(--red); font-style: italic; }
+.mast .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; opacity: .85; }
+main { padding: 8px 32px 32px; display: grid; }
+section { padding-block: 24px; border-top: 1px solid var(--rule); display: grid; gap: 12px; min-width: 0; }
+section:first-child { border-top: 0; }
+h2 { margin: 0; font: 700 20px/1.4 var(--font-body); display: flex; align-items: baseline; gap: 10px; text-wrap: balance; }
+h2 .no { font: 800 14px/1 var(--font-display); color: var(--red); letter-spacing: .04em; }
+p { margin: 0; max-width: 65ch; }
+ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+li::marker { color: var(--red); }
+.muted { color: var(--muted); font-size: 14px; }
+a { color: inherit; text-underline-offset: 3px; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; }
+.facts span { background: var(--chip); border-radius: 999px; padding: 4px 12px; font-size: 14px; }
+.facts b { font-family: var(--font-display); font-variant-numeric: tabular-nums; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--rule); }
+th { font-weight: 700; color: var(--muted); font-size: 13px; letter-spacing: .06em; }
+td:first-child { font-weight: 700; white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 0; }
+.flow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 14px; }
+.flow span { border: 1px solid var(--rule); border-radius: 6px; padding: 3px 10px; }
+.flow i { font-style: normal; color: var(--muted); }
+.status { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--chip); color: var(--muted); margin-left: 6px; vertical-align: 2px; }
+footer { padding: 16px 32px 24px; border-top: 1px solid var(--rule); }
+@media (max-width: 520px) {
+  .mast { padding: 22px 18px 18px; }
+  .mast h1, .mast h1 i { font-size: 24px; }
+  main { padding: 0 18px 20px; }
+  footer { padding: 14px 18px 20px; }
+  td:first-child { white-space: normal; }
+}
+</style>
+
+<div class="sheet">
+  <header class="mast">
+    <span class="kicker">Progress Report</span>
+    <h1><i>yoi</i> 遊移遊戲　開發進度報告</h1>
+    <div class="meta"><span>報告日期：2026 年 10 月 8 日</span><span>展示網址：yoxi-yoi-demo.web.app</span></div>
+  </header>
+
+  <main>
+    <section aria-labelledby="s1">
+      <h2 id="s1"><span class="no">01</span>專案簡介</h2>
+      <p>yoi 遊移遊戲把「走路」和「搭 yoxi」變成每日任務、團隊挑戰與獎勵，鼓勵使用者多走路、多搭乘。平台吉祥物 Yoika 負責在適當時機提醒使用者。</p>
+      <p>目前是手機網頁展示版，已上線，成員以展示帳號登入。點數、乘車券、寶箱都是模擬資料，不連接正式訂單或付款。</p>
+    </section>
+
+    <section aria-labelledby="s2">
+      <h2 id="s2"><span class="no">02</span>已完成功能</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th scope="col">模組</th><th scope="col">內容</th></tr></thead>
+          <tbody>
+            <tr><td>登入與身分</td><td>展示帳號登入；管理者工具可調整情境時間、重設場次、自動推進一週。</td></tr>
+            <tr><td>每日任務</td><td>每日走到 2,000、4,000、6,000 步各領 1 點；搭一趟 yoxi 當天步數 × 1.5；昨天的點數可在今天內補領。</td></tr>
+            <tr><td>團隊</td><td>組隊與邀請碼、隊伍命名、退團與隊長交接；全隊每週累積 30 萬步即可開寶箱。</td></tr>
+            <tr><td>獎勵</td><td>七日全勤得乘車券、團隊寶箱開箱、已獲得點數與獲得紀錄。</td></tr>
+            <tr><td>推薦新戶</td><td>推薦碼綁定、新戶與推薦人的首乘獎勵（模擬流程）。</td></tr>
+            <tr><td>使用體驗</td><td>地圖與即時天氣、通知中心、遊玩指南、Yoika 智慧提醒（概念展示）、搭車慶祝動畫。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="s3">
+      <h2 id="s3"><span class="no">03</span>開發方式與品質把關</h2>
+      <ul>
+        <li>功能拆成小模組，每個模組依序走完下面的流程：
+          <div class="flow" aria-label="開發流程"><span>規格</span><i>→</i><span>實作</span><i>→</i><span>測試</span><i>→</i><span>驗收</span><i>→</i><span>部署</span></div>
+        </li>
+        <li>領點不重複、步數不能倒退、跨帳號權限等規則由伺服器端把關，不只靠畫面限制。</li>
+        <li>每次修改都要通過自動化測試才上線。</li>
+        <li>分工：產品負責人負責決策、驗收與上線授權，AI 協助開發。</li>
+      </ul>
+      <div class="facts" aria-label="目前規模">
+        <span>規格文件 <b>32</b> 份</span>
+        <span>單元測試 <b>200</b> 項</span>
+        <span>資料規則測試 <b>121</b> 項</span>
+      </div>
+    </section>
+
+    <section aria-labelledby="s4">
+      <h2 id="s4"><span class="no">04</span>近期進度（10/1 – 10/8）</h2>
+      <ul>
+        <li>步數頁改版：新的點數進度條、一鍵領點，以及搭車後的慶祝彈窗。</li>
+        <li>團隊進度條改成與個人進度條一致的樣式。</li>
+        <li>Yoika 介紹頁與遊玩指南改版，加入可左右滑動的智慧提醒範例。</li>
+        <li>文字與用語統一：全平台改用「您」，獎勵、推薦相關說明重新整理。</li>
+        <li>地圖介面整理：定位、天氣、步數輸入按鈕統一樣式。</li>
+        <li>目前待測試的項目已全部測試通過。</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="s5">
+      <h2 id="s5"><span class="no">05</span>下一步規劃</h2>
+      <ul>
+        <li>遊戲語調切換<span class="status">文案定稿中</span><br><span class="muted">使用者可切換成較熱血的「遊戲版」用語；兩個版本的文案正在比較、定稿。</span></li>
+        <li>公開測試版<span class="status">已完成評估</span><br><span class="muted">另開獨立的展示環境；資料只存在使用者自己的瀏覽器，3 天未使用自動清除。</span></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer><p class="muted">展示版所有點數、乘車券與寶箱均為模擬，不代表真實發放和泰 Points。</p></footer>
+</div>

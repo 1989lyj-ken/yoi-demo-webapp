@@ -1,0 +1,1207 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,600;0,700;0,900;1,900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap");
+@import "tailwindcss";
+
+/* ===== Design tokens: UI-design spec 1.24.0, chapter 12 (copied verbatim) ===== */
+:root {
+  /* 2.1 品牌與強調 */
+  --yx-brand-red: #EF392A;
+  --yx-icon-red: #F14A42;
+  --yx-red-deep: #CC3329;
+  --yx-action-navy: #0B1F38;
+  --yx-navy-deep: #051122;
+  --yx-link-blue: #0C4C80;
+  --yx-slate: #3C4C60;
+  --yx-star-yellow: #FFF571;
+  --yx-star-gold: #B38A42;
+  --yx-tier-minor: #D9BFA4;
+  --yx-white: #FFFFFF;
+
+  /* 2.2 文字 */
+  --yx-text-primary: var(--yx-action-navy);
+  --yx-text-muted: #778AA4;
+  --yx-text-placeholder: #C3CBDC;
+  --yx-text-on-color: #FFFFFF;
+  --yx-text-link: var(--yx-link-blue);
+
+  /* 2.3 表面 */
+  --yx-surface: #FFFFFF;
+  --yx-surface-grey: #F2F6F9;
+  --yx-surface-blue: #EDF4FC;
+  --yx-surface-apricot: #F3EBE4;
+  --yx-apricot-watermark: #EEE1D5;
+  --yx-surface-praise: #F1E7DF;
+
+  /* 2.4 框線 */
+  --yx-border: #DFE4ED;
+  --yx-border-strong: #C3CBDC;
+  --yx-checkbox-border: #EAEDF3;
+
+  /* 2.5 狀態 */
+  --yx-disabled: #C3CBDC;
+  --yx-disabled-soft: #E2E6EE;
+  --yx-disabled-icon: #BAC3D1;
+  --yx-pressed-light: #E6EBF1;
+  --yx-error: var(--yx-brand-red);
+
+  /* 2.6 遮罩 */
+  --yx-scrim-soft: rgba(11, 31, 56, 0.35);
+  --yx-scrim-strong: rgba(11, 31, 56, 0.85);
+  --yx-scrim-darkest: rgba(11, 31, 56, 0.95);
+
+  /* 3 字型 */
+  --yx-font: "Montserrat", "Noto Sans TC", "PingFang TC", system-ui, sans-serif;
+  --yx-type-display: 900 34px/1.3 var(--yx-font);
+  --yx-type-slogan: italic 900 28px/1.1 "Montserrat", var(--yx-font);
+  --yx-type-number-lg: 700 28px/1.1 var(--yx-font);
+  --yx-type-number-md: 700 24px/1.1 var(--yx-font);
+  --yx-type-heading: 500 20px/1.4 var(--yx-font);
+  --yx-type-nav-title: 700 20px/1.3 var(--yx-font);
+  /* [延伸] FSD-08A-2: the home mock greeting scales with the screenshot (container query width). */
+  --yx-type-home-greeting: 700 4.8cqw/1.2 var(--yx-font);
+  --yx-type-menu: 500 20px/1.4 var(--yx-font);
+  --yx-type-title: 700 18px/1.4 var(--yx-font);
+  --yx-type-body: 500 18px/1.6 var(--yx-font);
+  --yx-type-button: 500 18px/1.2 var(--yx-font);
+  --yx-type-body-sm: 400 16px/1.5 var(--yx-font);
+  --yx-type-tab: 500 16px/1.2 var(--yx-font);
+  --yx-type-caption: 400 13px/1.5 var(--yx-font);
+  --yx-type-label: 400 13px/1.4 var(--yx-font);
+  --yx-type-tag: 500 12px/1.2 var(--yx-font);
+
+  /* 4 間距 */
+  --yx-space-xxs: 4px;
+  --yx-space-xs: 8px;
+  --yx-space-sm: 12px;
+  --yx-space-md: 16px;
+  --yx-space-lg: 24px;
+  --yx-space-xl: 32px;
+  --yx-space-xxl: 40px;
+  --yx-space-xxxl: 56px;
+  --yx-page-header: 16px;
+  --yx-page-content: 24px;
+  --yx-page-inset: 32px;
+
+  /* 4.5 觸控 */
+  --yx-touch-min: 44px;
+  --yx-touch-gap: 8px;
+
+  /* 5 圓角 */
+  --yx-radius-none: 0;
+  --yx-radius-xs: 2px;
+  --yx-radius-sm: 6px;
+  --yx-radius-md: 8px;
+  --yx-radius-lg: 10px;
+  --yx-radius-xl: 24px;
+  --yx-radius-full: 999px;
+
+  /* 6 陰影 */
+  --yx-shadow-float: 0 2px 8px rgba(11, 31, 56, 0.12);
+
+  /* 8 元件尺寸 */
+  --yx-button-height: 54px;
+  --yx-field-height: 56px;
+  --yx-field-search-height: 48px;
+  --yx-tab-pill-height: 41px;
+  --yx-tab-segment-height: 36px;
+  --yx-chip-height: 34px;
+  --yx-icon-tile: 44px;
+  --yx-pin: 28px;
+  --yx-checkbox: 24px;
+  --yx-row-compact: 56px;
+  --yx-row-icon: 96px;
+  --yx-divider-band: 8px;
+  --yx-avatar: 44px;
+  --yx-switch-width: 51px;
+  --yx-switch-height: 31px;
+
+  /* 8.12 地圖（示意值，正式配色待定） */
+  --yx-map-ground: #EEF2F6;
+  --yx-map-road: #FFFFFF;
+  --yx-map-water: #D6E4F0;
+  --yx-map-park: #E1ECDD;
+
+  /* 10 動效 */
+  --yx-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --yx-duration-press: 100ms;
+  --yx-duration-select: 150ms;
+  --yx-duration-sheet: 250ms;
+
+  /* [延伸] FSD-UI01 appendix: tokens the spec does not define */
+  --yx-prototype-backdrop: #E9EDF2; /* 8.12 Prototype display rule: grey sides around the 440 column */
+  --yx-prototype-width: 440px;
+  --yx-type-map-steps: 700 37px/1 var(--yx-font); /* big step count on the map (FSD-08A-6: 2/3 of 56) */
+  --yx-focus-on-dark: var(--yx-white); /* link-blue is ~2:1 on navy, below WCAG 1.4.11 */
+  --yx-map-veil: rgba(255, 255, 255, 0.3); /* FSD-08A-6: the status pill's 30 % white veil */
+  --yx-map-veil-half: rgba(255, 255, 255, 0.5); /* 2026-10-07: the map's status pill and buttons */
+  --yx-type-map-steps-long: 700 28px/1 var(--yx-font); /* FSD-08A-4 C6: a 7-digit count (1,000,000) still fits a 360 px map */
+  --yx-map-veil-blur: 6px; /* FSD-08A-3 D9: slight backdrop blur (now unused by the step count) */
+  --yx-type-kicker-lg: italic 500 16px/1.4 var(--yx-font); /* FSD-08A-6 (9): section kickers, 16 px italic */
+  --yx-type-chest-prize: 700 28px/31px var(--yx-font); /* FSD-08A-6: the rolling prize number (one 31 px line per value, UI-design 3-6) */
+  --yx-chest-shadow: rgba(11, 31, 56, 0.08); /* FSD-08A-6: the chest's ground shadow (3-6) */
+  --yx-chest-inner: rgba(11, 31, 56, 0.06); /* FSD-08A-6: the chest's inner shade (3-6) */
+}
+
+/* 11 大字好讀模式 */
+[data-mode="large-text"] {
+  --yx-text-muted: #4A5A70;
+  --yx-border: #7D8BA0;
+
+  --yx-type-display: 900 40px/1.3 var(--yx-font);
+  --yx-type-heading: 700 26px/1.4 var(--yx-font);
+  --yx-type-nav-title: 700 24px/1.3 var(--yx-font);
+  --yx-type-menu: 500 24px/1.4 var(--yx-font);
+  --yx-type-title: 700 22px/1.4 var(--yx-font);
+  --yx-type-body: 500 22px/1.7 var(--yx-font);
+  --yx-type-button: 700 22px/1.2 var(--yx-font);
+  --yx-type-body-sm: 500 20px/1.6 var(--yx-font);
+  --yx-type-tab: 500 20px/1.2 var(--yx-font);
+  --yx-type-caption: 500 18px/1.5 var(--yx-font);
+  --yx-type-label: 500 18px/1.4 var(--yx-font);
+  --yx-type-tag: 700 18px/1.2 var(--yx-font);
+
+  --yx-page-header: 20px;
+  --yx-space-xl: 40px;
+  --yx-touch-min: 60px;
+  --yx-touch-gap: 12px;
+  --yx-button-height: 64px;
+  --yx-icon-tile: 56px;
+  --yx-checkbox: 32px;
+  --yx-row-compact: 72px;
+  --yx-row-icon: 112px;
+  --yx-avatar: 56px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --yx-duration-sheet: 150ms; }
+}
+/* ===== End of token definitions; everything below references tokens only ===== */
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { background: var(--yx-prototype-backdrop); }
+body { margin: 0; min-width: 320px; min-height: 100dvh; background: var(--yx-prototype-backdrop); color: var(--yx-text-primary); font: var(--yx-type-body-sm); font-synthesis: none; text-rendering: optimizeLegibility; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+h1 { margin: 0; font: var(--yx-type-nav-title); color: var(--yx-text-primary); }
+h2 { margin: 0; font: var(--yx-type-title); color: var(--yx-text-primary); }
+p { margin: var(--yx-space-xs) 0 0; }
+:focus-visible { outline: 2px solid var(--yx-link-blue); outline-offset: 2px; }
+
+/* ----- Icons (ch. 7) ----- */
+.yx-icon { display: inline-block; flex: none; vertical-align: middle; }
+.yx-i-accent { fill: var(--yx-icon-red); }
+.yx-i-accent-stroke { stroke: var(--yx-icon-red); }
+.yx-i-knock { fill: var(--yx-white); }
+.yx-i-apricot { stroke: var(--yx-surface-apricot); }
+.yx-i-link { fill: var(--yx-link-blue); }
+/* Mono (on coloured surfaces): accent parts that sit inside cut-outs of the body would fill them in, so they are
+   hidden and the body shape alone carries the icon. Free-standing accents keep currentColor. */
+.yx-icon--mono .yx-i-accent-inset, .yx-icon--mono .yx-i-accent-stroke { display: none; }
+.yx-icon--mono .yx-i-accent, .yx-icon--mono .yx-i-link { fill: currentColor; }
+.yx-icon--mono .yx-i-apricot { stroke: currentColor; }
+.yx-icon--mono .yx-i-knock { fill: transparent; }
+.yx-sq-arrow { display: inline-flex; align-items: center; gap: 3px; flex: none; color: var(--yx-text-primary); }
+.yx-sq-arrow i { display: block; width: 8px; height: 5px; background: var(--yx-icon-red); }
+
+/* ----- Values (2.7): red number + navy unit ----- */
+.yx-count { display: inline-flex; align-items: baseline; gap: var(--yx-space-xxs); flex: none; white-space: nowrap; }
+.yx-count b { font: var(--yx-type-number-md); color: var(--yx-brand-red); font-variant-numeric: tabular-nums; }
+.yx-count span { font: var(--yx-type-caption); color: var(--yx-text-primary); }
+
+/* ----- Progress/Trip (8.11, 8.12) ----- */
+.yx-trip { position: relative; margin: var(--yx-space-md) 0 var(--yx-space-xs); padding-top: 20px; }
+.yx-trip-track { display: flex; gap: 3px; height: 5px; }
+.yx-trip-seg { flex: 1; background: var(--yx-disabled); }
+/* FSD-08A-3 D12: the reached part of a segment is navy up to the marker (--fill set per segment). */
+.yx-trip-seg:not(.done) { background: linear-gradient(to right, var(--yx-action-navy) var(--fill, 0%), var(--yx-disabled) var(--fill, 0%)); }
+.yx-trip-seg.done { background: var(--yx-action-navy); }
+.yx-trip-car { position: absolute; top: 0; left: clamp(11px, var(--trip), calc(100% - 11px)); transform: translateX(-50%); line-height: 0; transition: left var(--yx-duration-sheet) var(--yx-ease); }
+/* FSD-08A-3 D6: the footprints marker is square (the car was 28x18). */
+.yx-trip-car .yx-icon { width: 20px; height: 20px; }
+
+/* ----- Buttons (8.2, 8.1) ----- */
+.primary-button, .yo-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--yx-space-xs);
+  min-height: var(--yx-button-height); padding: 0 var(--yx-space-md); border: 0; border-radius: var(--yx-radius-xs);
+  background: var(--yx-action-navy); color: var(--yx-text-on-color); font: var(--yx-type-button); text-align: center;
+}
+.primary-button { width: 100%; margin-top: var(--yx-space-lg); }
+.primary-button:active, .yo-primary:active { background: var(--yx-navy-deep); }
+.secondary-button, .yo-secondary {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--yx-space-xs);
+  min-height: var(--yx-button-height); padding: 0 var(--yx-space-md); border: 1px solid var(--yx-action-navy); border-radius: var(--yx-radius-xs);
+  background: var(--yx-surface); color: var(--yx-text-primary); font: var(--yx-type-button); text-align: center;
+}
+.secondary-button:active, .yo-secondary:active { background: var(--yx-pressed-light); }
+.primary-button:disabled, .yo-primary:disabled, .secondary-button:disabled, .yo-secondary:disabled {
+  border-color: var(--yx-disabled); background: var(--yx-disabled); color: var(--yx-text-on-color); cursor: default;
+}
+.yo-full { width: 100%; margin-top: var(--yx-space-sm); }
+/* [延伸] Compact button: Primary styling at the 44 touch minimum, for in-row actions. */
+.yx-btn-compact, .yo-milestone button, .milestone button {
+  flex: none; min-width: 88px; min-height: var(--yx-touch-min); padding: 0 var(--yx-space-sm); border: 0; border-radius: var(--yx-radius-xs);
+  background: var(--yx-action-navy); color: var(--yx-text-on-color); font: var(--yx-type-tab);
+}
+.yx-btn-compact:active, .yo-milestone button:active, .milestone button:active { background: var(--yx-navy-deep); }
+.yx-btn-compact:disabled, .yo-milestone button:disabled, .milestone button:disabled { background: var(--yx-disabled); color: var(--yx-text-on-color); cursor: default; }
+/* [延伸] Header button. */
+.text-button, .yo-settings-toggle {
+  display: inline-flex; align-items: center; gap: 6px; min-height: var(--yx-touch-min); padding: 0 var(--yx-space-sm);
+  border: 1px solid var(--yx-border); border-radius: var(--yx-radius-xs); background: var(--yx-surface); color: var(--yx-text-primary); font: var(--yx-type-tab);
+}
+.text-button:active, .yo-settings-toggle:active { background: var(--yx-pressed-light); }
+.text-button:disabled { background: var(--yx-disabled); color: var(--yx-text-on-color); cursor: default; }
+/* Button/Text-Link (8.2): link-blue text + red-square arrow, 44 touch area. */
+.yo-link, .yo-demo-shortcut {
+  display: inline-flex; align-items: center; gap: var(--yx-space-xs); min-height: var(--yx-touch-min); padding: 0;
+  border: 0; background: transparent; color: var(--yx-text-link); font: var(--yx-type-body);
+}
+.yo-demo-shortcut:disabled { color: var(--yx-text-muted); cursor: default; }
+/* Button/Inline (8.2): flush with its field. */
+.yo-inline, .yo-step-form > div { display: flex; gap: 0; }
+.yo-inline input, .yo-step-form input { flex: 1; min-width: 0; }
+.yo-inline > button, .yo-step-form > div > button {
+  flex: none; width: auto; min-height: var(--yx-field-height); margin: 0; padding: 0 var(--yx-space-md);
+  border-radius: var(--yx-radius-none); font: var(--yx-type-tab); white-space: nowrap;
+}
+
+/* ----- Field (8.5) ----- */
+label { display: block; margin: var(--yx-space-md) 0 var(--yx-space-xs); font: var(--yx-type-label); color: var(--yx-text-primary); }
+input {
+  width: 100%; min-height: var(--yx-field-height); padding: 0 var(--yx-space-md); border: 1px solid transparent; border-radius: var(--yx-radius-none);
+  background: var(--yx-surface-grey); color: var(--yx-text-primary); font: var(--yx-type-body); accent-color: var(--yx-icon-red);
+}
+input::placeholder { color: var(--yx-text-placeholder); }
+input:disabled { color: var(--yx-text-muted); }
+
+/* ----- Messages ----- */
+.error-message { display: flex; align-items: flex-start; gap: var(--yx-space-xs); margin: var(--yx-space-sm) 0 0; color: var(--yx-text-primary); font: var(--yx-type-caption); }
+.error-message::before { content: "!"; display: inline-grid; place-items: center; flex: none; width: 16px; height: 16px; margin-top: 2px; border-radius: var(--yx-radius-full); background: var(--yx-icon-red); color: var(--yx-text-on-color); font: var(--yx-type-tag); }
+.success-message { color: var(--yx-text-primary); }
+.success-message::before { content: none; }
+.demo-notice, .yo-note { margin: var(--yx-space-lg) 0 0; padding: var(--yx-space-sm) var(--yx-space-md); border-radius: var(--yx-radius-md); background: var(--yx-surface-grey); color: var(--yx-text-primary); font: var(--yx-type-caption); }
+.demo-notice { text-align: center; }
+.yo-note p { margin: var(--yx-space-xxs) 0 0; }
+.yo-note strong { font: var(--yx-type-tab); }
+
+/* ----- Layout: 440 column on a grey backdrop (8.12 Prototype rule), page content 24 (4.3) ----- */
+.page-shell {
+  width: 100%; max-width: var(--yx-prototype-width); min-height: 100dvh; margin: 0 auto; gap: var(--yx-space-md);
+  padding: max(var(--yx-space-lg), env(safe-area-inset-top)) var(--yx-page-content) max(var(--yx-space-lg), env(safe-area-inset-bottom));
+  background: var(--yx-surface-grey);
+}
+.brand-header { width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: var(--yx-space-xs); padding: var(--yx-space-xs) 0; }
+.brand-header .brand-name { flex: 1 1 auto; }
+.brand-mark { width: 34px; height: 34px; display: grid; place-items: center; flex: none; border-radius: var(--yx-radius-lg); background: var(--yx-brand-red); color: var(--yx-text-on-color); font: var(--yx-type-number-md); }
+.brand-name { color: var(--yx-text-primary); font: var(--yx-type-title); }
+.brand-name .yoi-brand-text { margin-left: var(--yx-space-xs); font: var(--yx-type-nav-title); }
+footer { width: 100%; padding-top: var(--yx-space-md); color: var(--yx-text-primary); text-align: center; font: var(--yx-type-caption); }
+
+/* ----- Card base (8.8): surface, 1pt border, no shadow ----- */
+.login-card, .yo-panel, .yo-settings-panel, .yo-walk-week-card {
+  width: 100%; margin: 0; padding: var(--yx-space-lg) var(--yx-space-md); border: 1px solid var(--yx-border); border-radius: var(--yx-radius-md); background: var(--yx-surface);
+}
+.login-card { margin: auto 0; }
+.eyebrow, .yo-kicker { margin: 0 0 var(--yx-space-xs); color: var(--yx-text-link); font: var(--yx-type-tag); }
+.intro { margin: var(--yx-space-xs) 0 var(--yx-space-md); color: var(--yx-text-primary); font: var(--yx-type-body-sm); }
+.session-details { margin: var(--yx-space-lg) 0 0; border-top: 1px solid var(--yx-border); }
+.session-details div { display: flex; justify-content: space-between; gap: var(--yx-space-md); padding: var(--yx-space-sm) 0; border-bottom: 1px solid var(--yx-border); font: var(--yx-type-caption); }
+.session-details dt { color: var(--yx-text-muted); }
+.session-details dd { margin: 0; color: var(--yx-text-primary); font: var(--yx-type-tab); text-align: right; overflow-wrap: anywhere; }
+.daily-panel { margin-top: var(--yx-space-lg); padding-top: var(--yx-space-lg); border-top: 1px solid var(--yx-border); }
+.daily-panel p { font: var(--yx-type-body-sm); }
+.milestones { display: grid; gap: var(--yx-space-xs); margin-top: var(--yx-space-md); }
+.milestone { display: flex; align-items: center; justify-content: space-between; gap: var(--yx-space-xs); padding: var(--yx-space-sm); border: 1px solid var(--yx-border); border-radius: var(--yx-radius-md); background: var(--yx-surface); font: var(--yx-type-caption); }
+.team-panel { margin-top: var(--yx-space-md); }
+.team-join-form { display: grid; gap: var(--yx-space-xs); margin-top: var(--yx-space-md); }
+.team-summary { padding: var(--yx-space-sm); border: 1px solid var(--yx-border); border-radius: var(--yx-radius-md); background: var(--yx-surface-grey); }
+.team-summary p { margin: var(--yx-space-xs) 0 0; font: var(--yx-type-caption); }
+.team-summary code { color: var(--yx-text-primary); font: var(--yx-type-tab); }
+.team-progress { margin-top: var(--yx-space-sm); padding: var(--yx-space-md); border-radius: var(--yx-radius-md); background: var(--yx-surface-grey); }
+.team-progress-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--yx-space-xs); margin: 0 0 var(--yx-space-xs); font: var(--yx-type-tab); }
+.team-progress-note { margin: var(--yx-space-xs) 0 0; font: var(--yx-type-caption); }
+.team-member-past { background: var(--yx-surface-grey); }
+.team-roster { display: grid; gap: var(--yx-space-xs); margin-top: var(--yx-space-sm); }
+.team-member { display: grid; gap: var(--yx-space-xxs); padding: var(--yx-space-sm); border: 1px solid var(--yx-border); border-radius: var(--yx-radius-md); }
+.team-member strong { font: var(--yx-type-tab); }
+.team-member span, .team-member small { font: var(--yx-type-caption); }
+
+/* ----- Admin screen and stale overlay (FSD-02B) ----- */
+.admin-quick { display: flex; flex-wrap: wrap; gap: var(--yx-touch-gap); margin-top: var(--yx-space-sm); }
+.admin-quick .secondary-button { flex: 1 1 120px; }
+.admin-wide { width: 100%; margin-top: var(--yx-space-md); }
+.admin-confirm { margin-top: var(--yx-space-lg); padding: var(--yx-space-md); border: 1px solid var(--yx-action-navy); border-radius: var(--yx-radius-md); background: var(--yx-surface-grey); }
+.admin-confirm p { font: var(--yx-type-body-sm); }
+.stale-overlay { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: var(--yx-page-content); background: var(--yx-scrim-darkest); }
+.confirm-scrim { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: var(--yx-page-content); background: var(--yx-scrim-strong); }
+.confirm-dialog { width: 100%; max-width: 280px; padding: var(--yx-space-lg); border-radius: var(--yx-radius-xl); background: var(--yx-surface); color: var(--yx-text-primary); }
+.confirm-dialog h2 { margin: 0 0 var(--yx-space-xs); font: var(--yx-type-nav-title); }
+.confirm-dialog p { margin: 0 0 var(--yx-space-md); font: var(--yx-type-body-sm); }
+.dialog-choices { display: grid; gap: var(--yx-touch-gap); margin-bottom: var(--yx-space-md); }
+.dialog-choice { display: flex; align-items: center; gap: var(--yx-space-xs); padding: var(--yx-space-xs) var(--yx-space-sm); border: 1px solid var(--yx-border); border-radius: var(--yx-radius-md); font: var(--yx-type-body-sm); }
+.dialog-choice input { flex: none; width: var(--yx-touch-min); min-height: 0; height: var(--yx-touch-min); margin: 0; padding: 0; accent-color: var(--yx-action-navy); }
+.dialog-choice span { flex: 1 1 auto; overflow-wrap: anywhere; }
+.dialog-choice { min-height: var(--yx-touch-min); }
+.dialog-status { color: var(--yx-text-primary); }
+.dialog-actions { display: flex; gap: var(--yx-touch-gap); }
+.dialog-actions button { flex: 1 1 0; width: auto; margin: 0; }
+.team-actions { display: flex; flex-wrap: wrap; gap: var(--yx-touch-gap); margin-top: var(--yx-space-sm); }
+.stale-overlay .login-card { margin: 0; max-width: calc(var(--yx-prototype-width) - 2 * var(--yx-page-content)); }
+
+/* ----- Showcase app frame ----- */
+.yo-app { width: 100%; max-width: var(--yx-prototype-width); min-height: 100dvh; margin: 0 auto; padding-bottom: 96px; background: var(--yx-surface-grey); color: var(--yx-text-primary); }
+.yo-topbar { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--yx-space-xs); padding: var(--yx-space-xs) var(--yx-page-content); border-bottom: 1px solid var(--yx-border); background: var(--yx-surface); }
+.yo-brand { display: flex; align-items: center; gap: var(--yx-space-xs); color: var(--yx-text-primary); font: var(--yx-type-title); }
+.yo-top-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--yx-space-xs); }
+/* Tag/Status (8.3) */
+.yo-demo-tag { display: inline-flex; align-items: center; min-height: 24px; padding: 0 var(--yx-space-xs); border-radius: var(--yx-radius-sm); background: var(--yx-link-blue); color: var(--yx-text-on-color); font: var(--yx-type-tag); }
+/* [延伸] Showcase banner on navy; its button uses the on-dark header button and focus ring. */
+.yo-banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--yx-space-xs); padding: var(--yx-space-xs) var(--yx-page-content); background: var(--yx-action-navy); color: var(--yx-text-on-color); text-align: center; font: var(--yx-type-caption); }
+.yo-banner button { min-height: var(--yx-touch-min); padding: 0 var(--yx-space-sm); border: 1px solid var(--yx-text-on-color); border-radius: var(--yx-radius-xs); background: transparent; color: var(--yx-text-on-color); font: var(--yx-type-tab); }
+.yo-banner button:focus-visible { outline-color: var(--yx-focus-on-dark); }
+.yo-content { display: grid; gap: var(--yx-space-sm); padding: var(--yx-space-md) var(--yx-page-content) var(--yx-space-xl); }
+.yo-panel-head { display: flex; align-items: center; justify-content: space-between; gap: var(--yx-space-sm); }
+.yo-panel p { font: var(--yx-type-body-sm); }
+.yo-page-heading { padding: var(--yx-space-xs) 0 0; }
+.yo-page-heading > p:not(.yo-kicker) { margin: var(--yx-space-xs) 0 0; font: var(--yx-type-body-sm); }
+.yo-muted { display: block; margin-top: var(--yx-space-sm); color: var(--yx-text-primary); font: var(--yx-type-caption); }
+
+/* ----- Map card: spec map tokens; current position icon-red, POIs navy ----- */
+.yo-walk-week-card { padding: 0; overflow: hidden; }
+.yo-walk-map { position: relative; height: clamp(260px, 48vh, 360px); overflow: hidden; background: var(--yx-map-ground); isolation: isolate; }
+.yo-map-art {
+  position: absolute; inset: -18px; overflow: hidden; transform: translateX(var(--map-shift)); transition: transform var(--yx-duration-sheet) var(--yx-ease);
+  background:
+    radial-gradient(ellipse at 18% 18%, var(--yx-map-park) 0 13%, transparent 14%),
+    radial-gradient(ellipse at 88% 75%, var(--yx-map-water) 0 16%, transparent 17%),
+    repeating-linear-gradient(13deg, transparent 0 47px, var(--yx-map-road) 48px 60px, transparent 61px 111px),
+    repeating-linear-gradient(101deg, transparent 0 65px, var(--yx-map-road) 66px 78px, transparent 79px 142px),
+    var(--yx-map-ground);
+}
+.yo-map-art::before, .yo-map-art::after { position: absolute; content: ""; z-index: 1; border-radius: var(--yx-radius-full); background: var(--yx-map-road); }
+.yo-map-art::before { top: 44%; left: -8%; width: 120%; height: 18px; transform: rotate(-12deg); }
+.yo-map-art::after { top: -20%; left: 61%; width: 17px; height: 145%; transform: rotate(11deg); }
+.yo-map-art i { position: absolute; z-index: 2; width: 10px; height: 10px; border: 2px solid var(--yx-white); border-radius: var(--yx-radius-full); background: var(--yx-action-navy); }
+.yo-map-art i:nth-child(1) { top: 24%; left: 18%; } .yo-map-art i:nth-child(2) { top: 67%; left: 78%; } .yo-map-art i:nth-child(3) { top: 70%; left: 38%; } .yo-map-art i:nth-child(4) { top: 31%; left: 83%; } .yo-map-art i:nth-child(5) { top: 18%; left: 52%; }
+.yo-map-art b { position: absolute; z-index: 2; top: 53%; left: 50%; width: 14px; height: 14px; border: 3px solid var(--yx-white); border-radius: var(--yx-radius-full); background: var(--yx-icon-red); }
+.yo-map-art span, .yo-map-art em, .yo-map-art small { position: absolute; z-index: 2; color: var(--yx-slate); font: var(--yx-type-caption); font-style: normal; }
+.yo-map-art span { top: 21%; left: 34%; } .yo-map-art em { right: 8%; bottom: 22%; } .yo-map-art small { left: 12%; bottom: 13%; }
+.yo-map-top { position: absolute; z-index: 3; top: var(--yx-space-sm); right: var(--yx-space-sm); left: var(--yx-space-sm); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--yx-space-xs); }
+.yo-location-pill, .yo-gps-state { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 var(--yx-space-sm); border-radius: var(--yx-radius-full); background: var(--yx-surface); color: var(--yx-text-primary); font: var(--yx-type-caption); box-shadow: var(--yx-shadow-float); }
+.yo-step-overlay { position: absolute; z-index: 3; top: 50%; left: 50%; display: grid; grid-template-columns: auto auto; align-items: end; gap: 0 var(--yx-space-xs); padding: var(--yx-space-xs) var(--yx-space-md) var(--yx-space-sm); border-radius: var(--yx-radius-md); background: var(--yx-surface); text-align: center; transform: translate(-50%, -50%); box-shadow: var(--yx-shadow-float); }
+.yo-step-overlay strong { color: var(--yx-brand-red); font: var(--yx-type-map-steps); font-variant-numeric: tabular-nums; }
+.yo-step-overlay > span { padding-bottom: 6px; color: var(--yx-text-primary); font: var(--yx-type-title); }
+.yo-step-overlay small { grid-column: 1 / -1; margin-top: var(--yx-space-xxs); color: var(--yx-text-primary); font: var(--yx-type-caption); }
+.yo-map-marker { position: absolute; z-index: 2; top: var(--marker-y); left: var(--marker-x); width: 22px; height: 22px; border: 4px solid var(--yx-white); border-radius: var(--yx-radius-full); background: var(--yx-icon-red); transform: translate(-50%, -50%); transition: top var(--yx-duration-sheet) var(--yx-ease), left var(--yx-duration-sheet) var(--yx-ease); box-shadow: var(--yx-shadow-float); }
+.yo-map-move { position: absolute; z-index: 4; right: var(--yx-space-sm); bottom: var(--yx-space-sm); display: inline-flex; align-items: center; gap: var(--yx-space-xs); min-height: var(--yx-touch-min); padding: 0 var(--yx-space-sm); border: 0; border-radius: var(--yx-radius-xs); background: var(--yx-surface); color: var(--yx-text-primary); font: var(--yx-type-tab); box-shadow: var(--yx-shadow-float); }
+
+/* ----- Weekly strip [延伸]: done = apricot success tile, selected = 2pt link-blue frame (8.1) ----- */
+.yo-week-panel { padding: var(--yx-space-md); border-top: 1px solid var(--yx-border); }
+.yo-week-panel > p { margin: var(--yx-space-xs) 0 0; font: var(--yx-type-body-sm); }
+.yo-week-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--yx-space-xxs); margin: var(--yx-space-md) 0 var(--yx-space-xs); }
+.yo-week-strip .yo-day-chip { display: grid; justify-items: center; gap: var(--yx-space-xxs); min-width: 0; min-height: var(--yx-row-compact); padding: 6px 0; border: 2px solid transparent; border-radius: var(--yx-radius-md); background: var(--yx-surface-grey); color: var(--yx-text-primary); font: var(--yx-type-caption); }
+.yo-week-strip .yo-day-chip > b { display: grid; place-items: center; width: 28px; height: 28px; border-radius: var(--yx-radius-full); font: var(--yx-type-tag); font-variant-numeric: tabular-nums; }
+.yo-week-strip .yo-day-chip.done > b { border: 2px solid var(--yx-action-navy); background: var(--yx-surface-apricot); color: var(--yx-text-primary); }
+.yo-week-strip .yo-day-chip.selected { border-color: var(--yx-link-blue); }
+
+/* ----- Today's points and milestones ----- */
+.yo-step-card { padding-bottom: var(--yx-space-md); }
+.yo-step-meta { display: flex; justify-content: space-between; gap: var(--yx-space-xs); color: var(--yx-text-muted); font: var(--yx-type-caption); font-variant-numeric: tabular-nums; }
+.yo-milestones { display: grid; gap: var(--yx-space-xs); margin-top: var(--yx-space-md); }
+.yo-milestone { display: flex; align-items: center; gap: var(--yx-space-sm); padding: var(--yx-space-sm); border: 1px solid var(--yx-border); border-radius: var(--yx-radius-md); background: var(--yx-surface); }
+.yo-mile-icon { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: var(--yx-radius-full); background: var(--yx-surface-grey); color: var(--yx-text-primary); font: var(--yx-type-tab); }
+.yo-milestone > div { flex: 1; min-width: 0; }
+.yo-milestone strong, .yo-milestone small { display: block; }
+.yo-milestone strong { font: var(--yx-type-tab); }
+.yo-milestone small { margin-top: var(--yx-space-xxs); font: var(--yx-type-caption); }
+.yo-milestone.ready { border-color: var(--yx-action-navy); }
+.yo-milestone.ready .yo-mile-icon { background: var(--yx-action-navy); color: var(--yx-text-on-color); }
+.yo-milestone.claimed .yo-mile-icon { background: var(--yx-surface-apricot); }
+
+/* ----- Team ----- */
+.yo-team-banner { display: flex; justify-content: space-between; align-items: center; gap: var(--yx-space-sm); padding: var(--yx-space-md); border-radius: var(--yx-radius-md); background: var(--yx-action-navy); color: var(--yx-text-on-color); }
+.yo-team-banner small, .yo-team-banner p { margin: 0; color: var(--yx-text-on-color); font: var(--yx-type-caption); }
+.yo-team-banner h2 { margin: var(--yx-space-xxs) 0; color: var(--yx-text-on-color); }
+.yo-roster { display: grid; gap: var(--yx-space-xs); margin-top: var(--yx-space-md); }
+.yo-roster > div { display: flex; align-items: center; gap: var(--yx-space-sm); padding: var(--yx-space-xs); border: 1px solid var(--yx-border); border-radius: var(--yx-radius-md); }
+.yo-avatar { display: grid; place-items: center; flex: none; width: var(--yx-avatar); height: var(--yx-avatar); border-radius: var(--yx-radius-full); background: var(--yx-surface-apricot); color: var(--yx-text-primary); font: var(--yx-type-tab); }
+.yo-roster > div > span:nth-child(2) { flex: 1; min-width: 0; }
+.yo-roster strong, .yo-roster small { display: block; }
+.yo-roster strong { font: var(--yx-type-tab); }
+.yo-roster small { margin-top: 2px; font: var(--yx-type-caption); }
+.yo-roster > div > b { font: var(--yx-type-caption); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.yo-empty { text-align: center; }
+.yo-empty-icon { display: grid; place-items: center; width: var(--yx-icon-tile); height: var(--yx-icon-tile); margin: 0 auto var(--yx-space-sm); background: var(--yx-surface-apricot); }
+.yo-divider { display: flex; align-items: center; gap: var(--yx-space-sm); margin: var(--yx-space-lg) 0 var(--yx-space-xs); color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.yo-divider::before, .yo-divider::after { content: ""; flex: 1; height: 1px; background: var(--yx-border); }
+
+/* ----- Rewards: Card/Coupon (8.8) ----- */
+.yo-coupon { position: relative; display: block; padding: var(--yx-space-md); border-bottom: 2px dashed var(--yx-action-navy); border-radius: var(--yx-radius-none); background: var(--yx-surface-apricot); }
+.yo-coupon-icon { display: grid; place-items: center; flex: none; width: var(--yx-icon-tile); height: var(--yx-icon-tile); background: var(--yx-surface); }
+.yo-coupon > div:nth-child(2) { flex: 1; min-width: 0; }
+.yo-coupon small, .yo-coupon p { margin: 0; font: var(--yx-type-caption); }
+.yo-coupon h2 { margin: var(--yx-space-xxs) 0; }
+.yo-coupon strong { display: block; margin-top: var(--yx-space-xxs); font: var(--yx-type-tab); }
+.yo-chest { display: grid; place-items: center; width: var(--yx-icon-tile); height: var(--yx-icon-tile); background: var(--yx-surface-apricot); }
+
+/* ----- Invite ----- */
+.yo-code { margin: var(--yx-space-md) 0; padding: var(--yx-space-sm); border: 1px dashed var(--yx-border-strong); border-radius: var(--yx-radius-none); background: var(--yx-surface-grey); color: var(--yx-text-primary); font: var(--yx-type-number-md); text-align: center; overflow-wrap: anywhere; }
+.yo-referral-steps { display: flex; align-items: flex-start; margin: var(--yx-space-md) 0; }
+.yo-referral-steps > span { display: grid; justify-items: center; flex: none; width: 76px; gap: var(--yx-space-xxs); font: var(--yx-type-tab); }
+.yo-referral-steps > span::before { content: attr(data-step); display: grid; place-items: center; width: 32px; height: 32px; border-radius: var(--yx-radius-full); background: var(--yx-surface-grey); }
+.yo-referral-steps > span.done::before { background: var(--yx-action-navy); color: var(--yx-text-on-color); }
+.yo-referral-steps small { font: var(--yx-type-caption); text-align: center; }
+.yo-referral-steps i { flex: 1; height: 1px; margin: 16px 0 0; background: var(--yx-border); }
+
+/* ----- Settings panel ----- */
+.yo-settings-panel { width: auto; margin: var(--yx-space-sm) var(--yx-page-content) 0; }
+.yo-settings-panel > p { font: var(--yx-type-body-sm); }
+.yo-step-form { margin-top: var(--yx-space-md); }
+.yo-step-form label { margin-top: 0; }
+
+/* ----- [延伸] Bottom navigation: 4 items, icon + caption; selected = filled navy (8.1) ----- */
+.yo-bottom-nav { position: fixed; z-index: 7; bottom: 0; left: 50%; display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--yx-space-xxs); width: 100%; max-width: var(--yx-prototype-width); padding: var(--yx-space-xxs) var(--yx-space-xs) max(var(--yx-space-xxs), env(safe-area-inset-bottom)); border-top: 1px solid var(--yx-border); background: var(--yx-surface); transform: translateX(-50%); }
+.yo-bottom-nav button { display: grid; justify-items: center; align-content: center; gap: 2px; min-height: var(--yx-row-compact); padding: var(--yx-space-xxs) 2px; border: 0; border-radius: var(--yx-radius-md); background: transparent; color: var(--yx-text-primary); font: var(--yx-type-caption); }
+.yo-bottom-nav button:active { background: var(--yx-pressed-light); }
+.yo-bottom-nav button.selected { background: var(--yx-action-navy); color: var(--yx-text-on-color); }
+.yo-bottom-nav button.selected:focus-visible { outline-color: var(--yx-link-blue); }
+
+/* ----- Overlay/Toast (8.10) and scrims (2.6) ----- */
+.yo-toast { position: fixed; z-index: 10; left: 50%; bottom: 33%; display: flex; align-items: center; width: max-content; max-width: calc(min(100vw, var(--yx-prototype-width)) - 2 * var(--yx-page-content)); min-height: 36px; padding: var(--yx-space-xs) var(--yx-space-md); border-radius: var(--yx-radius-full); background: var(--yx-slate); color: var(--yx-text-on-color); font: var(--yx-type-tab); text-align: center; transform: translateX(-50%); }
+.yo-chest-overlay { position: fixed; z-index: 12; inset: 0; display: grid; place-items: center; padding: var(--yx-page-content); background: var(--yx-scrim-strong); }
+.yo-chest-animation { display: grid; justify-items: center; gap: var(--yx-space-sm); width: min(100%, 310px); padding: var(--yx-space-xl) var(--yx-space-lg); border-radius: var(--yx-radius-xl); background: var(--yx-surface); text-align: center; animation: chest-pop .42s ease-out both; }
+.yo-chest-animation > span { animation: chest-sparkle .7s ease-in-out infinite alternate; }
+.yo-chest-box { display: grid; place-items: center; width: 96px; height: 96px; background: var(--yx-surface-apricot); animation: chest-shake .45s ease-in-out infinite alternate; }
+.yo-chest-box .yx-icon { width: 64px; height: 64px; }
+.yo-chest-animation strong { font: var(--yx-type-title); }
+.yo-chest-animation small { font: var(--yx-type-caption); }
+@keyframes chest-pop { from { opacity: 0; transform: translateY(18px) scale(.88); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes chest-shake { from { transform: rotate(-7deg) translateY(0); } to { transform: rotate(7deg) translateY(-5px); } }
+@keyframes chest-sparkle { from { opacity: .45; transform: scale(.8) rotate(-12deg); } to { opacity: 1; transform: scale(1.18) rotate(12deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* FSD-04A weekly perfect attendance */
+.pw-card { margin-top: var(--yx-space-sm); padding: var(--yx-space-md); border-radius: var(--yx-radius-md); background: var(--yx-surface-grey); }
+.coupon-card { display: grid; gap: var(--yx-space-xs); margin-top: var(--yx-space-sm); padding: var(--yx-space-md); border-radius: var(--yx-radius-md); background: var(--yx-surface-grey); }
+.coupon-card p { margin: 0; }
+
+/* ----- FSD-06A: points balance, chests and the points record ----- */
+.chest-list, .points-record { display: grid; gap: var(--yx-space-xs); margin: var(--yx-space-sm) 0 0; padding: 0; list-style: none; }
+.chest-item { display: flex; align-items: center; justify-content: space-between; gap: var(--yx-space-sm); padding: var(--yx-space-sm) var(--yx-space-md); border-radius: var(--yx-radius-md); background: var(--yx-surface-grey); }
+.chest-item > span { display: flex; align-items: center; gap: var(--yx-space-xs); min-width: 0; }
+.chest-item .primary-button { flex: none; width: auto; margin: 0; padding: 0 var(--yx-space-md); }
+.points-record-title { margin: var(--yx-space-lg) 0 0; font: var(--yx-type-label); }
+.points-record li { display: flex; align-items: baseline; justify-content: space-between; gap: var(--yx-space-sm); padding: var(--yx-space-xs) 0; border-bottom: 1px solid var(--yx-border); font: var(--yx-type-caption); }
+.points-record li small { display: block; color: var(--yx-text-muted); }
+.points-record li b { flex: none; color: var(--yx-text-primary); }
+.points-record li.points-expired b { color: var(--yx-text-muted); text-decoration: line-through; }
+
+/* ----- FSD-07A: referrals ----- */
+.referral-code code { font: var(--yx-type-title); color: var(--yx-text-primary); }
+.referral-steps { display: flex; gap: var(--yx-space-sm); margin: var(--yx-space-sm) 0; padding: 0; list-style: none; }
+.referral-steps li { display: grid; flex: 1; justify-items: center; gap: var(--yx-space-xs); text-align: center; font: var(--yx-type-caption); color: var(--yx-text-muted); }
+.referral-steps li > span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: var(--yx-radius-full); border: 1px solid var(--yx-border-strong); background: var(--yx-surface); }
+.referral-steps li.done { color: var(--yx-text-primary); }
+.referral-steps li.done > span { border-color: var(--yx-action-navy); background: var(--yx-action-navy); color: var(--yx-text-on-color); }
+
+/* ----- FSD-08A-1: app shell ----- */
+.app-topbar { flex-wrap: nowrap; }
+.app-icon-button { display: grid; place-items: center; width: var(--yx-touch-min); height: var(--yx-touch-min); padding: 0; border: 0; border-radius: var(--yx-radius-md); background: transparent; color: var(--yx-text-primary); }
+.app-icon-button:active { background: var(--yx-pressed-light); }
+.app-bell-slot { width: var(--yx-touch-min); height: var(--yx-touch-min); }
+.app-page-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.app-page { display: grid; gap: var(--yx-space-sm); }
+.app-page[hidden] { display: none; }
+/* The shared panels as cards inside the shell. */
+.app-shell .daily-panel { margin: 0; padding: var(--yx-space-md); border: 0; border-radius: var(--yx-radius-lg); background: var(--yx-surface); }
+.app-shell .yo-walk-map { border-radius: var(--yx-radius-lg); }
+/* Map hero: Leaflet fills the canvas; overlays stay above it. */
+.app-map-canvas { position: absolute; inset: 0; z-index: 1; background: var(--yx-map-ground); }
+.app-map-canvas .leaflet-control-attribution { font: var(--yx-type-caption); background: var(--yx-surface); color: var(--yx-text-primary); }
+.app-map-canvas .leaflet-control-attribution a { color: var(--yx-link-blue); }
+.app-map-dot { fill: var(--yx-icon-red); fill-opacity: 1; stroke: var(--yx-white); stroke-width: 3; }
+.app-map-ring { fill: var(--yx-icon-red); fill-opacity: 0.12; stroke: var(--yx-icon-red); stroke-opacity: 0.4; stroke-width: 1; }
+.app-map .yo-map-top, .app-map .yo-step-overlay { z-index: 500; }
+#map-actions .yo-map-move { z-index: 500; }
+.app-map-note { position: absolute; z-index: 500; left: var(--yx-space-sm); bottom: var(--yx-space-sm); max-width: 60%; margin: 0; padding: var(--yx-space-xxs) var(--yx-space-xs); border-radius: var(--yx-radius-xs); background: var(--yx-surface); font: var(--yx-type-caption); }
+/* Menu drawer: a left sheet over a scrim, below the stale overlay (50) and the confirm scrim (40). */
+.drawer { position: fixed; inset: 0; z-index: 30; display: flex; background: var(--yx-scrim-soft); }
+.drawer-sheet { display: flex; flex-direction: column; gap: var(--yx-space-sm); width: min(86vw, 340px); height: 100%; overflow-y: auto; padding: var(--yx-space-md) var(--yx-page-content); background: var(--yx-surface); }
+.drawer-head { display: flex; align-items: center; justify-content: space-between; }
+.drawer-head h2 { margin: 0; font: var(--yx-type-title); }
+.drawer-account strong { display: block; font: var(--yx-type-title); }
+.drawer-list { display: grid; gap: var(--yx-space-xxs); margin: 0; padding: 0; list-style: none; }
+.drawer-group { margin-top: var(--yx-space-sm); color: var(--yx-text-muted); font: var(--yx-type-label); }
+.drawer-item { display: flex; align-items: center; justify-content: space-between; gap: var(--yx-space-xs); width: 100%; min-height: var(--yx-touch-min); padding: 0 var(--yx-space-sm); border: 0; border-radius: var(--yx-radius-md); background: transparent; color: var(--yx-text-primary); font: var(--yx-type-body-sm); text-align: left; }
+.drawer-item:active { background: var(--yx-pressed-light); }
+.drawer-item b { color: var(--yx-brand-red); font: var(--yx-type-title); }
+.drawer-upcoming { color: var(--yx-text-muted); }
+.drawer-upcoming small { padding: 2px var(--yx-space-xs); border-radius: var(--yx-radius-full); background: var(--yx-surface-grey); color: var(--yx-text-muted); font: var(--yx-type-caption); }
+
+/* ----- FSD-08A-1 addendum: the yoi logo (product owner, 2026-10-04) -----
+   The delivered transparent PNG (UI-design/yoi LOGO_去背.png) is 1200x600 with white margins; the artwork spans x 205-1000, y 135-470. The element shows
+   only that box: background scaled so 795 image px = --logo-w, shifted by the left and top margins. */
+.yoi-logo { display: inline-block; flex: none; } /* size and image: the 2026-10-06 (10) lockup rule below */
+.yoi-brand-text { margin-left: var(--yx-space-xs); color: var(--yx-text-primary); font: var(--yx-type-nav-title); }
+.brand-name { display: inline-flex; align-items: center; }
+
+/* ----- FSD-08A-2: yoxi home mock with the yoi entry -----
+   Screenshot src/assets/yoxi-home.jpg: 1206x2478, the 144 px status bar already cropped and the greeting blanked
+   in the file itself (Security M1; source UI-design/yoxi 首頁截圖.PNG kept unchanged). Positions are in % of the frame: yoxi's menu button centre (9.45%, 5.41%), diameter 12.8% of the width; the yoi button
+   sits below it, centre at 14.81% (19.5% of the original, about half a button gap: product owner D1). */
+.home-mock { min-height: 100dvh; background: var(--yx-surface-grey); }
+.home-frame { position: relative; width: 100%; max-width: var(--yx-prototype-width); margin: 0 auto; aspect-ratio: 1206 / 2478; overflow: hidden; container-type: inline-size; background: var(--yx-surface); }
+.home-shot { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; }
+.home-greeting { position: absolute; left: 5.5%; top: 67.2%; width: 52%; height: 3.4%; margin: 0; display: flex; align-items: center; background: var(--yx-surface); color: var(--yx-text-primary); font: var(--yx-type-home-greeting); pointer-events: none; }
+.home-demo-tag { position: absolute; right: 3%; bottom: 1.2%; padding: 2px var(--yx-space-xs); border-radius: var(--yx-radius-full); background: var(--yx-surface-grey); color: var(--yx-text-muted); font: var(--yx-type-caption); pointer-events: none; }
+.home-squid-pos { position: absolute; left: 9.45%; top: 14.81%; width: 12.8%; aspect-ratio: 1; transform: translate(-50%, -50%); }
+.home-squid-float { position: relative; width: 100%; height: 100%; animation: home-float 2.8s ease-in-out infinite; }
+/* Pulse ring: a separate pseudo-element (border + scale + opacity), never a box-shadow. */
+.home-squid-float::before { position: absolute; inset: 0; content: ""; border: 3px solid var(--yx-brand-red); border-radius: var(--yx-radius-full); opacity: 0; animation: home-pulse 2s ease-out infinite; pointer-events: none; }
+.home-squid { position: relative; display: grid; place-items: center; width: 100%; height: 100%; padding: 0; border: 0; border-radius: var(--yx-radius-full); background: var(--yx-surface); box-shadow: var(--yx-shadow-float); transform-origin: 50% 90%; animation: home-wiggle 6s ease-in-out infinite; }
+/* At 320 px the button is about 41 px: a larger invisible hit area keeps the 44 px touch minimum. */
+.home-squid::after { position: absolute; inset: -4px; content: ""; border-radius: var(--yx-radius-full); }
+/* The squid only, cut from the transparent logo (x 200-485, y 135-470 of 1200x600). */
+.home-squid-art { width: 64%; aspect-ratio: 285 / 335; background: url("./assets/yoi-logo.png") no-repeat; background-size: 421.05% auto; background-position: 21.86% 50.94%; }
+.home-new { position: absolute; top: -12%; right: -26%; padding: 1px 6px; border-radius: var(--yx-radius-full); background: var(--yx-brand-red); color: var(--yx-text-on-color); font: var(--yx-type-tag); pointer-events: none; }
+.home-hint { position: absolute; left: 50%; top: 42%; width: 80%; margin: 0; padding: var(--yx-space-sm) var(--yx-space-md); border-radius: var(--yx-radius-md); background: var(--yx-action-navy); color: var(--yx-text-on-color); font: var(--yx-type-body-sm); text-align: center; transform: translateX(-50%); }
+@keyframes home-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes home-pulse { 0% { opacity: 0.6; transform: scale(1); } 100% { opacity: 0; transform: scale(1.45); } }
+@keyframes home-wiggle { 0%, 90%, 100% { transform: rotate(0deg); } 92% { transform: rotate(-8deg); } 95% { transform: rotate(8deg); } 98% { transform: rotate(-4deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .home-squid-float, .home-squid { animation: none; }
+  .home-squid-float::before { display: none; }
+}
+
+/* ----- FSD-08A-2: bell and notice panel ----- */
+.app-bell { position: relative; }
+.app-bell-badge { position: absolute; top: 4px; right: 4px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: var(--yx-radius-full); background: var(--yx-brand-red); color: var(--yx-text-on-color); font: var(--yx-type-tag); line-height: 18px; text-align: center; }
+.notices { position: fixed; inset: 0; z-index: 30; display: flex; justify-content: flex-end; align-items: flex-start; background: var(--yx-scrim-soft); }
+.notice-sheet { display: flex; flex-direction: column; gap: var(--yx-space-sm); width: min(92vw, 360px); max-height: 80dvh; overflow-y: auto; margin: var(--yx-space-xs); padding: var(--yx-space-md); border-radius: var(--yx-radius-lg); background: var(--yx-surface); }
+.notice-sheet h2 { margin: 0; font: var(--yx-type-title); }
+.notice-list { display: grid; gap: var(--yx-space-xxs); margin: 0; padding: 0; list-style: none; }
+.notice-item { width: 100%; min-height: var(--yx-touch-min); padding: var(--yx-space-xs) var(--yx-space-sm); border: 0; border-radius: var(--yx-radius-md); background: var(--yx-surface-grey); color: var(--yx-text-primary); font: var(--yx-type-body-sm); text-align: left; }
+/* 2026-10-06 (6): one font for every notice. */
+.login-home { display: block; margin: var(--yx-space-md) auto 0; }
+
+/* ----- FSD-08A-3: the showcase layout backed by shared data ----- */
+.app-block, .app-day { display: grid; gap: var(--yx-space-sm); }
+.app-block-title { margin: var(--yx-space-sm) 0 0; }
+.yo-page-heading h2 { font: var(--yx-type-nav-title); }
+.yo-status, .yo-hint { margin: var(--yx-space-xs) 0 0; color: var(--yx-text-primary); font: var(--yx-type-caption); }
+.yo-status:empty, .yo-hint:empty { display: none; }
+.yo-ride-row { margin: var(--yx-space-sm) 0 0; font: var(--yx-type-body-sm); }
+.yo-step-meta b { font: inherit; color: var(--yx-text-primary); }
+.yo-step-form .yo-hint { margin-top: var(--yx-space-xs); }
+
+/* Milestones (D7): claimed rows are navy with white text; the button turns into a white outline. */
+.yo-milestone.claimed { border-color: var(--yx-action-navy); background: var(--yx-action-navy); color: var(--yx-text-on-color); }
+.yo-milestone.claimed .yo-mile-icon { background: transparent; color: var(--yx-text-on-color); }
+.yo-milestone.claimed button:disabled { border: 1px solid var(--yx-text-on-color); background: transparent; color: var(--yx-text-on-color); }
+.yo-milestone.claimed :focus-visible { outline-color: var(--yx-focus-on-dark); }
+
+/* Map hero (D9, B2, C10): pill and locate button in one row; the step card above the attribution at the bottom. */
+.app-map .yo-map-top { flex-wrap: nowrap; align-items: flex-start; }
+.app-map-status { flex: 1 1 auto; min-width: 0; }
+.app-map-status .yo-location-pill { max-width: 100%; min-height: 36px; padding-top: var(--yx-space-xxs); padding-bottom: var(--yx-space-xxs); }
+#map-actions { flex: none; }
+#map-actions .yo-map-move { position: static; }
+.app-map-bottom { position: absolute; z-index: 500; left: var(--yx-space-sm); right: var(--yx-space-sm); bottom: var(--yx-space-xl); display: flex; flex-direction: column; align-items: center; gap: var(--yx-space-xs); pointer-events: none; }
+.app-map-bottom > * { pointer-events: auto; }
+#map-note:empty { display: none; }
+.app-map-bottom .app-map-note { position: static; max-width: 100%; }
+.app-map .yo-step-overlay { position: static; transform: none; background: var(--yx-map-veil); -webkit-backdrop-filter: blur(var(--yx-map-veil-blur)); backdrop-filter: blur(var(--yx-map-veil-blur)); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .app-map .yo-step-overlay { background: var(--yx-surface); }
+}
+.app-map-privacy { margin: 0; padding: var(--yx-space-xs) var(--yx-space-md); } /* D5: the map card now ends here */
+
+/* Weekly strip (D4, B3): achieved = navy with white text; today = navy ring outside a white gap; picked = a bar below. */
+.yo-walk-week-card .yo-week-panel { border-top: 0; }
+.pw-card { margin-top: var(--yx-space-sm); padding: 0; background: transparent; }
+.pw-card-compact { margin-top: var(--yx-space-md); padding-top: var(--yx-space-sm); border-top: 1px solid var(--yx-border); }
+.pw-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--yx-space-xs); margin: 0; font: var(--yx-type-tab); }
+.pw-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--yx-space-xs); margin: var(--yx-space-sm) 0 var(--yx-space-md); padding: 4px; list-style: none; }
+.pw-chip { position: relative; display: grid; justify-items: center; align-content: center; gap: 2px; min-width: 0; min-height: var(--yx-row-compact); padding: var(--yx-space-xxs) 0; border: 2px solid transparent; border-radius: var(--yx-radius-md); background: var(--yx-surface-grey); color: var(--yx-text-primary); font: var(--yx-type-caption); white-space: nowrap; }
+.pw-chip .pw-weekday { font: var(--yx-type-tag); }
+.pw-chip .pw-date { font: var(--yx-type-tab); font-variant-numeric: tabular-nums; }
+.pw-chip .pw-status { min-height: 16px; font: var(--yx-type-tag); }
+.pw-achieved { background: var(--yx-action-navy); color: var(--yx-text-on-color); }
+.pw-syncable { background: var(--yx-surface-blue); }
+.pw-missed { color: var(--yx-text-muted); }
+.pw-today { border-color: var(--yx-white); outline: 2px solid var(--yx-action-navy); outline-offset: 0; }
+/* QA A1: a keyboard focus ring distinct from the today ring (after it, so it wins on the today cell too). */
+.pw-chip:focus-visible { outline: 2px solid var(--yx-link-blue); outline-offset: 4px; }
+.pw-selected::after { position: absolute; left: 30%; right: 30%; bottom: calc(-1 * var(--yx-space-sm)); height: 4px; content: ""; border-radius: var(--yx-radius-full); background: var(--yx-action-navy); }
+.pw-card-compact .pw-chip { min-height: var(--yx-touch-min); }
+.pw-detail { margin: 0; font: var(--yx-type-caption); }
+/* Text for screen readers only (FSD-08A-3: last week's cells). */
+.yo-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Coupons (D5, N2): Card/Coupon with a stamp; expired cards step down to greys (no opacity). */
+.yo-coupon + .yo-coupon { margin-top: var(--yx-space-sm); }
+.yo-coupon.coupon-card { border-radius: var(--yx-radius-none); background: var(--yx-surface-apricot); }
+.yo-coupon-row { display: flex; align-items: center; gap: var(--yx-space-sm); }
+.yo-coupon-row small { display: block; padding-right: 72px; }
+.yo-coupon-row h3 { padding-right: 40px; }
+.yo-coupon-row > div:nth-child(2) { flex: 1; min-width: 0; }
+.yo-coupon h3 { margin: var(--yx-space-xxs) 0; font: var(--yx-type-title); }
+.chest-item .yo-primary { flex: none; min-height: var(--yx-touch-min); }
+
+/* Team (D8): banner copy button on navy; roster cards with an avatar. */
+.yo-team-banner-text { flex: 1; min-width: 0; }
+.yo-team-banner strong { color: var(--yx-text-on-color); font: var(--yx-type-tab); overflow-wrap: anywhere; }
+.yo-member { display: flex; align-items: center; gap: var(--yx-space-sm); padding: var(--yx-space-xs); border: 1px solid var(--yx-border); border-radius: var(--yx-radius-md); }
+.yo-member-text { flex: 1; min-width: 0; }
+.yo-member-text strong, .yo-member-text small { display: block; overflow-wrap: anywhere; }
+.yo-member-text strong { font: var(--yx-type-tab); }
+.yo-member-text small { margin-top: 2px; font: var(--yx-type-caption); }
+.yo-member-text .yo-member-week { display: block; margin-top: 2px; font: var(--yx-type-caption); font-weight: 700; font-variant-numeric: tabular-nums; }
+.yo-member-past { background: var(--yx-surface-grey); color: var(--yx-text-muted); }
+
+/* ----- FSD-08A-4: steps sheet, its map button, the merged today card ----- */
+/* C6: positioned against the bottom stack (absolute, so the B2 band is unchanged), just above the step card on the right. */
+.app-map-bottom .app-steps-open { position: absolute; right: 0; bottom: calc(100% + var(--yx-space-xs)); gap: var(--yx-space-xxs); padding: 0 var(--yx-space-sm); }
+/* D4/C9: only today's ride row puts the compact button on the right; yesterday's line keeps the 08A-3 style. */
+.yo-ride-line { display: flex; align-items: center; justify-content: space-between; gap: var(--yx-space-sm); }
+.yo-ride-line p { margin: 0; }
+.yo-ride-button { min-width: 0; }
+/* B1: a sibling of .app-shell inside #app, above the drawer (30) and below the stale overlay (50). */
+.steps-sheet { position: fixed; inset: 0; z-index: 35; display: flex; align-items: flex-end; justify-content: center; background: var(--yx-scrim-soft); }
+.steps-sheet-panel { display: grid; gap: var(--yx-space-xs); width: 100%; max-width: var(--yx-prototype-width); padding: var(--yx-space-md) var(--yx-page-content) max(var(--yx-space-lg), env(safe-area-inset-bottom)); border-top-left-radius: var(--yx-radius-xl); border-top-right-radius: var(--yx-radius-xl); background: var(--yx-surface); }
+.steps-sheet-panel h2 { margin: 0; font: var(--yx-type-title); }
+
+.app-map .yo-step-overlay strong.long { font: var(--yx-type-map-steps-long); }
+.app-map .yo-step-overlay { max-width: 100%; }
+
+/* ----- FSD-08A-5 ----- */
+/* 3: the weekly task's kicker matches the today card's (which .yo-panel p sets to body-sm). */
+.yo-week-panel .yo-panel-head .yo-kicker { font: var(--yx-type-body-sm); }
+/* 4: the team block starts level with the other pages (no extra top margin). */
+.app-block.team-panel { margin-top: 0; }
+/* 13: the "今日里程碑" tag keeps the small page-heading kicker size inside the card. */
+.yo-panel .yo-kicker-tag { font: var(--yx-type-tag); }
+/* 11: the menu button as on the official yoxi app: a navy disc with white bars and icon-red ends. */
+#menu-button { border-radius: var(--yx-radius-full); background: var(--yx-action-navy); color: var(--yx-text-on-color); }
+#menu-button:active { background: var(--yx-navy-deep); }
+/* 08A-5 follow-up: the referral coupon's role sits on the line under the amount. */
+.yo-coupon-role { display: block; font: var(--yx-type-body-sm); }
+
+/* ----- FSD-08A-6 ----- */
+/* Map: 2/3 of the 08A-3 height with a 200 px floor; the pill is tight and 30 % white; the step count has no box,
+   only a light white text outline; it shares one row with the 模擬 button. */
+.app-map.yo-walk-map { height: clamp(200px, 32vh, 240px); }
+.app-map .yo-location-pill { min-height: 0; padding: 2px var(--yx-space-xs); gap: var(--yx-space-xxs); background: var(--yx-map-veil); text-shadow: 0 0 2px var(--yx-white), 0 0 3px var(--yx-white); }
+.app-map-row { display: flex; align-items: center; justify-content: center; gap: var(--yx-space-xs); max-width: 100%; }
+.app-map .yo-step-overlay { padding: 0; background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
+.app-map .yo-step-overlay strong, .app-map .yo-step-overlay > span { text-shadow: 0 0 2px var(--yx-white), 0 0 4px var(--yx-white), 0 0 6px var(--yx-white); }
+.app-map .yo-step-overlay > span { padding-bottom: var(--yx-space-xxs); }
+.app-map-bottom .app-map-row .app-steps-open { position: static; flex: none; }
+/* (9) section kickers: 16 px italic, blue */
+.yo-page-heading .yo-kicker, .yo-panel .yo-kicker-tag { font: var(--yx-type-kicker-lg); }
+/* Progress marks under segment boundaries; the red tone for the team bar */
+.yx-trip--marks { margin-bottom: var(--yx-space-lg); }
+.yx-trip-marks { position: absolute; left: 0; right: 0; top: 100%; height: 0; }
+.yx-trip-marks span { position: absolute; left: var(--at); top: var(--yx-space-xxs); transform: translateX(-50%); color: var(--yx-text-muted); font: var(--yx-type-tag); white-space: nowrap; }
+.yx-trip--red .yx-trip-seg.done { background: var(--yx-brand-red); }
+.yx-trip--red .yx-trip-seg:not(.done) { background: linear-gradient(to right, var(--yx-brand-red) var(--fill, 0%), var(--yx-disabled) var(--fill, 0%)); }
+/* Tabs inside a page */
+.app-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--yx-space-xs); }
+.app-tab { min-height: var(--yx-touch-min); padding: 0 var(--yx-space-sm); border: 1px solid var(--yx-action-navy); border-radius: var(--yx-radius-full); background: var(--yx-surface); color: var(--yx-text-primary); font: var(--yx-type-tab); }
+.app-tab.selected { background: var(--yx-action-navy); color: var(--yx-text-on-color); }
+.app-subpanel { display: grid; gap: var(--yx-space-sm); }
+/* (6) the weekly state as a block like the claim-all button */
+.pw-state { display: flex; align-items: center; justify-content: center; min-height: var(--yx-button-height); margin: var(--yx-space-sm) 0 0; padding: var(--yx-space-xs) var(--yx-space-md); border-radius: var(--yx-radius-xs); color: var(--yx-text-on-color); font: var(--yx-type-button); text-align: center; }
+.pw-state--navy { background: var(--yx-action-navy); }
+.pw-state--grey { background: var(--yx-disabled); }
+.pw-rule { margin-top: var(--yx-space-sm); }
+.pw-chip { cursor: default; }
+/* Header: the guide button left of the bell */
+.app-top-right { display: flex; align-items: center; gap: var(--yx-space-xxs); }
+.guide-sheet { width: min(92vw, 400px); max-height: 85dvh; }
+.guide-list { display: grid; gap: var(--yx-space-sm); margin: 0; padding: 0; list-style: none; }
+.guide-item { display: flex; gap: var(--yx-space-sm); align-items: flex-start; }
+.guide-icon { display: grid; place-items: center; flex: none; width: var(--yx-icon-tile); height: var(--yx-icon-tile); border-radius: var(--yx-radius-md); background: var(--yx-surface-grey); }
+.guide-item h3 { margin: 0; font: var(--yx-type-title); }
+.guide-item p { margin: var(--yx-space-xxs) 0 0; font: var(--yx-type-body-sm); }
+
+/* ----- FSD-08A-6 batch 2 ----- */
+/* Team card (附圖二) */
+.team-card-title { margin: 0; font: var(--yx-type-nav-title); }
+.team-card-rule { margin-top: var(--yx-space-xxs); }
+.team-card-status { margin: var(--yx-space-xs) 0 0; color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.team-card-meta { display: flex; align-items: baseline; justify-content: space-between; gap: var(--yx-space-xs); margin-top: var(--yx-space-md); color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.team-wan-line { color: var(--yx-text-primary); font: var(--yx-type-title); white-space: nowrap; }
+.team-wan { color: var(--yx-brand-red); font: var(--yx-type-number-lg); }
+.team-reached { display: inline-block; margin: 0; padding: 2px var(--yx-space-xs); border-radius: var(--yx-radius-full); background: var(--yx-surface-praise); color: var(--yx-text-primary); font: var(--yx-type-tag); }
+.team-card-box { margin-top: var(--yx-space-sm); padding: var(--yx-space-sm) var(--yx-space-md); border-radius: var(--yx-radius-md); background: var(--yx-surface-grey); }
+.team-card-box p { margin: 0; font: var(--yx-type-body-sm); }
+.team-card-box p + p { margin-top: var(--yx-space-xxs); }
+.team-invite-link { margin-top: var(--yx-space-xxs); font: var(--yx-type-tab); }
+/* FSD-03E: the team name with its edit button (captain only); a long name wraps, the button stays beside it. */
+.team-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--yx-space-xs); }
+/* Security S1: a name with bidi control characters cannot reorder anything outside the title. */
+.team-card-head .team-card-title { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; unicode-bidi: isolate; }
+.team-rename { flex: none; font: var(--yx-type-tab); }
+.rename-dialog { max-width: 320px; }
+.rename-label { display: block; margin-bottom: var(--yx-space-xxs); font: var(--yx-type-label); }
+.rename-input { width: 100%; box-sizing: border-box; }
+.confirm-dialog .rename-count { margin: var(--yx-space-xxs) 0 0; text-align: right; color: var(--yx-text-muted); font: var(--yx-type-caption); font-variant-numeric: tabular-nums; }
+.confirm-dialog .rename-count.over { color: var(--yx-error); }
+.rename-hints { margin: var(--yx-space-xs) 0 var(--yx-space-sm); padding-left: var(--yx-space-md); color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.rename-dialog .dialog-status:empty { margin: 0; }
+.team-members { display: grid; gap: var(--yx-space-xs); }
+.team-members-head { margin: var(--yx-space-xs) 0 0; color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.team-roster-list { display: grid; background: var(--yx-surface); border: 1px solid var(--yx-border); border-radius: var(--yx-radius-md); }
+.team-row { display: flex; align-items: center; gap: var(--yx-space-sm); padding: var(--yx-space-sm) var(--yx-space-md); }
+.team-row + .team-row { border-top: 1px solid var(--yx-border); }
+.yo-avatar.self { background: var(--yx-action-navy); color: var(--yx-text-on-color); }
+.team-row-main { display: grid; flex: 1; min-width: 0; gap: 2px; }
+.team-row-name { display: flex; flex-wrap: wrap; align-items: center; gap: var(--yx-space-xs); }
+.team-row-name strong { font: var(--yx-type-title); overflow-wrap: anywhere; }
+.team-row-main small { color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.team-first { display: inline-flex; align-items: center; gap: 2px; padding: 2px var(--yx-space-xs); border-radius: var(--yx-radius-xs); background: var(--yx-surface-apricot); color: var(--yx-text-primary); font: var(--yx-type-tag); }
+.team-row-today { display: grid; justify-items: end; flex: none; }
+.team-row-today b { font: var(--yx-type-number-md); font-variant-numeric: tabular-nums; }
+.team-row-today span, .team-row-today small { color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.team-row-today b + span { display: inline; }
+.team-row-past { background: var(--yx-surface-grey); }
+/* Chest card (附圖三) */
+.chest-card { background: var(--yx-surface-blue); border-color: var(--yx-surface-blue); }
+.chest-card-head { display: flex; align-items: flex-start; gap: var(--yx-space-sm); }
+.chest-card-head h2 { margin: 0; }
+.chest-card-caption { margin: var(--yx-space-xxs) 0 0; color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.chest-red { color: var(--yx-brand-red); }
+.chest-card-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--yx-space-xs); margin-top: var(--yx-space-sm); color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.chest-help { min-height: var(--yx-touch-min); font: var(--yx-type-tab); }
+.chest-prize-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: var(--yx-space-sm); padding: var(--yx-space-sm) var(--yx-space-md); border-left: 4px solid var(--yx-action-navy); background: var(--yx-surface); font: var(--yx-type-title); }
+.chest-prize-row b { font: var(--yx-type-number-lg); }
+/* Opening dialog (UI-design 3-6) */
+.chest-panel { display: grid; justify-items: center; gap: var(--yx-space-xs); width: min(100%, 330px); padding: var(--yx-space-lg) var(--yx-space-md) var(--yx-space-md); border-radius: var(--yx-radius-xl); background: var(--yx-surface-blue); text-align: center; }
+.chest-panel strong { font: var(--yx-type-title); }
+.chest-panel small { color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.chest-svg { display: block; overflow: visible; }
+.cb-shadow { fill: var(--yx-chest-shadow); }
+.cb-face-r, .cb-lid-top, .cb-ticket { fill: var(--yx-surface); stroke: var(--yx-action-navy); stroke-width: 1.6; stroke-linejoin: round; }
+.cb-face-l { fill: var(--yx-surface-grey); stroke: var(--yx-action-navy); stroke-width: 1.6; stroke-linejoin: round; }
+.cb-inner { fill: var(--yx-chest-inner); }
+.cb-edge { fill: none; stroke: var(--yx-action-navy); stroke-width: 1.6; stroke-linejoin: round; }
+.cb-ribbon { fill: var(--yx-brand-red); }
+.cb-trail { fill: none; stroke: var(--yx-action-navy); stroke-width: 1.6; stroke-dasharray: 2 5; stroke-linecap: round; opacity: 0; transition: opacity .2s ease .18s; }
+.cb-ticket-line { stroke: var(--yx-border-strong); stroke-width: 2.4; stroke-linecap: round; }
+.cb-ticket-line2 { stroke: var(--yx-border); stroke-width: 2.4; stroke-linecap: round; }
+.cb-line-minor { fill: none; stroke: var(--yx-tier-minor); stroke-width: 2.4; stroke-linecap: round; }
+.cb-line-navy { stroke: var(--yx-action-navy); stroke-width: 2; opacity: .25; stroke-linecap: round; }
+.cb-dot { fill: var(--yx-apricot-watermark); }
+.chest-big .cb-line-minor { stroke: var(--yx-star-gold); }
+.chest-box { transform-box: view-box; transform-origin: 100px 80px; }
+.chest-panel[data-phase="opening"] .chest-box { animation: chest-shake3 .1s ease-in-out infinite; }
+@keyframes chest-shake3 { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
+.cb-lid { transform-box: view-box; transform-origin: 100px 56px; transition: transform .3s cubic-bezier(.22, 1.15, .36, 1); }
+.opened .cb-lid { transform: translate(-30px, -44px) rotate(-12deg); }
+.cb-fly { opacity: 0; transform-box: view-box; transform-origin: center; }
+.opened .cb-fly { animation: chest-fly .42s cubic-bezier(.2, .9, .3, 1) .12s both; }
+.opened .cb-fly.cb-f2 { animation-delay: .2s; }
+@keyframes chest-fly { 0% { opacity: 0; transform: translate(-22px, 44px) scale(.5); } 55% { opacity: 1; transform: translate(-6px, 8px) scale(.96); } 100% { opacity: 1; transform: none; } }
+.cb-cf { opacity: 0; transition: opacity .25s ease .3s; }
+.opened .cb-cf { opacity: 1; }
+.opened .cb-trail { opacity: .45; }
+.chest-slogan { height: 32px; color: var(--yx-action-navy); font: var(--yx-type-slogan); opacity: 0; transform: translateY(6px); transition: opacity .22s ease .62s, transform .3s cubic-bezier(.2, 1, .3, 1) .62s; }
+.opened .chest-slogan { opacity: 1; transform: none; }
+.chest-prize { position: relative; width: 100%; margin-top: var(--yx-space-xs); padding: var(--yx-space-sm) var(--yx-space-md) var(--yx-space-sm) var(--yx-space-lg); border: 1px solid var(--yx-border); border-left: 4px solid var(--yx-tier-minor); border-radius: var(--yx-radius-lg); background: var(--yx-surface); text-align: left; opacity: 0; transform: translateY(-8px) scale(.94); transition: opacity .2s ease .42s, transform .38s cubic-bezier(.18, 1.1, .32, 1) .42s; }
+.opened .chest-prize { opacity: 1; transform: none; }
+.chest-big .chest-prize { border-left-color: var(--yx-star-gold); }
+.chest-prize-name { font: var(--yx-type-title); }
+.chest-prize-amt { margin-top: 2px; font: var(--yx-type-number-lg); }
+.chest-big .chest-prize-amt { color: var(--yx-star-gold); }
+.chest-reel { display: inline-block; height: 31px; overflow: hidden; vertical-align: -6px; }
+.chest-strip { display: block; transform: translateY(var(--reel, 0)); }
+.chest-strip i { display: block; height: 31px; font: var(--yx-type-chest-prize); font-style: normal; }
+.chest-prize-note { margin-top: var(--yx-space-xxs); color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.chest-tier { position: absolute; top: var(--yx-space-sm); right: var(--yx-space-sm); padding: var(--yx-space-xxs) var(--yx-space-xs); border-radius: var(--yx-radius-full); background: var(--yx-surface-grey); color: var(--yx-text-muted); font: var(--yx-type-tag); }
+.chest-big .chest-tier { background: var(--yx-star-gold); color: var(--yx-text-on-color); }
+.chest-take { margin-top: var(--yx-space-sm); }
+@media (prefers-reduced-motion: reduce) {
+  .cb-lid, .cb-fly, .cb-cf, .cb-trail { transition: none !important; animation: none !important; }
+  .opened .cb-fly, .opened .cb-cf { opacity: 1; }
+  .chest-panel[data-phase="opening"] .chest-box { animation: none; }
+  .chest-slogan { transform: none !important; }
+}
+
+/* ----- 2026-10-06 畫面調整 ----- */
+/* (1) the steps page stays put behind the steps sheet. */
+html.sheet-lock, html.sheet-lock body { overflow: hidden; }
+/* (2) the play guide's car before the ride state. */
+.yo-ride-row p, p.yo-ride-row { display: flex; align-items: center; gap: var(--yx-space-xs); }
+.yo-ride-icon { display: inline-flex; flex: none; }
+/* (4)(5) display-only state boxes (not buttons): grey 未解鎖, navy 領取 1 點, navy outlined 獎勵 1 點 on the navy row. */
+.yo-mile-state { flex: none; min-width: 88px; padding: var(--yx-space-xs) var(--yx-space-sm); border: 1px solid transparent; border-radius: var(--yx-radius-sm); text-align: center; font: var(--yx-type-tab); color: var(--yx-text-on-color); }
+.yo-mile-state--locked { background: var(--yx-disabled); }
+.yo-mile-state--ready { background: var(--yx-action-navy); }
+.yo-mile-state--done { border-color: var(--yx-text-on-color); background: var(--yx-action-navy); }
+/* (8) the weekly task's kicker matches 今日里程碑. */
+.yo-week-panel .yo-panel-head .yo-kicker-tag { font: var(--yx-type-kicker-lg); }
+/* (10) the designer's lockup (squid and yoi) replaces the cropped PNG. */
+.yoi-logo { --logo-w: 84px; width: var(--logo-w); height: calc(var(--logo-w) * 115 / 268.14); background: url("./assets/yoi-lockup.svg") no-repeat center / contain; }
+/* (11) leave and transfer share one row, equal widths. */
+.team-actions { flex-wrap: nowrap; }
+.team-actions > button { flex: 1 1 0; min-width: 0; }
+/* (12) the chest pictures of UI-design 3-5 sit on the card without a tile. */
+.yo-chest { width: 64px; height: 54px; background: transparent; }
+.chest-card-svg { display: block; }
+.cc-shadow { fill: var(--yx-action-navy); opacity: .08; }
+.cc-face { fill: var(--yx-surface); stroke: var(--yx-action-navy); stroke-width: 1.6; stroke-linejoin: round; }
+.cc-face-l { fill: var(--yx-surface-grey); }
+.cc-ribbon { fill: var(--yx-brand-red); }
+.cc-lid-band { opacity: .92; }
+.chest-card-svg--locked .cc-face { stroke: var(--yx-border-strong); }
+.chest-card-svg--locked .cc-ribbon { fill: var(--yx-border-strong); }
+.cc-inner { fill: var(--yx-action-navy); opacity: .06; }
+.cc-edge { fill: none; stroke: var(--yx-action-navy); stroke-width: 1.6; stroke-linejoin: round; }
+.cc-trail { fill: none; stroke: var(--yx-action-navy); stroke-width: 1.6; stroke-dasharray: 2 5; stroke-linecap: round; opacity: .45; }
+.cc-swirl { fill: none; stroke: var(--yx-tier-minor); stroke-width: 2.4; stroke-linecap: round; }
+.cc-dot { fill: var(--yx-apricot-watermark); }
+.cc-ticket { fill: var(--yx-surface); stroke: var(--yx-action-navy); stroke-width: 1.6; }
+.cc-ticket-sm { stroke-width: 1.4; }
+.cc-tline { fill: none; stroke: var(--yx-border-strong); stroke-width: 2; stroke-linecap: round; }
+.cc-tline-lg { stroke-width: 2.4; }
+.cc-tline-soft { stroke: var(--yx-border); stroke-width: 2.4; }
+.yoi-brand-text { white-space: nowrap; }
+
+/* ----- FSD-08B: weather on the map ----- */
+#map-weather { flex: none; }
+#map-weather .yo-map-move { position: static; z-index: 500; }
+.app-weather-button { display: inline-flex; align-items: center; gap: var(--yx-space-xxs); min-width: var(--yx-touch-min); min-height: var(--yx-touch-min); font: var(--yx-type-tab); }
+/* 360 px: the pill gives way (ellipsis), the locate and weather buttons keep their size. */
+.app-map-status .yo-location-pill { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.weather-sheet { width: min(92vw, 400px); max-height: 85dvh; }
+.weather-sheet h3 { margin: 0 0 var(--yx-space-xs); font: var(--yx-type-tab); }
+.weather-now { display: flex; align-items: center; gap: var(--yx-space-sm); }
+.weather-now-main { display: flex; align-items: baseline; gap: var(--yx-space-xs); margin: 0; }
+.weather-now-main b { font: var(--yx-type-number-lg); color: var(--yx-text-primary); }
+.weather-now-main span { font: var(--yx-type-title); }
+.weather-now-meta { margin: var(--yx-space-xxs) 0 0; color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.weather-tip { margin: 0; padding: var(--yx-space-sm) var(--yx-space-md); border-radius: var(--yx-radius-md); background: var(--yx-surface-grey); font: var(--yx-type-body-sm); }
+.weather-hours { display: flex; gap: var(--yx-space-xs); margin: 0; padding: 0 0 var(--yx-space-xxs); overflow-x: auto; list-style: none; }
+.weather-hours li { display: grid; justify-items: center; gap: var(--yx-space-xxs); flex: none; min-width: 64px; padding: var(--yx-space-xs); border: 1px solid var(--yx-border); border-radius: var(--yx-radius-md); font: var(--yx-type-caption); }
+.weather-hours b, .weather-days b { font: var(--yx-type-tab); }
+.weather-days { display: grid; gap: var(--yx-space-xs); margin: 0; padding: 0; list-style: none; }
+.weather-days li { display: flex; align-items: center; gap: var(--yx-space-xs); padding: var(--yx-space-xs) 0; border-bottom: 1px solid var(--yx-border); font: var(--yx-type-body-sm); }
+.weather-days li > span:first-child { min-width: 40px; }
+.weather-days li > b { margin-left: auto; }
+.weather-days small, .weather-hours small { color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.weather-source { margin: 0; color: var(--yx-text-muted); font: var(--yx-type-caption); }
+
+/* ----- 2026-10-06 (second batch) ----- */
+/* (2) the ride state on two lines next to the car. */
+.yo-ride-text--two { display: grid; }
+/* (3) the privacy bullets at the bottom of the today tab. */
+.app-privacy-list { margin: 0; padding-left: var(--yx-space-md); list-style: disc; color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.app-privacy-list li + li { margin-top: var(--yx-space-xxs); }
+/* (4) the kicker sits as close to the title as on the weekly card (the card's grid gap is 12 px), same top padding. */
+.app-day { padding-top: var(--yx-space-md); }
+.app-day > .yo-kicker-tag { margin-bottom: calc(var(--yx-space-xs) - var(--yx-space-sm)); }
+/* (6) bullets before the referral headings and the field label, at body size. */
+.referral-bullet { display: list-item; margin-left: var(--yx-space-md); list-style: disc outside; font: var(--yx-type-body-sm); }
+/* (9) upcoming features in italics. */
+/* (9) the upcoming items slanted (a skew, so Latin and Chinese look the same; the Latin italic face is only loaded in 900). */
+.drawer-upcoming-label { display: inline-block; transform: skewX(-10deg); }
+/* (9) C: navy text, the 即將推出 tag red with white text. */
+.drawer-list .drawer-upcoming { color: var(--yx-text-primary); }
+.drawer-list .drawer-upcoming small { background: var(--yx-brand-red); color: var(--yx-text-on-color); }
+/* (10) notes under buttons are small: .yo-panel p (body size) no longer wins over the note classes. */
+.yo-panel p.yo-muted, .yo-panel p.yo-status, .yo-panel p.yo-hint, .yo-panel p.team-progress-note, .yo-panel .error-message + p.yo-muted { font: var(--yx-type-caption); }
+.yo-panel p.team-card-rule { font: var(--yx-type-body-sm); }
+.yo-ride-text:not(.yo-ride-text--two) { white-space: nowrap; }
+
+/* ----- 2026-10-06 (third batch) ----- */
+/* (2) the team empty card: no icon, the heading at the top, left aligned. */
+.yo-empty.team-empty { text-align: left; }
+/* (4) a soft breathing glow behind a claim button while points can be claimed (opacity only; compositor-friendly). */
+.yo-claim-glow { position: relative; }
+.yo-claim-glow::before { content: ""; position: absolute; inset: -6px; border: 4px solid var(--yx-brand-red); border-radius: var(--yx-radius-md); filter: blur(4px); opacity: 0; animation: yo-breathe 1.6s ease-in-out infinite; pointer-events: none; }
+@keyframes yo-breathe { 0%, 100% { opacity: .1; } 50% { opacity: .8; } }
+@media (prefers-reduced-motion: reduce) { .yo-claim-glow::before { animation: none; opacity: .35; } }
+/* (7) the account title as a group label; the name row opens the details. */
+.drawer-account .drawer-group { margin: 0 0 var(--yx-space-xxs); }
+.drawer-account-name strong { font: var(--yx-type-title); }
+.drawer-chevron { display: inline-flex; transition: transform .2s; }
+.drawer-chevron.open { transform: rotate(180deg); }
+.drawer-account .session-details { margin-top: var(--yx-space-xs); }
+@media (prefers-reduced-motion: reduce) { .drawer-chevron { transition: none; } }
+/* 2026-10-06: Yoi Sense on the first line, 智慧感知 on the second. */
+/* 2026-10-06 (4): 全部已讀 left of 關閉. */
+.notices-actions { display: flex; gap: var(--yx-space-xs); }
+
+/* ----- 2026-10-06 (A): the recruiting / paused team card ----- */
+.team-seats { display: flex; gap: var(--yx-space-sm); margin-top: var(--yx-space-md); }
+.team-seat { display: grid; place-items: center; width: 56px; height: 56px; border-radius: var(--yx-radius-full); font: var(--yx-type-caption); text-align: center; }
+.team-seat.filled { background: var(--yx-action-navy); color: var(--yx-text-on-color); font: var(--yx-type-tab); }
+.team-seat.empty { border: 2px dashed var(--yx-border-strong); color: var(--yx-text-muted); }
+.team-recruit-count { margin: var(--yx-space-sm) 0 0; font: var(--yx-type-body-sm); }
+.team-recruit-count b { color: var(--yx-brand-red); font: var(--yx-type-number-md); }
+.yo-panel p.team-recruit-lead { margin: var(--yx-space-xxs) 0 var(--yx-space-md); font: var(--yx-type-body-sm); }
+/* 2026-10-06: Yoika's gold sparkles (the chest's "big prize" gold; also gold in mono). */
+.yx-icon .yx-i-gold { fill: var(--yx-star-gold); }
+/* 2026-10-06 (8): keep the scrollbar's room on desktop, so switching to a short page (邀請) never shifts the layout sideways. */
+html { scrollbar-gutter: stable; }
+/* 2026-10-07 (B): only the squid of the header lockup floats (2px, 3.2 s) over a faint red glow (0–15%, 4 s); "yoi" stays still.
+   The lockup is 268.14 wide; the squid is its first 94.1 units, so the two halves crop the same image. */
+.yoi-logo { position: relative; display: inline-flex; isolation: isolate; background: none; }
+.yoi-logo-squid, .yoi-logo-word { position: relative; z-index: 1; height: 100%; background: url("./assets/yoi-lockup.svg") no-repeat; background-size: var(--logo-w) 100%; }
+.yoi-logo-squid { width: calc(var(--logo-w) * 94.1 / 268.14); animation: yoi-logo-float 3.2s ease-in-out infinite; }
+.yoi-logo-word { width: calc(var(--logo-w) * 174.04 / 268.14); background-position: calc(var(--logo-w) * -94.1 / 268.14) 0; }
+.yoi-logo::before { position: absolute; z-index: 0; top: 10%; left: 0; width: calc(var(--logo-w) * 94.1 / 268.14); height: 80%; content: ""; border-radius: var(--yx-radius-full); background: var(--yx-brand-red); filter: blur(6px); opacity: 0; animation: yoi-logo-glow 4s ease-in-out infinite; pointer-events: none; }
+@keyframes yoi-logo-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+@keyframes yoi-logo-glow { 0%, 100% { opacity: 0; } 50% { opacity: .15; } }
+@media (prefers-reduced-motion: reduce) { .yoi-logo-squid, .yoi-logo::before { animation: none; } }
+
+/* ----- 2026-10-07: header (logo centred, small 遊移, plain menu lines) ----- */
+.app-topbar { display: grid; grid-template-columns: 1fr auto 1fr; }
+.app-topbar #menu-button { justify-self: start; }
+.app-brand-center { justify-self: center; }
+.app-topbar .app-top-right { justify-self: end; }
+#menu-button, #menu-button:active { border-radius: var(--yx-radius-md); background: transparent; color: var(--yx-text-primary); }
+.yoi-brand-text--small { color: var(--yx-text-muted); font: var(--yx-type-tab); }
+
+/* ----- 2026-10-07: the play guide as a bottom sheet (two pages, accordion rows) ----- */
+.guide-overlay { align-items: flex-end; justify-content: center; }
+.guide-sheet { position: relative; display: flex; flex-direction: column; gap: var(--yx-space-sm); width: 100%; max-width: var(--yx-prototype-width); max-height: 88dvh; overflow-y: auto; margin: 0; padding: var(--yx-space-lg) var(--yx-page-content) max(var(--yx-space-lg), env(safe-area-inset-bottom)); border-top-left-radius: var(--yx-radius-xl); border-top-right-radius: var(--yx-radius-xl); background: var(--yx-surface); animation: guide-up .25s ease-out; }
+@keyframes guide-up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .guide-sheet { animation: none; } }
+.guide-close { position: absolute; top: var(--yx-space-sm); right: var(--yx-space-sm); display: grid; place-items: center; width: var(--yx-touch-min); height: var(--yx-touch-min); padding: 0; border: 0; background: transparent; color: var(--yx-text-muted); }
+.guide-sheet h2 { margin: 0; padding-right: var(--yx-touch-min); font: var(--yx-type-nav-title); }
+.guide-sub { margin: 0; color: var(--yx-text-link); font: var(--yx-type-body-sm); }
+.guide-sheet--yoika { align-items: center; text-align: center; }
+.guide-sheet--yoika h2 { padding-right: 0; }
+.guide-squid { --sq-w: 96px; display: block; width: var(--sq-w); height: calc(var(--sq-w) * 115 / 94.1); background: url("./assets/yoi-lockup.svg") no-repeat 0 0 / calc(var(--sq-w) * 268.14 / 94.1) 100%; }
+.guide-squid--small { --sq-w: 44px; flex: none; }
+.guide-lead { margin: 0; font: var(--yx-type-body-sm); }
+.guide-example { width: 100%; padding: var(--yx-space-sm) var(--yx-space-md); border-radius: var(--yx-radius-md); background: var(--yx-surface-blue); text-align: left; }
+.guide-example small { color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.guide-example p { margin: var(--yx-space-xxs) 0 0; font: var(--yx-type-body-sm); }
+.guide-dots { display: flex; gap: var(--yx-space-xs); justify-content: center; }
+.guide-dots i { display: block; width: 6px; height: 6px; border-radius: var(--yx-radius-full); background: var(--yx-border-strong); transition: width .2s ease; }
+/* 2026-10-07: the dots are the examples' switch (each a 24 px tap area around the dot) */
+.guide-dot { display: grid; place-items: center; min-width: 24px; height: 24px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.guide-dot.on i { width: 20px; background: var(--yx-action-navy); }
+.guide-slides { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+.guide-slides::-webkit-scrollbar { display: none; }
+.guide-slide { flex: 0 0 100%; scroll-snap-align: start; }
+.guide-sense { display: flex; align-items: center; gap: var(--yx-space-xxs); color: var(--yx-link-blue); font: var(--yx-type-tag); }
+.guide-example .guide-sense { margin: var(--yx-space-xxs) 0 0; font: var(--yx-type-tag); }
+@media (prefers-reduced-motion: reduce) { .guide-dots i { transition: none; } }
+.guide-rows { display: grid; margin: 0; padding: 0; list-style: none; }
+.guide-row + .guide-row { border-top: 1px solid var(--yx-border); }
+.guide-row-head { display: flex; align-items: center; gap: var(--yx-space-sm); width: 100%; min-height: var(--yx-touch-min); padding: var(--yx-space-sm) 0; border: 0; background: transparent; color: var(--yx-text-primary); text-align: left; }
+.guide-row .guide-icon { width: 48px; height: 48px; border-radius: var(--yx-radius-md); background: var(--yx-surface-apricot); }
+.guide-row-text { display: grid; flex: 1 1 auto; min-width: 0; }
+.guide-row-text strong { font: var(--yx-type-title); }
+.guide-row-text small { color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.guide-row-value { flex: none; color: var(--yx-brand-red); }
+.guide-row-value b { font: var(--yx-type-number-lg); }
+.guide-row-value span { margin-left: 2px; color: var(--yx-text-primary); font: var(--yx-type-tag); }
+.guide-row-value strong { color: var(--yx-text-primary); font: var(--yx-type-title); }
+.guide-chevron { display: inline-flex; flex: none; color: var(--yx-text-muted); }
+.guide-chevron { transition: transform .25s ease; }
+.guide-row.open .guide-chevron { transform: rotate(180deg); }
+/* 2026-10-07: smooth fold (grid rows 0fr to 1fr), closed rows are not focusable or visible to screen readers. */
+.guide-collapse { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .25s ease; }
+.guide-row.open .guide-collapse { grid-template-rows: 1fr; }
+.guide-collapse-inner { min-height: 0; overflow: hidden; visibility: hidden; transition: visibility 0s linear .25s; }
+.guide-row.open .guide-collapse-inner { visibility: visible; transition-delay: 0s; }
+.guide-shown .guide-sheet { animation: none; }
+@media (prefers-reduced-motion: reduce) { .guide-collapse, .guide-collapse-inner, .guide-chevron { transition: none; } }
+.guide-bullets { margin: 0 0 var(--yx-space-sm); padding-left: calc(48px + var(--yx-space-sm) + var(--yx-space-md)); list-style: "▸  "; font: var(--yx-type-body-sm); }
+.guide-bullets li + li { margin-top: var(--yx-space-xxs); }
+.guide-bullets li::marker { color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.guide-yoika { display: flex; align-items: center; gap: var(--yx-space-sm); width: 100%; padding: var(--yx-space-sm) var(--yx-space-md); border: 0; border-radius: var(--yx-radius-md); background: var(--yx-surface-blue); color: var(--yx-text-primary); text-align: left; }
+.guide-foot { margin: 0; color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.guide-foot b { color: var(--yx-text-primary); }
+
+/* ----- FSD-08C (2026-10-07): today's points card, the ride task row, yesterday's card, the privacy card, the ride celebration ----- */
+:root { --yx-type-node: 700 13px/1 "Montserrat", var(--yx-font); }
+.app-day [hidden], .app-map-ride[hidden] { display: none; }
+.pt-rail { position: relative; height: 58px; margin: var(--yx-space-xs) 12px 0; }
+.pt-bar { position: absolute; left: 0; right: 0; top: 44px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; height: 5px; }
+.pt-bar i { display: block; height: 100%; overflow: hidden; background: var(--yx-disabled); }
+.pt-bar b { display: block; width: var(--w, 0); height: 100%; background: var(--yx-action-navy); transition: width .4s ease; }
+.pt-start { position: absolute; left: 0; top: 40.5px; width: 12px; height: 12px; border-radius: var(--yx-radius-full); background: var(--yx-action-navy); transform: translateX(-50%); }
+.pt-node { position: absolute; top: 34px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: var(--yx-radius-full); background: var(--yx-action-navy); color: var(--yx-text-on-color); font: var(--yx-type-node); transform: translateX(-50%); }
+.pt-node[data-at="1"] { left: 33.333%; }
+.pt-node[data-at="2"] { left: 66.667%; }
+.pt-node[data-at="3"] { left: 100%; }
+.pt-node--locked { background: var(--yx-disabled); }
+.pt-node--ready::after { content: ""; position: absolute; top: -3px; right: -3px; width: 11px; height: 11px; border: 1.5px solid var(--yx-surface); border-radius: var(--yx-radius-full); background: var(--yx-icon-red); }
+.pt-shoe { position: absolute; top: 0; left: var(--at, 0); z-index: 1; width: 24px; height: 29px; transform: translateX(-50%); transition: left .4s ease; }
+/* 2026-10-07: the shoe floats like the header squid (same keyframes and timing) */
+.pt-shoe-b { position: relative; display: grid; place-items: center; width: 24px; height: 24px; border: 1.5px solid var(--yx-action-navy); border-radius: var(--yx-radius-full); background: var(--yx-surface); animation: yoi-logo-float 3.2s ease-in-out infinite; }
+.pt-shoe-b::after { content: ""; position: absolute; left: 50%; top: 100%; border: 5px solid transparent; border-top-color: var(--yx-action-navy); border-bottom-width: 0; transform: translateX(-50%); }
+.pt-labels { position: relative; height: 18px; margin: var(--yx-space-xxs) 12px 0; color: var(--yx-text-muted); font: var(--yx-type-tag); font-variant-numeric: tabular-nums; }
+.pt-labels span { position: absolute; white-space: nowrap; transform: translateX(-50%); }
+.pt-labels [data-at="0"] { left: 0; }
+.pt-labels [data-at="1"] { left: 33.333%; }
+.pt-labels [data-at="2"] { left: 66.667%; }
+.pt-labels [data-at="3"] { left: 100%; }
+.pt-say:focus { outline: none; }
+.pt-lead { margin: 0; color: var(--yx-action-navy); font: var(--yx-type-body); }
+.pt-lead b { color: var(--yx-brand-red); font-weight: 700; }
+.pt-sub { margin: var(--yx-space-xxs) 0 0; color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.app-day .yo-full { margin-top: 0; }
+.ride-task { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; align-items: center; gap: var(--yx-space-sm); padding-top: var(--yx-space-md); border-top: 1px solid var(--yx-border); }
+.ride-reward { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; width: 52px; height: 52px; background: var(--yx-surface-grey); color: var(--yx-action-navy); }
+.ride-reward b { font: var(--yx-type-tag); font-weight: 700; line-height: 1.15; text-align: center; }
+.ride-mid strong { display: block; color: var(--yx-action-navy); font: var(--yx-type-title); }
+.ride-mid small { display: block; color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.ride-go { position: relative; height: 28px; padding: 0 var(--yx-space-sm); border: 1px solid var(--yx-action-navy); border-radius: var(--yx-radius-full); background: var(--yx-surface); color: var(--yx-action-navy); font: var(--yx-type-label); font-weight: 700; white-space: nowrap; cursor: pointer; }
+.ride-go::after { content: ""; position: absolute; inset: -8px -4px; }
+.ride-go:disabled { border-color: var(--yx-disabled); color: var(--yx-disabled); cursor: default; }
+.ride-done { display: inline-flex; align-items: center; gap: var(--yx-space-xxs); color: var(--yx-text-muted); font: var(--yx-type-label); white-space: nowrap; }
+.yd-stats { display: grid; margin: 0; }
+.yd-stats > div { display: flex; align-items: baseline; justify-content: space-between; gap: var(--yx-space-sm); padding: var(--yx-space-xs) 0; border-bottom: 1px solid var(--yx-border); }
+.yd-stats dt { flex: none; color: var(--yx-text-muted); white-space: nowrap; font: var(--yx-type-body-sm); }
+.yd-stats dd { margin: 0; color: var(--yx-action-navy); font: var(--yx-type-body-sm); text-align: right; }
+.yd-stats dd b { color: var(--yx-action-navy); font: var(--yx-type-number-md); font-variant-numeric: tabular-nums; }
+.yd-stats dd small { display: block; color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.app-privacy-card { margin-top: var(--yx-space-md); padding: var(--yx-space-sm) var(--yx-space-md); }
+.app-map-ride { margin: 0; color: var(--yx-slate); font: var(--yx-type-caption); text-align: center; text-shadow: 0 0 2px var(--yx-white), 0 0 4px var(--yx-white), 0 0 6px var(--yx-white); }
+.rc-overlay { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: var(--yx-page-content); background: var(--yx-scrim-strong); }
+.rc-panel { position: relative; width: min(296px, 100%); padding: 28px var(--yx-space-lg) var(--yx-space-lg); overflow: hidden; border-radius: var(--yx-radius-xl); background: var(--yx-surface); text-align: center; }
+.rc-conf { position: absolute; inset: 0; pointer-events: none; }
+.rc-c { position: absolute; left: var(--x); top: var(--y); display: block; transform: rotate(var(--r)); }
+.rc-c--rect { width: 10px; height: 5px; }
+.rc-c--dot { width: 7px; height: 7px; border-radius: var(--yx-radius-full); }
+.rc-c--bar { width: 4px; height: 12px; }
+.rc-c--red { background: var(--yx-brand-red); }
+.rc-c--navy { background: var(--yx-action-navy); }
+.rc-c--apricot { background: var(--yx-apricot-watermark); }
+.rc-c--yellow { background: var(--yx-star-yellow); }
+.rc-c--blue { background: var(--yx-link-blue); }
+.rc-tile { position: relative; display: flex; align-items: center; justify-content: center; width: 83px; height: 83px; margin: 0 auto; border-radius: var(--yx-radius-lg); background: var(--yx-surface-apricot); color: var(--yx-action-navy); }
+.rc-tile .yx-icon { width: 42px; height: 28px; }
+.rc-slogan { margin: var(--yx-space-md) 0 0; color: var(--yx-action-navy); font: var(--yx-type-slogan); }
+.rc-t { margin: var(--yx-space-xs) 0 0; color: var(--yx-action-navy); font: var(--yx-type-body); }
+.rc-n { display: flex; align-items: baseline; justify-content: center; gap: 6px; margin: var(--yx-space-xs) 0 0; color: var(--yx-text-muted); font: var(--yx-type-title); }
+.rc-n b { min-width: 4.2ch; color: var(--yx-brand-red); font: var(--yx-type-number-lg); font-variant-numeric: tabular-nums; text-align: left; }
+.rc-n span:last-child { color: var(--yx-text-primary); }
+.rc-ar { align-self: center; }
+.rc-c-note { margin: var(--yx-space-xs) 0 var(--yx-space-md); color: var(--yx-slate); font: var(--yx-type-caption); }
+.rc-panel .yo-full { margin-top: 0; }
+/* S7: plays once, about 1.5 s; reduced motion shows the finished frame */
+@media (prefers-reduced-motion: no-preference) {
+  .rc-play .rc-panel { animation: rc-pop .25s ease-out both; }
+  .rc-play .rc-tile { animation: rc-bounce .35s .15s cubic-bezier(.3, 1.6, .5, 1) both; }
+  .rc-play .rc-c { animation: rc-burst .6s cubic-bezier(.15, .8, .3, 1) var(--delay) both; }
+  .rc-play .rc-slogan { animation: rc-fade .25s .3s both; }
+  .rc-play .rc-t, .rc-play .rc-n { animation: rc-fade .25s .4s both; }
+  .rc-play .rc-c-note, .rc-play .rc-btn { animation: rc-fade .25s 1.3s both; }
+}
+@keyframes rc-pop { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: scale(1); } }
+@keyframes rc-bounce { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
+@keyframes rc-burst { 0% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(.2) rotate(0); } 20% { opacity: 1; } 100% { opacity: 1; transform: translate(0, 0) scale(1) rotate(var(--r)); } }
+@keyframes rc-fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .pt-bar b, .pt-shoe { transition: none; } .pt-shoe-b { animation: none; } }
+.points-balance-label { font: var(--yx-type-title); }
+#steps-sheet-title:focus { outline: none; }
+
+/* 2026-10-07: the map's status pill, weather and 模擬 (and 顯示我的位置) share one look: a pill on a 50 % white veil */
+.app-map .yo-location-pill, .app-map .yo-map-move { border-radius: var(--yx-radius-full); background: var(--yx-map-veil-half); -webkit-backdrop-filter: blur(var(--yx-map-veil-blur)); backdrop-filter: blur(var(--yx-map-veil-blur)); box-shadow: none; }
+.app-map .yo-map-move { text-shadow: 0 0 2px var(--yx-white), 0 0 3px var(--yx-white); }
+/* 2026-10-07: the steps button is a pencil in a pill */
+.app-map .app-steps-open { justify-content: center; min-width: var(--yx-touch-min); }
+/* 2026-10-07: the referral field's label without the bullet */
+.referral-label { display: block; font: var(--yx-type-body-sm); }
+/* 2026-10-08: Yoika swims on its intro page: the body floats and tilts, the lower part (the legs) sways like a paddle. */
+.guide-squid:not(.guide-squid--small) { position: relative; background: none; animation: yoika-swim 3.2s ease-in-out infinite; }
+.guide-squid:not(.guide-squid--small)::before, .guide-squid:not(.guide-squid--small)::after { position: absolute; inset: 0; content: ""; background: url("./assets/yoi-lockup.svg") no-repeat 0 0 / calc(var(--sq-w) * 268.14 / 94.1) 100%; }
+.guide-squid:not(.guide-squid--small)::before { clip-path: inset(0 0 21% 0); }
+.guide-squid:not(.guide-squid--small)::after { clip-path: inset(78% 0 0 0); transform-origin: 50% 78%; animation: yoika-legs 1.6s ease-in-out infinite; }
+@keyframes yoika-swim { 0%, 100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-6px) rotate(1.5deg); } }
+@keyframes yoika-legs { 0%, 100% { transform: skewX(7deg) scaleY(1); } 50% { transform: skewX(-7deg) scaleY(1.06); } }
+@media (prefers-reduced-motion: reduce) { .guide-squid:not(.guide-squid--small), .guide-squid:not(.guide-squid--small)::after { animation: none; } }
+/* 2026-10-08: 顯示我的位置 as small as the status pill (same padding and type); a larger invisible tap area keeps it easy to hit */
+.app-map #map-locate, .app-map #weather-open { position: relative; inset: auto; min-width: 0; min-height: 0; padding: 2px var(--yx-space-xs); font: var(--yx-type-caption); }
+.app-map #weather-open .yx-icon { width: 16px; height: 16px; }
+/* the right-hand button sits exactly 12 px from the edge, mirroring the status pill (an empty weather slot takes no gap) */
+.app-map #map-weather:empty { display: none; }
+.app-map #map-actions, .app-map #map-weather { display: flex; }
+.app-map #map-locate::after, .app-map #weather-open::after { position: absolute; inset: -10px -4px; content: ""; }
+
+/* ----- UX-1010 (2026-10-12): Rosie's whole-site fixes ----- */
+/* F1: 輸入步數 under the big count, a 32 px pill on the map's 50 % veil (product owner, 2026-10-12) */
+.app-map-bottom .app-steps-open, .app-map .app-steps-open { position: static; align-self: center; min-width: 0; min-height: 32px; height: 32px; padding: 0 12px; gap: var(--yx-space-xxs); font: var(--yx-type-label); font-weight: 700; color: var(--yx-action-navy); }
+.app-map .app-steps-open .yx-icon { width: 16px; height: 16px; }
+/* F7: a quiet grey-blue map; only the tiles, never the count, the pills or the buttons on top */
+.app-map .leaflet-tile-pane { filter: grayscale(1) sepia(0.25) hue-rotate(175deg) saturate(1.6) brightness(1.08) contrast(0.88); }
+/* F4 */
+.points-use { margin: var(--yx-space-xxs) 0 0; color: var(--yx-text-muted); font: var(--yx-type-caption); }
+/* F6: the note on its own line, 活動說明 under it on the right */
+.chest-card-foot { flex-direction: column; align-items: stretch; }
+.chest-card-foot > span:empty { display: none; }
+.chest-card-foot .chest-help { align-self: flex-end; white-space: nowrap; }
+/* F8 */
+.team-members-note { margin: var(--yx-space-xxs) 0 0; color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.team-done { font-weight: 700; }
+/* F9: no steps yet */
+.pt-zero .yo-full { margin-top: 0; }
+/* F16: the ride line under the track's labels (12 above, 16 below) */
+.app-day .pt-ride { margin: calc(12px - var(--yx-space-sm)) 0 calc(16px - var(--yx-space-sm)); color: var(--yx-text-muted); font: var(--yx-type-caption); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pt-ride b { color: var(--yx-action-navy); font-weight: 700; }
+/* F15: the toast above the bottom navigation; it never blocks a tap */
+.yo-toast { position: fixed; z-index: 60; left: 50%; bottom: calc(88px + env(safe-area-inset-bottom, 0px)); max-width: calc(100% - 32px); padding: 10px 16px; border-radius: var(--yx-radius-full); background: var(--yx-slate); color: var(--yx-white); font: var(--yx-type-body-sm); text-align: center; opacity: 0; pointer-events: none; transform: translate(-50%, 8px); transition: opacity .2s ease, transform .2s ease; }
+.yo-toast--in { opacity: 1; transform: translate(-50%, 0); }
+.yo-toast--out { opacity: 0; transform: translate(-50%, 8px); transition-duration: .4s; }
+/* F13: a notice is one button: text and when, an arrow on the right */
+.notice-item { display: flex; align-items: center; justify-content: space-between; gap: var(--yx-space-xs); text-align: left; }
+.notice-text { display: grid; gap: 2px; min-width: 0; }
+.notice-text small { color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.notice-item .yx-icon { flex: none; transform: rotate(-90deg); color: var(--yx-text-muted); }
+/* F14: seven circles */
+.pw-prize { color: var(--yx-text-muted); font: var(--yx-type-caption); white-space: nowrap; }
+.pw-prize b { color: var(--yx-brand-red); font: var(--yx-type-title); }
+.pw-dots { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--yx-space-xxs); margin: var(--yx-space-sm) 0 0; padding: 0; list-style: none; }
+.pw-dots li { display: grid; justify-items: center; gap: 6px; }
+.pw-dot { position: relative; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 0; border-radius: var(--yx-radius-full); background: var(--yx-surface); color: var(--yx-text-on-color); }
+button.pw-dot { cursor: pointer; }
+.pw-dot--done { background: var(--yx-action-navy); }
+.pw-dot--missed { background: var(--yx-surface-grey); }
+.pw-dash { display: block; width: 10px; height: 2px; border-radius: var(--yx-radius-full); background: var(--yx-disabled); }
+.pw-dot--future, .pw-dot--unknown { border: 1.5px dashed var(--yx-disabled); }
+.pw-ring { position: absolute; inset: 0; transform: rotate(-90deg); }
+.pw-ring circle { fill: none; stroke-width: 3; }
+.pw-ring-bg { stroke: var(--yx-border); }
+.pw-ring-fg { stroke: var(--yx-brand-red); stroke-dasharray: var(--p) 100; stroke-linecap: round; }
+.pw-day { color: var(--yx-text-muted); font: var(--yx-type-tag); }
+.pw-day.today { color: var(--yx-action-navy); font-weight: 700; }
+.pw-dots li.picked .pw-day { padding-bottom: 2px; border-bottom: 3px solid var(--yx-action-navy); color: var(--yx-action-navy); font-weight: 700; }
+.pw-say { margin-top: var(--yx-space-md); }
+.pw-say .pt-lead b { color: var(--yx-brand-red); font-weight: 700; }
+.pw-compact-title { margin: var(--yx-space-md) 0 0; color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.pw-card-compact .pw-dot { width: 28px; height: 28px; }
+/* 2026-10-12: an upcoming feature's intro page (full screen; the designed image scrolls under a sticky header) */
+.intro-page { position: fixed; inset: 0; z-index: 45; overflow-y: auto; overscroll-behavior: contain; background: var(--yx-surface); }
+.intro-panel { max-width: 480px; margin: 0 auto; }
+.intro-head { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: var(--yx-space-xs); min-height: 56px; padding: env(safe-area-inset-top, 0px) var(--yx-space-sm) 0; border-bottom: 1px solid var(--yx-border); background: var(--yx-surface); }
+.intro-head h2 { margin: 0; font: var(--yx-type-title); }
+.intro-back { display: grid; place-items: center; width: var(--yx-touch-min); height: var(--yx-touch-min); padding: 0; border: 0; border-radius: var(--yx-radius-full); background: transparent; color: var(--yx-action-navy); cursor: pointer; }
+.intro-back .yx-icon { transform: rotate(90deg); }
+.intro-body { padding-bottom: env(safe-area-inset-bottom, 0px); }
+.intro-body img { display: block; width: 100%; height: auto; }
+/* FSD-PA-07: the 功能體驗清單 rows */
+.pub-checks { display: grid; gap: var(--yx-space-xs); margin: 0; padding: 0; list-style: none; text-align: left; }
+.pub-check { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; align-items: center; gap: var(--yx-space-sm); padding: var(--yx-space-xs) 0; border-bottom: 1px solid var(--yx-border); }
+.pub-check-mark { display: grid; place-items: center; width: 28px; height: 28px; border: 1.5px dashed var(--yx-disabled); border-radius: var(--yx-radius-full); color: var(--yx-text-on-color); }
+.pub-check.done .pub-check-mark { border: 0; background: var(--yx-action-navy); }
+.pub-check-text { display: grid; gap: 2px; }
+.pub-check-text small { color: var(--yx-text-muted); font: var(--yx-type-caption); }
+.pub-card { margin-top: var(--yx-space-md); }
+/* FSD-PA: the 體驗工具 shortcut cards inside their tabs */
+.pub-tool { display: grid; gap: var(--yx-space-xs); }
+.pub-tool h2, .pub-tool p { margin: 0; }
+.pub-tool .yo-full { margin-top: 0; }
+.pub-tag { color: var(--yx-link-blue); font: var(--yx-type-tag); font-weight: 700; }
+/* 2026-10-12: the feedback link sits above 重新開始體驗 when the checklist is complete */
+.pub-feedback { display: flex; align-items: center; justify-content: center; margin-bottom: var(--yx-space-xs); text-decoration: none; }

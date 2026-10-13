@@ -1,0 +1,37 @@
+{
+  "name": "yoxi-yoi-demo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --experimental-strip-types tests/daily-state.test.mjs && node --experimental-strip-types tests/admin-clock.test.mjs && node --experimental-strip-types tests/team-state.test.mjs && node --experimental-strip-types tests/firebase-error.test.mjs && node --experimental-strip-types tests/contrib-state.test.mjs && node --experimental-strip-types tests/week-result-state.test.mjs && node --experimental-strip-types tests/week-settler.test.mjs && node --experimental-strip-types tests/perfect-week-state.test.mjs && node --experimental-strip-types tests/perfect-week-settler.test.mjs && node --experimental-strip-types tests/acceptance-fixes.test.mjs && node --experimental-strip-types tests/chest-state.test.mjs && node --experimental-strip-types tests/referral-state.test.mjs && node --experimental-strip-types tests/app-shell.test.mjs && node --experimental-strip-types tests/app-layout.test.mjs && node --experimental-strip-types tests/notices.test.mjs && node tests/ui-tokens.test.mjs && node --experimental-strip-types tests/count-up.test.mjs && node --experimental-strip-types tests/team-name.test.mjs && node --experimental-strip-types tests/auto-week.test.mjs && node --experimental-strip-types tests/weather.test.mjs && node --experimental-strip-types tests/today-card.test.mjs && node --experimental-strip-types tests/public.test.mjs",
+    "test:daily": "node --experimental-strip-types tests/daily-state.test.mjs",
+    "test:rules": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-firestore-rules.ps1",
+    "test:all": "npm test && npm run test:rules",
+    "test:rules:mutation": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-firestore-rules.ps1 -TestCommand \"node scripts/mutate-contrib-rules.mjs\"",
+    "test:rules:mutation:week": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-firestore-rules.ps1 -TestCommand \"node scripts/mutate-week-result-rules.mjs\"",
+    "test:rules:mutation:coupon": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-firestore-rules.ps1 -TestCommand \"node scripts/mutate-perfect-week-rules.mjs\"",
+    "test:rules:mutation:profiles": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-firestore-rules.ps1 -TestCommand \"node scripts/mutate-member-profiles-rules.mjs\"",
+    "test:rules:mutation:chest": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-firestore-rules.ps1 -TestCommand \"node scripts/mutate-chest-rules.mjs\"",
+    "test:rules:mutation:referral": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-firestore-rules.ps1 -TestCommand \"node scripts/mutate-referral-rules.mjs\"",
+    "test:rules:mutation:teamname": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-firestore-rules.ps1 -TestCommand \"node scripts/mutate-team-name-rules.mjs\"",
+    "dev:public": "vite --mode public --port 5174 --strictPort",
+    "build:public": "vite build --mode public"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.2",
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/leaflet": "1.9",
+    "firebase-tools": "^15.32.0",
+    "tailwindcss": "^4.3.0",
+    "typescript": "~5.8.3",
+    "vite": "~6.3.5"
+  },
+  "dependencies": {
+    "firebase": "^12.19.0",
+    "leaflet": "^1.9.4"
+  }
+}

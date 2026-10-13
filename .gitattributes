@@ -1,0 +1,9 @@
+# 版本庫與工作目錄一律用 LF：firestore.rules 的審查雜湊以 LF 計算，.sh 在 Linux runner 上也必須是 LF。
+* text=auto eol=lf
+
+# 二進位檔不做換行轉換
+*.png binary
+*.jpg binary
+*.JPG binary
+*.PNG binary
+*.jar binary

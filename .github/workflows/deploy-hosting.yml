@@ -1,0 +1,74 @@
+# 階段三：手動部署 Hosting（只部署前端，永遠不動 Firestore Rules）。
+# 只能從 GitHub 的 Actions 頁面手動按「Run workflow」觸發；部署前會先跑型別檢查與單元測試。
+# 需要的 Secrets（產品負責人在 GitHub 設定，不要寫進任何檔案）：
+#   FIREBASE_SA_INTERNAL：yoxi-yoi-demo 專案的服務帳戶金鑰 JSON（角色：Firebase Hosting 管理員）
+#   FIREBASE_SA_PUBLIC：  yoi-public-demo 專案的服務帳戶金鑰 JSON（角色：Firebase Hosting 管理員）
+name: Deploy Hosting
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 部署哪個網站
+        type: choice
+        required: true
+        options:
+          - internal
+          - public
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ inputs.target }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # 在 GitHub 的 Environments 為這兩個環境設定「Required reviewers」，部署前需要產品負責人按核准。
+    environment: ${{ inputs.target == 'public' && 'public-demo' || 'internal-demo' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: 安裝相依
+        run: npm ci
+
+      - name: 型別檢查與單元測試
+        run: |
+          npx tsc --noEmit
+          npm test
+
+      - name: 建置內部展示版
+        if: inputs.target == 'internal'
+        run: npm run build
+
+      - name: 建置公開測試版
+        if: inputs.target == 'public'
+        run: npm run build:public
+
+      - name: 寫入服務帳戶憑證（只存在 runner 暫存區）
+        env:
+          SA_JSON: ${{ inputs.target == 'public' && secrets.FIREBASE_SA_PUBLIC || secrets.FIREBASE_SA_INTERNAL }}
+        run: |
+          if [ -z "$SA_JSON" ]; then echo "缺少服務帳戶 Secret" >&2; exit 1; fi
+          printf '%s' "$SA_JSON" > "$RUNNER_TEMP/sa.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+
+      - name: 部署內部展示版（只有 hosting）
+        if: inputs.target == 'internal'
+        run: npx firebase deploy --only hosting --project yoxi-yoi-demo --non-interactive
+
+      - name: 部署公開測試版（只有 hosting）
+        if: inputs.target == 'public'
+        run: npx firebase deploy --only hosting --project yoi-public-demo --config firebase.public.json --non-interactive
+
+      - name: 清除憑證
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sa.json"
