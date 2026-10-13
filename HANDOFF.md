@@ -1,6 +1,6 @@
 # yoi 遊移遊戲（原名智行遊移）交接快照（2026-09-30 起，持續更新）
 
-## 最新狀態（2026-10-13，新 session 先讀這段；下方 10-05 段為較早紀錄）
+## 最新狀態（2026-10-14，新 session 先讀這段；下方 10-05 段為較早紀錄）
 
 - **兩個網站**（部署都只動 Hosting、不動 Rules；雲端與本機 Rules 皆為 `ffc851d07d033003…`，03E＋04B 已於 2026-10-06 由產品負責人發布，10-13 以貼上的 Console 內容核對一致）
   - 內部展示版 https://yoxi-yoi-demo.web.app ：指令「部署前端、不動 Rules」→ `npm run build` ＋ `npx firebase deploy --only hosting`。
@@ -13,10 +13,11 @@
   - 選單：功能體驗清單、修改我的名稱、關於公開測試版、重新開始體驗、給我們回饋（Google 表單 https://forms.gle/6Pgw6uG15NGRVqsSA ）。
   - 分頁名稱「yoi 遊移遊戲｜公開測試版」（vite 外掛在建置時替換）。天氣為模擬天氣。
 - **Yoika 對話（FSD-PA-10，2026-10-13，只在公開版）**：頂部魷魚即入口，Gemini（Firebase AI Logic、Gemini Developer API 免費方案、`gemini-3.5-flash-lite`）＋ App Check（Fraud Defense／reCAPTCHA Enterprise，AI Logic 已強制執行、一次性權杖）。程式在 `src/public/yoika-*.ts`、測試 `tests/yoika.test.mjs`。設定值：本機在 `.env.public`（不進版控）；GitHub Actions 讀 Environments `public-demo` 的 Variables，缺值即中止部署。本機測試需在 App Check 註冊偵錯權杖（機密，不寫入任何檔案）。內部展示版不含 Yoika。
-- **近期內部版改動**：FSD-08C（步數頁今日卡、慶祝彈窗）、`FSD/FSD_UX1010_全站調整.md`（Rosie F1–F17：團隊寶箱「達標當週就能開」等）、即將推出介紹頁（`src/assets/intro-*.png`）、全站「你」改「您」。
+- **近期內部版改動**：FSD-08C（步數頁今日卡、慶祝彈窗）、`FSD/FSD_UX1010_全站調整.md`（Rosie F1–F17：團隊寶箱「達標當週就能開」等）、即將推出介紹頁（`src/assets/intro-*.webp`）、全站「你」改「您」。
+- **圖片 WebP（2026-10-14，`724e4f6`）**：介紹頁三圖與 yoxi 首頁截圖改用 WebP（同尺寸、品質 82），首頁魷魚改用預先裁切的 `src/assets/yoi-squid.webp`（285x335，取代整張 `yoi-logo.png` 的 CSS 裁切）；圖片總量約 2.19 MB → 0.65 MB。原 PNG／JPG 仍留在 `src/assets` 但已不引用（依規範不刪）。依據：網站輕量化評估（其餘層次已達成：Leaflet 與 Yoika 已按需載入、`assets/**` 一年 immutable；內部版主程式 gzip 約 248 kB 為 Firebase SDK，不處理）。內部展示版尚未重新部署，線上仍是舊圖片。
 - **其他產出**：`UI-design/QRcode/`（公開版 QR，卡片版含去背與白字版）；`報告/yoi_開發進度報告_20261008.html`。
 - **測試**：`npm test`（含 `tests/today-card.test.mjs`、`tests/public.test.mjs`）全過；本機預覽 `.claude/launch.json` 的 `vite-dev`（5173）、`vite-public`（5174）。
-- **GitHub（2026-10-13 建立）**：私人 repo https://github.com/1989lyj-ken/yoi-demo-webapp （本目錄已 `git init`，換行一律 LF，見 `.gitattributes`）。CI（`.github/workflows/ci.yml`）每次 push 跑 tsc、`npm test`、兩版建置與 Emulator Rules 測試（`scripts/test-firestore-rules-ci.sh`，首次 121/121）。手動部署 `deploy-hosting.yml`（Secrets `FIREBASE_SA_INTERNAL`／`FIREBASE_SA_PUBLIC`，服務帳戶只有 Firebase 託管管理員角色；環境限 `main`）：2026-10-13 公開版首次經 Actions 部署成功。部署仍只在產品負責人下指令時執行（`gh workflow run deploy-hosting.yml -f target=public|internal`）。
+- **GitHub（2026-10-13 建立）**：私人 repo https://github.com/1989lyj-ken/yoi-demo-webapp （本目錄已 `git init`，換行一律 LF，見 `.gitattributes`）。CI（`.github/workflows/ci.yml`）每次 push 跑 tsc、`npm test`、兩版建置與 Emulator Rules 測試（`scripts/test-firestore-rules-ci.sh`，首次 121/121）。手動部署 `deploy-hosting.yml`（Secrets `FIREBASE_SA_INTERNAL`／`FIREBASE_SA_PUBLIC`，服務帳戶只有 Firebase 託管管理員角色；環境限 `main`）：2026-10-13 公開版首次經 Actions 部署成功。2026-10-14：PR #1（`yoika-chat` → `main`，含 Yoika 與 WebP）合併為 `70561e4`，公開版經 Actions 部署（run `38440590492`）成功，線上已確認為 WebP 與 Yoika；這是第一次由 GitHub Variables 建置 Yoika，待產品負責人實際對話確認。注意：本機部署繞過 `main` 限制（10-13 的 Yoika 曾因此只在線上、不在 `main`），且必須先 `npm run build:public`，否則會重新上傳舊的 `dist-public/`；建議優先走 Actions。部署仍只在產品負責人下指令時執行（`gh workflow run deploy-hosting.yml -f target=public|internal`）。
 - **待辦**：遊戲語調切換暫不啟動（2026-10-13 產品負責人決定，規劃見 `FSD/遊戲語調切換_規劃.md`）；Hermes 試跑（`驗收指令_Hermes試跑.md`）等結果。（J7 表情符號隊名已於正式環境驗收通過。）
 
 ## 目前狀態（2026-10-05，新 session 先讀這段）
