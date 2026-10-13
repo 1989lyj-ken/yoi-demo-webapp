@@ -1205,3 +1205,23 @@ button.pw-dot { cursor: pointer; }
 .pub-tag { color: var(--yx-link-blue); font: var(--yx-type-tag); font-weight: 700; }
 /* 2026-10-12: the feedback link sits above 重新開始體驗 when the checklist is complete */
 .pub-feedback { display: flex; align-items: center; justify-content: center; margin-bottom: var(--yx-space-xs); text-decoration: none; }
+/* FSD-PA-10: 和 Yoika 聊聊 (public test build). Navy bubbles are the visitor's; Yoika answers on surface-blue. */
+.yoika-sheet h2 { display: flex; align-items: center; gap: var(--yx-space-xs); }
+.yoika-log { display: flex; flex-direction: column; gap: var(--yx-space-xs); min-height: 160px; max-height: 42dvh; overflow-y: auto; margin: 0; padding: 0; list-style: none; }
+.yoika-msg { max-width: 85%; padding: var(--yx-space-xs) var(--yx-space-sm); border-radius: var(--yx-radius-md); font: var(--yx-type-body-sm); white-space: pre-wrap; overflow-wrap: anywhere; }
+.yoika-msg--yoika { align-self: flex-start; background: var(--yx-surface-blue); color: var(--yx-text-primary); }
+.yoika-msg--me { align-self: flex-end; background: var(--yx-action-navy); color: var(--yx-text-on-color); }
+.yoika-typing { color: var(--yx-text-muted); }
+.yoika-chips { display: flex; flex-wrap: nowrap; gap: var(--yx-space-xs); overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.yoika-chips::-webkit-scrollbar { display: none; }
+.yoika-chip { flex: none; white-space: nowrap; min-height: var(--yx-touch-min); padding: 0 var(--yx-space-sm); border: 1px solid var(--yx-border-strong); border-radius: var(--yx-radius-full); background: var(--yx-surface); color: var(--yx-text-primary); font: var(--yx-type-caption); }
+.yoika-chip:disabled { color: var(--yx-text-muted); }
+.yoika-form { display: flex; gap: var(--yx-space-xs); }
+.yoika-form input { flex: 1; min-width: 0; min-height: var(--yx-touch-min); padding: 0 var(--yx-space-sm); border: 1px solid var(--yx-border-strong); border-radius: var(--yx-radius-md); font: var(--yx-type-body-sm); }
+.yoika-form .yo-primary { flex: none; width: auto; padding: 0 var(--yx-space-md); }
+/* FSD-PA-10 (2026-10-13): the header squid opens Yoika; the whole logo is the button, a small speech bubble hangs under it. */
+.app-brand-center.has-yoika-door { position: relative; }
+.yoika-door { position: absolute; inset: 0; padding: 0; border: 0; border-radius: var(--yx-radius-md); background: transparent; cursor: pointer; }
+.yoika-door:focus-visible { outline: 2px solid var(--yx-link-blue); outline-offset: 2px; }
+.yoika-bubble { position: absolute; top: calc(100% + 6px); left: -4px; z-index: 5; padding: 2px var(--yx-space-xs); border: 1px solid var(--yx-border-strong); border-radius: var(--yx-radius-full); background: var(--yx-surface); color: var(--yx-text-primary); font: var(--yx-type-caption); font-weight: 700; white-space: nowrap; pointer-events: none; }
+.yoika-bubble::before { position: absolute; top: -5px; left: 18px; width: 8px; height: 8px; content: ""; border-top: 1px solid var(--yx-border-strong); border-left: 1px solid var(--yx-border-strong); background: var(--yx-surface); transform: translateX(-50%) rotate(45deg); }

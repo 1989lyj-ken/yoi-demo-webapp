@@ -5,9 +5,11 @@
 import { listen } from "../local/store.ts";
 import { inviteTeammate, joinedTeammates, newcomerBinds, newcomerRides, newcomerState, reachTeamGoal, runClock, visitorTeam, type SimPorts } from "./sim.ts";
 import { checklistView, clockBusyView, FEEDBACK_URL, newcomerCardView, publicDialogView, PUBLIC_TOOLS, teammatesCardView, toolCardView } from "./views.ts";
-import { checklist, firstChecklistDue, markBellOpened, markTeamGoalUsed, markWeatherOpened, teamGoalUsed } from "./checklist.ts";
+import { checklist, firstChecklistDue, markBellOpened, markTeamGoalUsed, markWeatherOpened, markYoikaOpened, teamGoalUsed, yoikaOpened } from "./checklist.ts";
 import { currentContext, renameVisitor, restartWorld, TEAMMATES, visitorName } from "./world.ts";
 import { simulatedWeatherFetch } from "./weather-sim.ts";
+import { openYoika } from "./yoika-chat.ts";
+import { yoikaConfig } from "./yoika-config.ts";
 
 export interface PublicControls {
   tools(): { id: string; label: string }[];
@@ -48,6 +50,23 @@ export function mountPublic(ports: SimPorts, hooks: { isBusy(): boolean }): Publ
     const action = (event.target as HTMLElement).closest<HTMLElement>("[data-pub-action]")?.dataset.pubAction;
     if (action === "tomorrow" || action === "monday" || action === "week") void clock(action);
     if (action === "goal") void teamGoal();
+  });
+
+  // FSD-PA-10 (product owner 2026-10-13): the header's floating squid is Yoika's only door; a small bubble under it says 和 Yoika 聊聊
+  // until the chat is first opened (remembered in the world, so 重新開始體驗 shows it again).
+  const brand = document.querySelector<HTMLElement>(".app-brand-center");
+  const door = document.createElement("button");
+  door.id = "pub-yoika-door";
+  door.type = "button";
+  door.className = "yoika-door";
+  door.setAttribute("aria-label", "和 Yoika 聊聊");
+  if (!yoikaOpened()) door.innerHTML = `<span class="yoika-bubble" aria-hidden="true">和 Yoika 聊聊</span>`;
+  brand?.classList.add("has-yoika-door");
+  brand?.append(door);
+  door.addEventListener("click", () => {
+    markYoikaOpened();
+    door.querySelector(".yoika-bubble")?.remove();
+    openYoika(yoikaConfig(), () => door.focus());
   });
 
   // 2026-10-12: the 填寫朋友的推薦碼 field starts with Michael's code, so binding works with one tap.
@@ -245,6 +264,6 @@ export function mountPublic(ports: SimPorts, hooks: { isBusy(): boolean }): Publ
     },
     weatherFetch: simulatedWeatherFetch(() => currentContext().scenarioNow),
     onGuideClosed() { if (firstChecklistDue()) window.setTimeout(() => openChecklist(), 150); },
-    stop() { off(); closeChecklist(); prefillWatch?.disconnect(); document.removeEventListener("click", onBell, true); teamCard.remove(); newCard.remove(); toolCards.forEach((b) => b.remove()); },
+    stop() { off(); closeChecklist(); prefillWatch?.disconnect(); document.removeEventListener("click", onBell, true); teamCard.remove(); newCard.remove(); door.remove(); brand?.classList.remove("has-yoika-door"); toolCards.forEach((b) => b.remove()); },
   };
 }

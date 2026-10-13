@@ -71,9 +71,10 @@ export function publicDialogView(kind: "rename" | "restart" | "about", name = ""
 /** FSD-PA-08: what a visitor must know. */
 export const ABOUT_ITEMS = [
   "這是 yoi 遊移遊戲的公開測試版，所有步數、點數、乘車券與寶箱都是模擬資料，不是正式 yoxi 服務或和泰 Points。",
-  "資料只存在您這台裝置的瀏覽器，不會上傳；3 天沒有使用會自動清除。",
+  "體驗資料只存在您這台裝置的瀏覽器，3 天沒有使用會自動清除；只有使用「和 Yoika 聊聊」時，會送出下方說明的內容。",
   "時間只會在您按「快轉」時前進；模擬隊友與模擬新朋友只存在您的體驗裡。",
   "「給我們回饋」會另開一份 Google 表單，由您自行填寫送出；App 不會自動帶入任何資料。",
+  "「和 Yoika 聊聊」的回答由 Google Gemini 產生：只會送出您輸入的問題，以及回答需要的模擬步數、點數、天氣與規則，不含位置與個人身分；請勿輸入個人資料。",
   "僅供展示與體驗，不得作為商業用途。地圖資料來自 OpenStreetMap contributors；天氣為模擬資料。",
 ];
 
