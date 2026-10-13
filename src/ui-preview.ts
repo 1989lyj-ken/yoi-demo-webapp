@@ -11,9 +11,9 @@ import { escapeHtml } from "./ui/html";
 import { appShellView, bellView, homeView, noticesView, chestOverlayView, drawerView, inviteCardView, mapHeroView, navButtonView, UPCOMING_NOTE, couponPromptView, couponsView, referralView, rewardsRecordView, rewardsView, dailyPointsView, loginView, guideView, introPageView, pointsTrackView, rideCelebrationView, todaySayView, perfectWeekView, sharedShellView, staleOverlayView, teamDialogView, teamEmptyView, teamRenameDialogView, teamView, yesterdayPromptView, type CouponCard, type PerfectWeekCard } from "./ui/views";
 import { weekVerdict } from "./weekly/perfect-week-state";
 import { SHELL_PAGES, UPCOMING_INTRO, type ShellPage } from "./app/shell-state";
-import introWishlistUrl from "./assets/intro-wishlist.png";
+import introWishlistUrl from "./assets/intro-wishlist.webp";
 import { deriveNotices } from "./app/notices";
-import yoxiHomeUrl from "./assets/yoxi-home.jpg";
+import yoxiHomeUrl from "./assets/yoxi-home.webp";
 import { TEAM_NAME_HINTS, TEAM_NAME_MAX, teamNameUnits } from "./team/team-name";
 import { leaveDialogCopy, teamControls, transferConfirmCopy, transferPickCopy, type TeamState } from "./team/team-state";
 

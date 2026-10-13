@@ -549,7 +549,7 @@ footer { width: 100%; padding-top: var(--yx-space-md); color: var(--yx-text-prim
 .brand-name { display: inline-flex; align-items: center; }
 
 /* ----- FSD-08A-2: yoxi home mock with the yoi entry -----
-   Screenshot src/assets/yoxi-home.jpg: 1206x2478, the 144 px status bar already cropped and the greeting blanked
+   Screenshot src/assets/yoxi-home.webp (2026-10-14 WebP of yoxi-home.jpg): 1206x2478, the 144 px status bar already cropped and the greeting blanked
    in the file itself (Security M1; source UI-design/yoxi 首頁截圖.PNG kept unchanged). Positions are in % of the frame: yoxi's menu button centre (9.45%, 5.41%), diameter 12.8% of the width; the yoi button
    sits below it, centre at 14.81% (19.5% of the original, about half a button gap: product owner D1). */
 .home-mock { min-height: 100dvh; background: var(--yx-surface-grey); }
@@ -564,8 +564,8 @@ footer { width: 100%; padding-top: var(--yx-space-md); color: var(--yx-text-prim
 .home-squid { position: relative; display: grid; place-items: center; width: 100%; height: 100%; padding: 0; border: 0; border-radius: var(--yx-radius-full); background: var(--yx-surface); box-shadow: var(--yx-shadow-float); transform-origin: 50% 90%; animation: home-wiggle 6s ease-in-out infinite; }
 /* At 320 px the button is about 41 px: a larger invisible hit area keeps the 44 px touch minimum. */
 .home-squid::after { position: absolute; inset: -4px; content: ""; border-radius: var(--yx-radius-full); }
-/* The squid only, cut from the transparent logo (x 200-485, y 135-470 of 1200x600). */
-.home-squid-art { width: 64%; aspect-ratio: 285 / 335; background: url("./assets/yoi-logo.png") no-repeat; background-size: 421.05% auto; background-position: 21.86% 50.94%; }
+/* The squid only, cut from the transparent logo (x 200-485, y 135-470 of 1200x600); since 2026-10-14 pre-cropped to yoi-squid.webp (285x335). */
+.home-squid-art { width: 64%; aspect-ratio: 285 / 335; background: url("./assets/yoi-squid.webp") no-repeat center / 100% 100%; }
 .home-new { position: absolute; top: -12%; right: -26%; padding: 1px 6px; border-radius: var(--yx-radius-full); background: var(--yx-brand-red); color: var(--yx-text-on-color); font: var(--yx-type-tag); pointer-events: none; }
 .home-hint { position: absolute; left: 50%; top: 42%; width: 80%; margin: 0; padding: var(--yx-space-sm) var(--yx-space-md); border-radius: var(--yx-radius-md); background: var(--yx-action-navy); color: var(--yx-text-on-color); font: var(--yx-type-body-sm); text-align: center; transform: translateX(-50%); }
 @keyframes home-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
