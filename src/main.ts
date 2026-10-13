@@ -29,10 +29,10 @@ import { claimableOf, rideCelebration, rideRowNote, trackFraction } from "./dail
 import { mountAppShell, type AppShell } from "./app/app-shell";
 import { SHELL_PAGES, type ShellPage } from "./app/shell-state";
 import type { NoticeInputs } from "./app/notices";
-import yoxiHomeUrl from "./assets/yoxi-home.jpg";
-import introYoikaUrl from "./assets/intro-yoika.png";
-import introWishlistUrl from "./assets/intro-wishlist.png";
-import introKampungUrl from "./assets/intro-kampung.png";
+import yoxiHomeUrl from "./assets/yoxi-home.webp";
+import introYoikaUrl from "./assets/intro-yoika.webp";
+import introWishlistUrl from "./assets/intro-wishlist.webp";
+import introKampungUrl from "./assets/intro-kampung.webp";
 import "./style.css";
 import { IS_PUBLIC } from "./app/edition";
 import { ensureWorld } from "./public/world";

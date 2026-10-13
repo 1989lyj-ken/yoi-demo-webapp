@@ -30,6 +30,13 @@ export function markWeatherOpened(): void {
   commit([{ path: BELL, data: { ...(readDoc(BELL) ?? {}), weather: true } }]);
 }
 
+/** FSD-PA-10 (product owner 2026-10-13): the 和 Yoika 聊聊 bubble shows until the chat is first opened. */
+export function yoikaOpened(): boolean { return !!(readDoc(BELL) as { yoika?: boolean } | undefined)?.yoika; }
+export function markYoikaOpened(): void {
+  if (yoikaOpened()) return;
+  commit([{ path: BELL, data: { ...(readDoc(BELL) ?? {}), yoika: true } }]);
+}
+
 export function markBellOpened(): void {
   if ((readDoc(BELL) as { bell?: boolean } | undefined)?.bell) return;
   commit([{ path: BELL, data: { ...(readDoc(BELL) ?? {}), bell: true } }]);

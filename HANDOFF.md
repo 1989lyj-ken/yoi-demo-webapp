@@ -12,6 +12,7 @@
   - 功能體驗清單 11 項（第 11 項「開啟定位，看地圖與天氣」可略過）；第一次進入看完「怎麼玩」後自動跳出。
   - 選單：功能體驗清單、修改我的名稱、關於公開測試版、重新開始體驗、給我們回饋（Google 表單 https://forms.gle/6Pgw6uG15NGRVqsSA ）。
   - 分頁名稱「yoi 遊移遊戲｜公開測試版」（vite 外掛在建置時替換）。天氣為模擬天氣。
+- **Yoika 對話（FSD-PA-10，2026-10-13，只在公開版）**：頂部魷魚即入口，Gemini（Firebase AI Logic、Gemini Developer API 免費方案、`gemini-3.5-flash-lite`）＋ App Check（Fraud Defense／reCAPTCHA Enterprise，AI Logic 已強制執行、一次性權杖）。程式在 `src/public/yoika-*.ts`、測試 `tests/yoika.test.mjs`。設定值：本機在 `.env.public`（不進版控）；GitHub Actions 讀 Environments `public-demo` 的 Variables，缺值即中止部署。本機測試需在 App Check 註冊偵錯權杖（機密，不寫入任何檔案）。內部展示版不含 Yoika。
 - **近期內部版改動**：FSD-08C（步數頁今日卡、慶祝彈窗）、`FSD/FSD_UX1010_全站調整.md`（Rosie F1–F17：團隊寶箱「達標當週就能開」等）、即將推出介紹頁（`src/assets/intro-*.png`）、全站「你」改「您」。
 - **其他產出**：`UI-design/QRcode/`（公開版 QR，卡片版含去背與白字版）；`報告/yoi_開發進度報告_20261008.html`。
 - **測試**：`npm test`（含 `tests/today-card.test.mjs`、`tests/public.test.mjs`）全過；本機預覽 `.claude/launch.json` 的 `vite-dev`（5173）、`vite-public`（5174）。

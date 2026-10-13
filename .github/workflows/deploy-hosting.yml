@@ -3,6 +3,9 @@
 # 需要的 Secrets（產品負責人在 GitHub 設定，不要寫進任何檔案）：
 #   FIREBASE_SA_INTERNAL：yoxi-yoi-demo 專案的服務帳戶金鑰 JSON（角色：Firebase Hosting 管理員）
 #   FIREBASE_SA_PUBLIC：  yoi-public-demo 專案的服務帳戶金鑰 JSON（角色：Firebase Hosting 管理員）
+# 需要的 Variables（FSD-PA-10 Yoika，設在 Environments → public-demo → Variables；都是公開值，會出現在網頁裡）：
+#   VITE_YOIKA_API_KEY、VITE_YOIKA_PROJECT_ID、VITE_YOIKA_APP_ID、VITE_YOIKA_MESSAGING_SENDER_ID、VITE_YOIKA_RECAPTCHA_SITE_KEY
+#   缺任何一個就中止部署，避免把「Yoika 準備中」的版本推上線。App Check 偵錯權杖是機密，永遠不放這裡。
 name: Deploy Hosting
 
 on:
@@ -49,9 +52,21 @@ jobs:
         if: inputs.target == 'internal'
         run: npm run build
 
-      - name: 建置公開測試版
+      - name: 建置公開測試版（含 Yoika 設定）
         if: inputs.target == 'public'
-        run: npm run build:public
+        env:
+          VITE_YOIKA_API_KEY: ${{ vars.VITE_YOIKA_API_KEY }}
+          VITE_YOIKA_PROJECT_ID: ${{ vars.VITE_YOIKA_PROJECT_ID }}
+          VITE_YOIKA_APP_ID: ${{ vars.VITE_YOIKA_APP_ID }}
+          VITE_YOIKA_MESSAGING_SENDER_ID: ${{ vars.VITE_YOIKA_MESSAGING_SENDER_ID }}
+          VITE_YOIKA_RECAPTCHA_SITE_KEY: ${{ vars.VITE_YOIKA_RECAPTCHA_SITE_KEY }}
+        run: |
+          for name in VITE_YOIKA_API_KEY VITE_YOIKA_PROJECT_ID VITE_YOIKA_APP_ID VITE_YOIKA_MESSAGING_SENDER_ID VITE_YOIKA_RECAPTCHA_SITE_KEY; do
+            if [ -z "${!name}" ]; then echo "缺少 Variable：$name（Environments → public-demo → Variables）" >&2; exit 1; fi
+          done
+          if [ "$VITE_YOIKA_PROJECT_ID" != "yoi-public-demo" ]; then echo "VITE_YOIKA_PROJECT_ID 必須是 yoi-public-demo" >&2; exit 1; fi
+          npm run build:public
+          grep -q "$VITE_YOIKA_APP_ID" dist-public/assets/*.js || { echo "建置結果沒有 Yoika 設定" >&2; exit 1; }
 
       - name: 寫入服務帳戶憑證（只存在 runner 暫存區）
         env:

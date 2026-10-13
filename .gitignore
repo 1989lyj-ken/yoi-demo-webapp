@@ -18,3 +18,9 @@ dist-public/
 
 # macOS 系統檔
 .DS_Store
+
+# 本機環境變數覆寫（例如測試用的假設定）
+.env*.local
+
+# FSD-PA-10：Yoika 的公開版設定只在本機部署使用（產品負責人 2026-10-13），不進版控
+.env.public
