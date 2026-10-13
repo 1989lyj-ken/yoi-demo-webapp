@@ -1225,3 +1225,6 @@ button.pw-dot { cursor: pointer; }
 .yoika-door:focus-visible { outline: 2px solid var(--yx-link-blue); outline-offset: 2px; }
 .yoika-bubble { position: absolute; top: calc(100% + 6px); left: -4px; z-index: 5; padding: 2px var(--yx-space-xs); border: 1px solid var(--yx-border-strong); border-radius: var(--yx-radius-full); background: var(--yx-surface); color: var(--yx-text-primary); font: var(--yx-type-caption); font-weight: 700; white-space: nowrap; pointer-events: none; }
 .yoika-bubble::before { position: absolute; top: -5px; left: 18px; width: 8px; height: 8px; content: ""; border-top: 1px solid var(--yx-border-strong); border-left: 1px solid var(--yx-border-strong); background: var(--yx-surface); transform: translateX(-50%) rotate(45deg); }
+/* 2026-10-14: an answer worded by the system while Gemini is busy — grey, with its own label, never mistaken for AI. */
+.yoika-msg--system { background: var(--yx-surface-grey); color: var(--yx-text-primary); }
+.yoika-system-tag { display: block; margin-bottom: 2px; color: var(--yx-text-muted); font: var(--yx-type-caption); font-weight: 700; }

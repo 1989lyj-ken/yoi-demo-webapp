@@ -6,7 +6,9 @@
 export const YOIKA_LIMITS = { inputChars: 100, perConversation: 10, perDay: 30, gapMs: 3000, replyChars: 400, toolRounds: 3, timeoutMs: 25_000 } as const;
 
 export const YOIKA_DECLINE = "我是走路和移動的小幫手，這個問題我幫不上忙。要不要問我今天的步數、天氣，或走路還是搭 yoxi？";
-export const YOIKA_BUSY = "Yoika 現在有點忙，請稍後再試。";
+export const YOIKA_BUSY = "Gemini 目前使用量很高，請稍後再試，或先點上方的建議問題。";
+/** 2026-10-14: before a fallback answer, so nobody takes system data for an AI reply. */
+export const YOIKA_FALLBACK_LEAD = "Gemini 目前使用量很高，先給您系統查到的資料：";
 export const YOIKA_NOT_READY = "Yoika 對話準備中，很快就能和您聊天。";
 
 /** Suggested questions (buttons above the input). */
@@ -96,13 +98,66 @@ export function dayStatus(input: { rawSteps: number; effectiveSteps: number; rid
   };
 }
 
+/** The visitor's numbers, sent with every question (2026-10-14: one model call per answer instead of a tool round trip). */
+export interface YoikaSnapshot {
+  now: string;
+  today: Record<string, unknown>;
+  yesterday: Record<string, unknown>;
+  team: Record<string, unknown>;
+  weather: Record<string, unknown>;
+}
+
+/** The message Gemini gets: the platform data first, then the question. */
+export function withSnapshot(question: string, snapshot: YoikaSnapshot): string {
+  return `［平台資料］${JSON.stringify(snapshot)}\n［訪客問題］${question}`;
+}
+
+const num = (v: unknown) => (typeof v === "number" ? v : 0);
+const fmt = (n: number) => n.toLocaleString("en-US");
+
+/**
+ * 2026-10-14 (product owner, option B): when Gemini is slow or busy, the suggested questions (and "N 公里" questions)
+ * are answered from the same data, worded by the system and labelled as such. Anything else gets null.
+ */
+export function fallbackAnswer(question: string, snapshot: YoikaSnapshot): string | null {
+  const q = question.trim();
+  const km = /(\d+(?:\.\d+)?)\s*(?:公里|km)/i.exec(q);
+  if (km && /走|搭|yoxi|車/i.test(q)) {
+    const r = walkOrRide(Number(km[1]));
+    if ("error" in r) return null;
+    return `走 ${km[1]} 公里約 ${r.walkMinutes} 分鐘（約 ${fmt(num(r.walkSteps))} 步）；搭 yoxi 約 ${r.rideMinutes} 分鐘（含等車）。時間為估算，車資請看 yoxi 叫車頁。`;
+  }
+  if (/步|點/.test(q) && /差|領|多少/.test(q)) {
+    const t = snapshot.today;
+    const claimable = num(t.pointsClaimable);
+    const next = t.stepsToNextPoint;
+    const parts = [`今天有效步數 ${fmt(num(t.effectiveSteps))} 步`];
+    if (claimable > 0) parts.push(`有 ${claimable} 點可以領`);
+    parts.push(typeof next === "number" ? `再走 ${fmt(next)} 步可以再解鎖 1 點` : "今天 3 點都已解鎖");
+    return `${parts.join("，")}。`;
+  }
+  if (/天氣|下雨|出門|走走/.test(q)) {
+    const w = snapshot.weather;
+    const rain = num(w.rainChancePercent);
+    const tip = rain >= 50 ? "出門記得帶傘，或考慮搭 yoxi。" : "適合出門走走。";
+    return `目前模擬天氣：${String(w.now ?? "不明")}，${num(w.temperatureC)}°C，降雨機率 ${rain}%。${tip}`;
+  }
+  if (/團隊|寶箱|組隊/.test(q)) {
+    const t = snapshot.team;
+    const rule = "2–5 人一隊，一週內全隊走滿 30 萬步，每位隊員可以開一次團隊寶箱。";
+    return t.hasTeam ? `${rule}您的隊伍本週已走 ${fmt(num(t.weekTotalSteps))} 步。` : `${rule}您還沒有隊伍，可以到「團隊」頁組建。`;
+  }
+  return null;
+}
+
 export function systemInstruction(rules: string): string {
   return [
     "你是 Yoika，yoi 遊移遊戲的走路與移動小幫手。這是公開測試版，步數、點數、券與天氣都是模擬資料。",
     "只回答：訪客今天或昨天的步數與點數、七日全勤、團隊與寶箱、推薦規則、模擬天氣與出門建議、走路還是搭 yoxi。",
     "每則回覆的第一個字元必須是標籤：範圍內寫 [OK] 再接回答；範圍外寫 [NO] 就好，不要其他文字。",
     "範圍外包括：醫療診斷、投資、政治、寫作業、寫程式、翻譯、和移動無關的閒聊、推薦真實店家或地點。",
-    "數字一律先呼叫工具取得，不要猜；工具沒有的資料就說不知道。車資一律請訪客看 yoxi 叫車頁。",
+    "每則訪客訊息前面附有［平台資料］（今天、昨天、團隊、模擬天氣），數字一律以它為準，不要猜；沒有的資料就說不知道。",
+    "走路或搭車的時間請呼叫 compare_walk_or_ride 工具。車資一律請訪客看 yoxi 叫車頁。",
     "健康相關只給一般性的走路建議，提醒身體不適請諮詢醫師，不做診斷。",
     "不代為叫車、不發券、不承諾任何優惠，不提供網址。",
     "用繁體中文、稱呼訪客「您」，口吻親切，最多三句話。",

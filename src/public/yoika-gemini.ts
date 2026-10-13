@@ -11,14 +11,11 @@ import type { YoikaConfig } from "./yoika-config.ts";
 
 export type YoikaTools = Record<string, (args: Record<string, unknown>) => Record<string, unknown>>;
 
+// 2026-10-14: the visitor's numbers travel with each question (withSnapshot), so most answers take one model call;
+// only the walk-or-ride estimate is still a tool, because it needs a distance from the question.
 const DECLARATIONS: FunctionDeclaration[] = [
-  { name: "get_today_status", description: "訪客今天或昨天的原始步數、有效步數、是否搭過 yoxi、已解鎖／已領／可領點數，以及離下一點還差幾步。",
-    parameters: Schema.object({ properties: { day: Schema.enumString({ enum: ["today", "yesterday"], description: "today 或 yesterday" }) } }) },
-  { name: "get_team_status", description: "訪客是否有隊伍、隊員人數、本週全隊步數與 30 萬步目標。" },
-  { name: "get_weather", description: "目前與接下來幾小時的模擬天氣：天氣、氣溫、降雨機率。" },
   { name: "compare_walk_or_ride", description: "給距離（公里），估算走路與搭 yoxi 各要幾分鐘、走路約幾步。不含車資。",
     parameters: Schema.object({ properties: { distanceKm: Schema.number({ description: "距離，公里" }) } }) },
-  { name: "get_rules", description: "平台規則：點數、乘車加成、七日全勤、團隊寶箱、推薦。" },
 ];
 
 export interface YoikaChat { send(text: string): Promise<string> }
