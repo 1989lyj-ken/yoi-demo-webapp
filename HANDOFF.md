@@ -15,7 +15,7 @@
 - **近期內部版改動**：FSD-08C（步數頁今日卡、慶祝彈窗）、`FSD/FSD_UX1010_全站調整.md`（Rosie F1–F17：團隊寶箱「達標當週就能開」等）、即將推出介紹頁（`src/assets/intro-*.png`）、全站「你」改「您」。
 - **其他產出**：`UI-design/QRcode/`（公開版 QR，卡片版含去背與白字版）；`報告/yoi_開發進度報告_20261008.html`。
 - **測試**：`npm test`（含 `tests/today-card.test.mjs`、`tests/public.test.mjs`）全過；本機預覽 `.claude/launch.json` 的 `vite-dev`（5173）、`vite-public`（5174）。
-- **GitHub（2026-10-13 建立）**：私人 repo https://github.com/1989lyj-ken/yoi-demo-webapp （本目錄已 `git init`，換行一律 LF，見 `.gitattributes`）。CI（`.github/workflows/ci.yml`）每次 push 跑 tsc、`npm test`、兩版建置與 Emulator Rules 測試（`scripts/test-firestore-rules-ci.sh`，首次 121/121）。手動部署 `deploy-hosting.yml` 已備好，待產品負責人設定服務帳戶 Secrets 與 Environments 核准（步驟見 `GitHub_Actions_設定步驟.md`）。
+- **GitHub（2026-10-13 建立）**：私人 repo https://github.com/1989lyj-ken/yoi-demo-webapp （本目錄已 `git init`，換行一律 LF，見 `.gitattributes`）。CI（`.github/workflows/ci.yml`）每次 push 跑 tsc、`npm test`、兩版建置與 Emulator Rules 測試（`scripts/test-firestore-rules-ci.sh`，首次 121/121）。手動部署 `deploy-hosting.yml`（Secrets `FIREBASE_SA_INTERNAL`／`FIREBASE_SA_PUBLIC`，服務帳戶只有 Firebase 託管管理員角色；環境限 `main`）：2026-10-13 公開版首次經 Actions 部署成功。部署仍只在產品負責人下指令時執行（`gh workflow run deploy-hosting.yml -f target=public|internal`）。
 - **待辦**：遊戲語調切換暫不啟動（2026-10-13 產品負責人決定，規劃見 `FSD/遊戲語調切換_規劃.md`）；Hermes 試跑（`驗收指令_Hermes試跑.md`）等結果。（J7 表情符號隊名已於正式環境驗收通過。）
 
 ## 目前狀態（2026-10-05，新 session 先讀這段）
