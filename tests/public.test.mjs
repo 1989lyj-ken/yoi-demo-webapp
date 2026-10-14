@@ -128,6 +128,16 @@ test('FSD-PA: the public build names the browser tab 公開測試版', () => {
   assert.match(readFileSync(new URL('../index.html', import.meta.url), 'utf8'), /<title>yoi 遊移遊戲｜展示版<\/title>/);
 });
 
+test('2026-10-14 SEO: the public build has a meta description (您, never 你); the internal demo is noindex', () => {
+  const config = readFileSync(new URL('../vite.config.ts', import.meta.url), 'utf8');
+  const description = config.match(/const PUBLIC_DESCRIPTION = "([^"]+)"/)?.[1] ?? '';
+  assert.match(description, /^不搭車，也打開 yoxi。/);
+  assert.match(description, /陪您出行/);
+  assert.doesNotMatch(description, /你/);
+  assert.match(config, /name: "description", content: PUBLIC_DESCRIPTION/);
+  assert.match(config, /name: "robots", content: "noindex"/);
+});
+
 test('2026-10-12: feedback goes to the Google Form in a new tab (menu, and the completed checklist); nothing is sent by the app', async () => {
   const { FEEDBACK_URL, PUBLIC_TOOLS, checklistView, ABOUT_ITEMS } = await import('../src/public/views.ts');
   assert.equal(FEEDBACK_URL, 'https://forms.gle/6Pgw6uG15NGRVqsSA');
