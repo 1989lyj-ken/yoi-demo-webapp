@@ -24,3 +24,19 @@ dist-public/
 
 # FSD-PA-10：Yoika 的公開版設定只在本機部署使用（產品負責人 2026-10-13），不進版控
 .env.public
+
+# 參賽送件整理（2026-10-14）：以下只留在本機，不進版控
+yoxi 首頁截圖.PNG
+/5c30e3e026a711c434a22dc1237e6e82.png
+/dd39361b8a5c98b5a80c97f7b43c18b3.png
+/Console-Rules-backup-*.md
+/published-check.rules
+/gas-spike/
+/gas-spike-test.html
+/src/gas-spike-test.*
+/PRD/yoxi智行夥伴需求規格計畫書_RFP_1.1.md
+/PRD/智行遊移_PRD_v0.1_0924.md
+/遊戲語調_*.csv
+/簡報草稿/
+/驗收指令_*.md
+/驗收分工_*.md

@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `AGENTS.md`：專案規範（產品邊界、積木流程、共用規則）。本檔不重複其內容，**動手前必讀**。
 - `HANDOFF.md`：最新交接快照（目前實測狀態、進行中的 03B、建議接手順序）。接手時先讀，並以實際重跑結果為準。
-- `PRD/智行遊移_PRD_v0.1.md`：產品規則來源（以文件內版本為準）。`PRD/` 下的 RFP 與 `_0924` 為舊版／參考，不要當成最新決策。
+- `PRD/智行遊移_PRD_v0.1.md`：產品規則來源（以文件內版本為準）。`PRD/` 下的 RFP 與 `_0924` 為舊版／參考，不要當成最新決策（RFP 1.1 與 `_0924` 只留在本機，不進版控）。
 - `FSD/`：各積木契約。`FSD_03B` 已改為單一 canonical schema（含審查基準雜湊與產品負責人裁決紀錄）；`FSD_03A` 的 `teamCodes` 描述僅為歷史紀錄。
 - `UI-design/`：設計交付包（從 `00_先讀我.md` 開始；參數總表在 `01_規則/1-1_PRD_規則總表.md` 第 4 章）。其中 `3-2_AI情境卡` 屬後續版本，首版不做。
 - 本目錄**不是 Git repository**；不要為接手而重建、覆蓋或刪除既有檔案。
@@ -58,7 +58,7 @@ Vite + TypeScript + Tailwind v4（無框架，直接操作 DOM 字串模板）�
 
 ### `gas-spike/`
 
-FSD-05 的 Apps Script 共享端可行性試驗，**已停用**（2026-10-03 產品負責人決定不保留，雲端專案已移除；06A 移除 `gasSpike` Rules 並把 `Code.test.mjs` 移出 `npm test`）。檔案僅作紀錄保留，`gas-spike-test.html` 仍可由 Vite dev 開啟但已無雲端端點。詳見 `gas-spike/README.md`。
+FSD-05 的 Apps Script 共享端可行性試驗，**已停用**（2026-10-03 產品負責人決定不保留，雲端專案已移除；06A 移除 `gasSpike` Rules 並把 `Code.test.mjs` 移出 `npm test`）。檔案僅作紀錄保留在本機（2026-10-14 起不進版控，見 `.gitignore`），`gas-spike-test.html` 仍可由 Vite dev 開啟但已無雲端端點。詳見 `gas-spike/README.md`。
 
 ## 雲端操作邊界
 
