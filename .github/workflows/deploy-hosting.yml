@@ -30,7 +30,7 @@ jobs:
   deploy:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-    # 兩個環境在 GitHub Environments 限定只允許 main 分支（免費方案私人 repo 沒有 Required reviewers；只有 repo 寫入者能手動觸發）。
+    # 兩個環境在 GitHub Environments 限定只允許 main 分支，並設 Required reviewers：部署前須由產品負責人核准（repo 已於 2026-10-14 改為公開）。
     environment: ${{ inputs.target == 'public' && 'public-demo' || 'internal-demo' }}
     steps:
       - uses: actions/checkout@v5
