@@ -1,6 +1,27 @@
 # yoi 遊移遊戲（原名智行遊移）交接快照（2026-09-30 起，持續更新）
 
-## 最新狀態（2026-10-14，新 session 先讀這段；下方 10-05 段為較早紀錄）
+## 最新狀態（2026-11-03，新 session 先讀這段；下方 10-14、10-05 段為較早紀錄）
+
+- **專案狀態**：初賽已結束，產品負責人決定平台不再開發（2026-11-03）。下方 10-14 段的待辦（遊戲語調、Hermes 試跑）不再進行。
+- **網站**：
+  - 公開測試版 https://yoi-public-demo.web.app 繼續開著。
+  - 內部展示版 https://yoxi-yoi-demo.web.app 已於 2026-11-03 由產品負責人執行 `npx.cmd firebase hosting:disable --project yoxi-yoi-demo` 下線（兩個網址都回 404「Site Not Found」）。Firestore 資料與 Auth 帳號保留；要恢復就重跑 `deploy-hosting.yml`（`target=internal`）。
+- **安全審查（2026-10-14 起，13 項）**：全部結案。報告為 Claude Docs「yoi 安全審查報告」https://claude.ai/artifact/EiGkxAkP6rET1iroMn27rh 。
+  - 第 1–4 項：沿用 FSD 信任模型，列為已接受風險。接真實獎勵前，必須把相關判定移到伺服器端。
+  - 第 5 項：Vite 升到 `~6.4.4`（PR #5）。
+  - 第 6 項：兩個網站先加上安全標頭（PR #5），之後補上完整 CSP。CSP 先以 Report-Only 觀察（PR #10），2026-11-03 改為正式阻擋（PR #11），兩站實測都沒有違規。CSP 在 `firebase.json`／`firebase.public.json`；新增外部網域要同步改兩檔。
+  - 第 7 項隊名控制字元：2026-11-03 產品負責人決定不修。
+  - 第 9 項：Actions 釘選 commit SHA（PR #5）。
+  - 第 10 項：App Check 已對 AI Logic 強制執行，兩把 API 金鑰都限定網域。
+  - 第 11 項：repo 改為公開，兩個部署環境都設 Required reviewers（PR #4）。
+  - 第 12 項：App Check 偵錯權杖已於 2026-11-03 刪除，本機已無法測 Yoika；要再測需重新登記一組。
+  - 另有兩項修正：
+    - 首頁 `/` 改為 no-cache（PR #6）。
+    - GitHub Variable 原本存的是狀態「未完成」的 reCAPTCHA 金鑰，已改成正式金鑰，舊金鑰也已刪除。
+- **GitHub**：repo https://github.com/1989lyj-ken/yoi-demo-webapp 已改為公開（下方 10-14 段寫的「私人」已過時）。最新 `main` 為 `ee0374a`（PR #12：輕量化報告修正 WebP 描述）。
+- **簡報**：Canva 初賽簡報第 20–22 頁、`簡報草稿/` 停在 10-14 版。產品負責人決定不再更新。
+
+## 2026-10-14 狀態
 
 - **兩個網站**（部署都只動 Hosting、不動 Rules；雲端與本機 Rules 皆為 `ffc851d07d033003…`，03E＋04B 已於 2026-10-06 由產品負責人發布，10-13 以貼上的 Console 內容核對一致）
   - 內部展示版 https://yoxi-yoi-demo.web.app ：指令「部署前端、不動 Rules」→ `npm run build` ＋ `npx firebase deploy --only hosting`。
