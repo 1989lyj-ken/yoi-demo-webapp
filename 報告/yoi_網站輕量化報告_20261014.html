@@ -75,7 +75,7 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
   <header>
     <div class="kicker">Web Performance · 2026-10-14</div>
     <h1>yoi 遊移遊戲 網站輕量化報告</h1>
-    <div class="meta">範圍：公開測試版 yoi-public-demo.web.app（內部展示版同步受惠，待部署）　依據：《Web 效能優化學習筆記：從「網站輕量化」開始》</div>
+    <div class="meta">範圍：公開測試版 yoi-public-demo.web.app（內部展示版：WebP 已上線，字型與 noindex 待部署）　依據：《Web 效能優化學習筆記：從「網站輕量化」開始》</div>
   </header>
 
   <section>
@@ -175,7 +175,7 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
       <table>
         <thead><tr><th>項目</th><th>GitHub</th><th>上線</th></tr></thead>
         <tbody>
-          <tr><td>圖片改用 WebP</td><td>commit <code>724e4f6</code>，隨 PR #1 合併</td><td>公開版 Actions run <code>38440590492</code></td></tr>
+          <tr><td>圖片改用 WebP</td><td>commit <code>724e4f6</code>，隨 PR #1 合併</td><td>公開版 Actions run <code>38440590492</code>；內部版隨 10/14 安全修正部署上線（run <code>38522618987</code>）</td></tr>
           <tr><td>交接文件紀錄</td><td>PR #2</td><td>文件，不需部署</td></tr>
           <tr><td>字型改用裝置內建</td><td>commit <code>c839bd0</code>（說明 PR #7）</td><td>公開版 Actions run <code>38530496147</code></td></tr>
           <tr><td>搜尋介紹＋內部版 noindex</td><td>PR #8（<code>a7d6002</code>）</td><td>公開版 Actions run <code>38534076950</code>；內部版暫不部署</td></tr>
@@ -188,7 +188,7 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
   <section>
     <h2>後續待辦</h2>
     <ul class="todo">
-      <li><span class="chip had">暫緩</span><span>內部展示版暫不部署（2026-10-14 產品負責人決定）：WebP、字型、noindex 三項改動已在 <code>main</code>，下次部署內部版時會一併上線。</span></li>
+      <li><span class="chip had">暫緩</span><span>內部展示版暫不部署（2026-10-14 產品負責人決定）：字型、noindex 兩項改動已在 <code>main</code>，下次部署內部版時會一併上線。WebP 已隨 10/14 的安全修正部署上線。</span></li>
       <li><span class="chip done">已完成</span><span>產品負責人以 iPhone 與 Android 實機確認中文字型（粗體標題、中英數混排）並與 Yoika 對話，皆無問題（2026-10-14）。</span></li>
       <li><span class="chip had">建議</span><span>在 GitHub 為 <code>main</code> 設定只能經 PR 修改，避免再次直接推送。</span></li>
       <li><span class="chip had">可略過</span><span>魷魚 logo SVG 最佳化（約省 10–15 KB）、刪除不再引用的原始圖檔（不影響網站）。</span></li>
